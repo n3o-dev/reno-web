@@ -11,7 +11,8 @@
     "test:contract": "vitest run tests/contract",
     "test:fixtures": "vitest run tests/fixtures",
     "test:rules": "vitest run tests/rules",
-    "schema:emit": "tsx scripts/emit-schema.ts"
+    "schema:emit": "tsx scripts/emit-schema.ts",
+    "fixtures:build": "tsx scripts/build-fixtures.ts"
   },
   "devDependencies": {
     "@types/node": "^26.6.2",
