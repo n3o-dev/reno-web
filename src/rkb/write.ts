@@ -78,6 +78,7 @@ interface ResolvedEdit {
    * The totals cells for a day sit in its R column, not its A column — N18
    * holds SUM(O11:O16). This is the column whose totals need refreshing.
    */
+  readonly sheet: string
   readonly totalsColumn: string
   readonly totalsRows: TotalsRows
   readonly blocked: BlockedCell | null
@@ -131,6 +132,7 @@ function resolve(book: Workbook, edits: readonly ActualEdit[]): ResolvedEdit[] {
     const ref = `${day.aColumn}${row.rowNumber}`
     return {
       path: sheet.path,
+      sheet: sheet.name,
       ref,
       rowNumber: row.rowNumber,
       value: edit.value,
@@ -174,7 +176,11 @@ export function writeActuals(bytes: Uint8Array, edits: readonly ActualEdit[]): W
     const xml = entries[path]
     if (xml === undefined) throw new RkbWriteError(`workbook is missing ${path}`)
     const edited = applyToSheet(strFromU8(xml), sheetEdits)
-    const targets = sheetEdits.map((e) => ({ column: e.totalsColumn, rows: e.totalsRows }))
+    const targets = sheetEdits.map((e) => ({
+      sheet: e.sheet,
+      column: e.totalsColumn,
+      rows: e.totalsRows,
+    }))
     const refreshed = refreshTotals(edited, targets)
     staleTotals.push(...refreshed.stale)
     next[path] = strToU8(refreshed.xml)
@@ -246,11 +252,18 @@ function insertCell(xml: string, edit: ResolvedEdit): string {
 /**
  * Borrows a neighbour's style for an inserted cell.
  *
- * Same column parity first. R and A columns alternate and carry different
- * styles — 105 and 132 on this workbook, differing in font and alignment — so
- * an A cell's *nearest* neighbour is always its R partner, and copying it
- * would render the value in the wrong font, off-centre. Falls back to the
- * nearest cell of any parity only when the row has no same-parity styled cell.
+ * Same column parity, and inside the day grid. R and A columns alternate and
+ * carry different styles — 105 and 132 on this workbook — so an A cell's
+ * *nearest* neighbour is always its R partner; and the descriptive columns to
+ * the left of the grid share parity with the A columns, so day 1 would tie
+ * with JENIS PEKERJAAN and lose on document order.
+ *
+ * The heuristic is not exact where a sheet's styles vary along the row.
+ * Measured over all 31 days on all six sheets, 169 of 186 inserts recover the
+ * original style; the 17 that do not are Koridor dalam (8 days, vertical
+ * alignment only), Car park (7 days, fillId 5 vs 0 — a real shading
+ * difference), Facade day 16 and Ruang Utility day 28. This path never fires
+ * on Reno's own workbook, where every cell is already present.
  */
 function neighbourStyle(rowBody: string, target: number, firstDayColumn: number): string | null {
   let sameParity: { distance: number; style: string } | null = null

@@ -19,12 +19,16 @@ export interface TotalsRows {
 }
 
 export interface StaleTotal {
+  /** Koridor dalam and Toilet share totals rows, so column+row alone is ambiguous. */
+  readonly sheet: string
   readonly column: string
+  /** The row that actually holds the literal, not always the JUMLAH row. */
   readonly row: number
   readonly reason: string
 }
 
 export interface TotalsTarget {
+  readonly sheet: string
   /** The column the totals cells sit in — the day's R column, not its A column. */
   readonly column: string
   readonly rows: TotalsRows
@@ -118,11 +122,13 @@ export function refreshTotals(
      * cell would take a whole month's export with it. The caller is told.
      */
     if (jFormula === null || rFormula === null) {
-      stale.push({
-        column: target.column,
-        row: jumlah,
-        reason: 'the workbook states this total as a literal, not a formula',
-      })
+      const reason = 'the workbook states this total as a literal, not a formula'
+      if (jFormula === null) {
+        stale.push({ sheet: target.sheet, column: target.column, row: jumlah, reason })
+      }
+      if (rFormula === null) {
+        stale.push({ sheet: target.sheet, column: target.column, row: realisasi, reason })
+      }
       continue
     }
     const jValue = evaluateSum(jFormula, values, jRef)

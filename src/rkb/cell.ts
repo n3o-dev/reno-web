@@ -16,7 +16,7 @@ export interface FoundCell {
  * silently missed the other.
  */
 export function findCell(xml: string, ref: string): FoundCell | null {
-  const open = new RegExp(`<c [^>]*r=["']${ref}["'][^>]*?(/?)>`)
+  const open = new RegExp(`<c\\s[^>]*r=["']${ref}["'][^>]*?(/?)>`)
   const match = open.exec(xml)
   if (match === null) return null
   if (match[1] === '/') {
@@ -27,7 +27,8 @@ export function findCell(xml: string, ref: string): FoundCell | null {
   return { start: match.index, end: closeAt + 4, text: xml.slice(match.index, closeAt + 4) }
 }
 
-export const styleOf = (tag: string): string | null => /\ss="(\d+)"/.exec(tag)?.[1] ?? null
+export const styleOf = (tag: string): string | null =>
+  /\ss=["'](\d+)["']/.exec(tag)?.[1] ?? null
 
 /**
  * Replaces a cell's cached `<v>` and its error flag, leaving `<f>` untouched.

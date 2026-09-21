@@ -42,6 +42,26 @@ describe('AC-6 · A values land in the right cell for all three layouts', () => 
     expect(tag).toContain('<v>7</v>')
   })
 
+  it.each([
+    ['a single-quoted reference', 'r="O12"', "r='O12'"],
+    ['a newline inside the tag', '<c r="O12"', '<c\n r="O12"'],
+    ['a tab inside the tag', '<c r="O12"', '<c\t r="O12"'],
+  ])('finds a cell despite %s, rather than duplicating it', (_name, from, to) => {
+    const entries = unzipSync(original)
+    const xml = strFromU8(entries['xl/worksheets/sheet2.xml'] as Uint8Array)
+    const doctored = zipSync({
+      ...entries,
+      'xl/worksheets/sheet2.xml': strToU8(xml.replace(from as string, to as string)),
+    })
+    const out = writeActuals(doctored, [
+      { sheet: 'RKB TOILET ', rowNumber: 12, day: 6, value: 1 },
+    ]).bytes
+    const after = strFromU8(unzipSync(out)['xl/worksheets/sheet2.xml'] as Uint8Array)
+    expect((after.match(/r=["']O12["']/g) ?? []).length).toBe(1)
+    // and the cell keeps its formatting, rather than being rewritten bare
+    expect(/<c[^>]*r=["']O12["'][^>]*s=["']132["']/.test(after)).toBe(true)
+  })
+
   it('finds a cell whose reference is single-quoted, rather than duplicating it', () => {
     const entries = unzipSync(original)
     const xml = strFromU8(entries['xl/worksheets/sheet2.xml'] as Uint8Array)
@@ -130,7 +150,7 @@ describe('AC-6 · A values land in the right cell for all three layouts', () => 
       ['RKB FACADE', 'xl/worksheets/sheet4.xml', 31],
       ['RKB RUANG UTILITY', 'xl/worksheets/sheet5.xml', 3],
       ['RKB RUANG UTILITY', 'xl/worksheets/sheet5.xml', 31],
-    ])('%s day %i keeps the exact style it had', (sheet, path, day) => {
+    ])('$0 day $2 keeps the exact style it had', (sheet, path, day) => {
       const styleAt = (doc: string, ref: string): string | null =>
         /\ss="(\d+)"/.exec(new RegExp(`<c[^>]*r="${ref}"[^>]*>`).exec(doc)?.[0] ?? '')?.[1] ?? null
       const row = rowOf(original, sheet as string, 1)

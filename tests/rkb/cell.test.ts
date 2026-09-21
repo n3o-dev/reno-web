@@ -60,7 +60,13 @@ describe('setCellValue', () => {
 })
 
 describe('findCell', () => {
-  it.each(['<c r="O12" s="1"/>', "<c r='O12' s='1'/>"])('locates %s', (cell) => {
+  it.each([
+    ['plain space', '<c r="O12" s="1"/>'],
+    ['single-quoted ref', "<c r='O12' s='1'/>"],
+    ['newline inside the tag', '<c\n r="O12" s="1"/>'],
+    ['tab inside the tag', '<c\t r="O12" s="1"/>'],
+    ['CRLF inside the tag', '<c\r\n r="O12" s="1"/>'],
+  ])('locates a cell with %s', (_name, cell) => {
     expect(findCell(`<row>${cell}</row>`, 'O12')).not.toBeNull()
   })
 
@@ -69,8 +75,11 @@ describe('findCell', () => {
     expect(findCell('<row><c r="AO12" s="1"/></row>', 'O12')).toBeNull()
   })
 
-  it('reads the style index off a tag', () => {
-    expect(styleOf('<c r="O12" s="132">')).toBe('132')
-    expect(styleOf('<c r="O12">')).toBeNull()
+  it.each([
+    ['<c r="O12" s="132">', '132'],
+    ["<c r='O12' s='132'>", '132'],
+    ['<c r="O12">', null],
+  ])('reads the style off %s', (tag, expected) => {
+    expect(styleOf(tag as string)).toBe(expected)
   })
 })

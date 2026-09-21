@@ -249,8 +249,15 @@ describe('AC-7 · a total Reno typed as a literal is left alone, not refused', (
   it('reports the total it could not refresh', () => {
     expect(writeActuals(original, [edit]).staleTotals).toEqual([
       {
+        sheet: 'RKB RUANG UTILITY',
         column: 'F',
         row: 41,
+        reason: 'the workbook states this total as a literal, not a formula',
+      },
+      {
+        sheet: 'RKB RUANG UTILITY',
+        column: 'F',
+        row: 42,
         reason: 'the workbook states this total as a literal, not a formula',
       },
     ])
