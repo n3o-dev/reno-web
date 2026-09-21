@@ -17,15 +17,35 @@ const rowOf = (bytes: Uint8Array, sheet: string, no: number) => {
 }
 
 describe('AC-6 · A values land in the right cell for all three layouts', () => {
+  const SHEET_PATH: Record<string, string> = {
+    'RKB TOILET ': 'xl/worksheets/sheet2.xml',
+    'RKB FACADE': 'xl/worksheets/sheet4.xml',
+    'RKB RUANG UTILITY': 'xl/worksheets/sheet5.xml',
+  }
+
   it.each([
     // sheet, NO, day, expected A cell — layouts B and C sit one column right
     ['RKB TOILET ', 1, 3, 'I12'],
     ['RKB FACADE', 1, 3, 'K12'],
     ['RKB RUANG UTILITY', 1, 3, 'K12'],
-  ])('%s row %i day %i → %s', (sheet, no, day, expected) => {
+  ])('%s row %i day %i writes into %s', (sheet, no, day, expected) => {
     const row = rowOf(original, sheet as string, no as number)
-    expect(row?.rowNumber).toBe(12)
     expect(`${row?.days[(day as number) - 1]?.aColumn}${row?.rowNumber}`).toBe(expected)
+
+    // Round-trip through the writer: asserting the reader's column alone would
+    // pass with the entire writer deleted.
+    const out = writeActuals(original, [
+      { sheet: sheet as string, rowNumber: 12, day: day as number, value: 7 },
+    ]).bytes
+    const xml = strFromU8(unzipSync(out)[SHEET_PATH[sheet as string] as string] as Uint8Array)
+    const tag = new RegExp(`<c [^>]*r="${expected}"[^>]*>.*?</c>`).exec(xml)?.[0] ?? ''
+    expect(tag).toContain('<v>7</v>')
+  })
+
+  it.each([NaN, Infinity, -Infinity])('refuses to write %s, which Excel cannot open', (value) => {
+    expect(() =>
+      writeActuals(original, [{ sheet: 'RKB TOILET ', rowNumber: 12, day: 6, value }]),
+    ).toThrowError(/finite/i)
   })
 
   it('writes the value into that cell and reads it back', () => {
@@ -81,13 +101,21 @@ describe('AC-6 · A values land in the right cell for all three layouts', () => 
       expect(rowOf(out, 'RKB TOILET ', 1)?.days[5]?.actual).toBe(1)
     })
 
-    it('borrows a neighbour’s formatting for the inserted cell', () => {
+    it('borrows an A cell’s formatting, not the R cell next door', () => {
+      const styleAt = (doc: string, ref: string): string | null =>
+        /\ss="(\d+)"/.exec(new RegExp(`<c[^>]*r="${ref}"[^>]*>`).exec(doc)?.[0] ?? '')?.[1] ?? null
+      const before = strFromU8(unzipSync(original)['xl/worksheets/sheet2.xml'] as Uint8Array)
+
       const out = writeActuals(stripped, [
         { sheet: 'RKB TOILET ', rowNumber: 12, day: 6, value: 1 },
       ]).bytes
       const xml = strFromU8(unzipSync(out)['xl/worksheets/sheet2.xml'] as Uint8Array)
-      const inserted = /<c[^>]*r="O12"[^>]*>/.exec(xml)?.[0] ?? ''
-      expect(/\ss="\d+"/.test(inserted)).toBe(true)
+
+      // R and A columns carry different styles; the nearest neighbour of an A
+      // cell is always its R partner, so nearest-wins picks the wrong one.
+      expect(styleAt(xml, 'O12')).toBe(styleAt(before, 'O12'))
+      expect(styleAt(xml, 'O12')).not.toBe(styleAt(xml, 'N12'))
+      expect(styleAt(xml, 'O12')).toBe(styleAt(xml, 'M12'))
     })
 
     it('inserts in column order, not at the end of the row', () => {

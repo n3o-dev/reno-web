@@ -1,7 +1,11 @@
 import { unzipSync, zipSync, strFromU8, strToU8 } from 'fflate'
-import { parseWorkbook, type Section, type Workbook } from './read'
+import { parseWorkbook, type Workbook } from './read'
 import { columnToIndex, columnOf } from './sheet-xml'
 import { DAYS_IN_GRID } from './layout'
+import { RkbWriteError } from './write-error'
+import { refreshTotals, type TotalsRows } from './totals'
+
+export { RkbWriteError } from './write-error'
 
 /**
  * Writes realised A values back into Reno's own workbook.
@@ -10,9 +14,11 @@ import { DAYS_IN_GRID } from './layout'
  * nothing changed except the numbers. That is why this edits the sheet XML
  * surgically rather than round-tripping through a spreadsheet library — a
  * library rebuilds the whole workbook from its own model and quietly drops
- * whatever it did not understand. Here, every zip entry except the sheets
- * actually edited is passed through byte for byte, and within those sheets
- * only the target `<c>` elements are touched.
+ * whatever it did not understand. Here the *contents* of every zip entry
+ * except the sheets actually edited are passed through byte for byte, and
+ * within those sheets only the target `<c>` elements are touched. The archive
+ * itself is rebuilt, so entry timestamps change and the file is not
+ * byte-reproducible between runs — do not hash the export to detect changes.
  *
  * See docs/specs/rkb-workbook-io.md (AC-5, AC-6)
  */
@@ -56,13 +62,6 @@ export interface WriteResult {
   readonly blocked: readonly BlockedCell[]
 }
 
-export class RkbWriteError extends Error {
-  constructor(message: string) {
-    super(message)
-    this.name = 'RkbWriteError'
-  }
-}
-
 interface ResolvedEdit {
   readonly path: string
   readonly ref: string
@@ -73,7 +72,7 @@ interface ResolvedEdit {
    * holds SUM(O11:O16). This is the column whose totals need refreshing.
    */
   readonly totalsColumn: string
-  readonly totalsRows: Section['totalsRows']
+  readonly totalsRows: TotalsRows
   readonly blocked: BlockedCell | null
 }
 
@@ -82,6 +81,11 @@ function resolve(book: Workbook, edits: readonly ActualEdit[]): ResolvedEdit[] {
   return edits.map((edit) => {
     if (!Number.isInteger(edit.day) || edit.day < 1 || edit.day > DAYS_IN_GRID) {
       throw new RkbWriteError(`day ${edit.day} is outside 1..${DAYS_IN_GRID}`)
+    }
+    if (!Number.isFinite(edit.value)) {
+      throw new RkbWriteError(
+        `value ${edit.value} is not a finite number; writing it produces a workbook Excel cannot open`,
+      )
     }
     if (edit.blocked !== undefined) {
       if (edit.value !== 0) {
@@ -159,7 +163,8 @@ export function writeActuals(bytes: Uint8Array, edits: readonly ActualEdit[]): W
     const xml = entries[path]
     if (xml === undefined) throw new RkbWriteError(`workbook is missing ${path}`)
     const edited = applyToSheet(strFromU8(xml), sheetEdits)
-    next[path] = strToU8(refreshTotals(edited, sheetEdits))
+    const targets = sheetEdits.map((e) => ({ column: e.totalsColumn, rows: e.totalsRows }))
+    next[path] = strToU8(refreshTotals(edited, targets))
   }
   return { bytes: zipSync(next), blocked }
 }
@@ -244,121 +249,35 @@ function insertCell(xml: string, edit: ResolvedEdit): string {
   return xml.slice(0, rowStart) + nextBody + xml.slice(rowEnd)
 }
 
-/** Borrows the style of the nearest cell in the same row, so formatting matches. */
+/**
+ * Borrows a neighbour's style for an inserted cell.
+ *
+ * Same column parity first. R and A columns alternate and carry different
+ * styles — 105 and 132 on this workbook, differing in font and alignment — so
+ * an A cell's *nearest* neighbour is always its R partner, and copying it
+ * would render the value in the wrong font, off-centre. Falls back to the
+ * nearest cell of any parity only when the row has no same-parity styled cell.
+ */
 function neighbourStyle(rowBody: string, target: number): string | null {
-  let best: { distance: number; style: string } | null = null
+  let sameParity: { distance: number; style: string } | null = null
+  let anyParity: { distance: number; style: string } | null = null
+
   for (const cell of rowBody.matchAll(/<c\s[^>]*r="([A-Z]+)\d+"[^>]*?(?:\/>|>)/g)) {
     const column = cell[1]
     const tag = cell[0]
     if (column === undefined) continue
     const style = styleOf(tag)
     if (style === null) continue
-    const distance = Math.abs(columnToIndex(column) - target)
-    if (best === null || distance < best.distance) best = { distance, style }
+    const index = columnToIndex(column)
+    const distance = Math.abs(index - target)
+    if (distance === 0) continue
+    if (anyParity === null || distance < anyParity.distance) anyParity = { distance, style }
+    if ((index - target) % 2 === 0) {
+      if (sameParity === null || distance < sameParity.distance) {
+        sameParity = { distance, style }
+      }
+    }
   }
-  return best?.style ?? null
+  return (sameParity ?? anyParity)?.style ?? null
 }
 
-/* -------------------------------------------------------------------------
- * Totals
- *
- * The JUMLAH / REALISASI / PERSENTASI rows are Reno's own formulas with cached
- * results. The formulas are never rewritten — only their cached values are
- * refreshed, so a reader that does not recalculate still sees the truth and
- * Excel still recalculates on open exactly as before.
- * ---------------------------------------------------------------------- */
-
-/** Numeric values by cell reference, for evaluating a SUM range. */
-function valueMap(xml: string): Map<string, number> {
-  const out = new Map<string, number>()
-  // Self-closing cells must be matched explicitly: `[^>]*?` happily consumes
-  // the `/` of `<c r="M12" s="132"/>`, and the pair form then swallows every
-  // cell up to the next `</c>`.
-  for (const cell of xml.matchAll(/<c ([^>]*?)(?:\/>|>(.*?)<\/c>)/g)) {
-    const attrs = cell[1] ?? ''
-    const inner = cell[2] ?? ''
-    const ref = /r="([A-Z]+\d+)"/.exec(attrs)?.[1]
-    if (ref === undefined) continue
-    if (/\st="(s|e|str)"/.test(attrs)) continue
-    const raw = /<v>(.*?)<\/v>/.exec(inner)?.[1]
-    if (raw === undefined) continue
-    const n = Number(raw)
-    if (Number.isFinite(n)) out.set(ref, n)
-  }
-  return out
-}
-
-/** Evaluates `SUM(E11:E16)` against a value map. Only the SUM form is used here. */
-function evaluateSum(formula: string, values: ReadonlyMap<string, number>): number | null {
-  const range = /^SUM\(([A-Z]+)(\d+):([A-Z]+)(\d+)\)$/.exec(formula.trim())
-  if (range === null) return null
-  const [, col, fromRow, , toRow] = range
-  if (col === undefined || fromRow === undefined || toRow === undefined) return null
-  let total = 0
-  for (let r = Number(fromRow); r <= Number(toRow); r++) total += values.get(`${col}${r}`) ?? 0
-  return total
-}
-
-function findCell(xml: string, ref: string): { start: number; end: number; text: string } | null {
-  const open = new RegExp(`<c [^>]*r="${ref}"[^>]*?(/?)>`)
-  const match = open.exec(xml)
-  if (match === null) return null
-  if (match[1] === '/') return { start: match.index, end: match.index + match[0].length, text: match[0] }
-  const closeAt = xml.indexOf('</c>', match.index)
-  if (closeAt === -1) return null
-  return { start: match.index, end: closeAt + 4, text: xml.slice(match.index, closeAt + 4) }
-}
-
-/** Replaces a cell's cached `<v>` and its error flag, leaving `<f>` untouched. */
-function setCached(xml: string, ref: string, value: string, isError: boolean): string {
-  const found = findCell(xml, ref)
-  if (found === null) return xml
-  let text = found.text
-  text = isError
-    ? (/\st="e"/.test(text) ? text : text.replace(/^<c /, '<c t="e" '))
-    : text.replace(/\st="e"/, '')
-  text = /<v>.*?<\/v>/.test(text)
-    ? text.replace(/<v>.*?<\/v>/, `<v>${value}</v>`)
-    : text.replace('</c>', `<v>${value}</v></c>`)
-  return xml.slice(0, found.start) + text + xml.slice(found.end)
-}
-
-const formulaOf = (xml: string, ref: string): string | null =>
-  /<f>(.*?)<\/f>/.exec(findCell(xml, ref)?.text ?? '')?.[1] ?? null
-
-function refreshTotals(xml: string, edits: readonly ResolvedEdit[]): string {
-  let out = xml
-  const seen = new Set<string>()
-
-  for (const edit of edits) {
-    const { jumlah, realisasi, persentasi } = edit.totalsRows
-    if (jumlah === null || realisasi === null || persentasi === null) continue
-    const key = `${edit.totalsColumn}:${jumlah}`
-    if (seen.has(key)) continue
-    seen.add(key)
-
-    const values = valueMap(out)
-    const jRef = `${edit.totalsColumn}${jumlah}`
-    const rRef = `${edit.totalsColumn}${realisasi}`
-    const pRef = `${edit.totalsColumn}${persentasi}`
-
-    const jFormula = formulaOf(out, jRef)
-    const rFormula = formulaOf(out, rRef)
-    const jValue = jFormula === null ? null : evaluateSum(jFormula, values)
-    const rValue = rFormula === null ? null : evaluateSum(rFormula, values)
-    if (jValue === null || rValue === null) continue
-
-    out = setCached(out, jRef, String(jValue), false)
-    out = setCached(out, rRef, String(rValue), false)
-
-    /**
-     * A zero denominator stays #DIV/0!. Replacing it with 0 would read as
-     * "nothing was done" when the truth is "nothing was planned" — the two
-     * are different and only one of them is the Pimpro's fault.
-     */
-    out = jValue === 0
-      ? setCached(out, pRef, '#DIV/0!', true)
-      : setCached(out, pRef, String(rValue / jValue), false)
-  }
-  return out
-}

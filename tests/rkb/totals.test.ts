@@ -157,3 +157,71 @@ describe('AC-7 · the error flag tracks the denominator', () => {
     expect(Number(pct.cached)).toBeCloseTo(0.75)
   })
 })
+
+describe('AC-7 · the last row of a section is inside the SUM range', () => {
+  /**
+   * Toilet section 1 spans rows 12-16 and REALISASI N18 is SUM(O11:O16), so
+   * row 16 is the range's final row. An off-by-one in the range loop would
+   * under-report every section whose last row did work, silently.
+   */
+  it('counts work done on a section’s final job row', () => {
+    expect(cellOf(original, TOILET, 'N18').cached).toBe('0')
+    const out = writeActuals(original, [
+      { sheet: 'RKB TOILET ', rowNumber: 16, day: 6, value: 1 },
+    ]).bytes
+    expect(cellOf(out, TOILET, 'N18').cached).toBe('1')
+  })
+
+  it('counts work done on a section’s first job row too', () => {
+    const out = writeActuals(original, [
+      { sheet: 'RKB TOILET ', rowNumber: 12, day: 6, value: 1 },
+    ]).bytes
+    expect(cellOf(out, TOILET, 'N18').cached).toBe('1')
+  })
+})
+
+describe('AC-7 · a totals shape we do not understand is refused, not guessed', () => {
+  it('throws rather than silently leaving a total stale', () => {
+    const broken = doctor(original, '<f>SUM(O11:O16)</f>', '<f>SUBTOTAL(9,O11:O16)</f>')
+    expect(() =>
+      writeActuals(broken, [{ sheet: 'RKB TOILET ', rowNumber: 12, day: 6, value: 1 }]),
+    ).toThrowError(/not a SUM range|cannot refresh/i)
+  })
+
+  it('throws when the percentage formula is not the shape it caches', () => {
+    const broken = doctor(original, '<f>N18/N17*100%</f>', '<f>N18/D17*100%</f>')
+    expect(() =>
+      writeActuals(broken, [{ sheet: 'RKB TOILET ', rowNumber: 12, day: 6, value: 1 }]),
+    ).toThrowError(/expected .*N18\/N17/)
+  })
+
+  it('does not corrupt a cell that already carries another type attribute', () => {
+    const typed = doctor(original, '<c r="J19" s="111" t="e">', '<c r="J19" s="111" t="str">')
+    const out = writeActuals(typed, [
+      { sheet: 'RKB TOILET ', rowNumber: 12, day: 4, value: 1 },
+    ]).bytes
+    const xml = strFromU8(unzipSync(out)[TOILET] as Uint8Array)
+    const tag = /<c [^>]*r="J19"[^>]*>/.exec(xml)?.[0] ?? ''
+    expect((tag.match(/\st="/g) ?? []).length).toBe(1)
+    expect(tag).toContain('t="e"')
+  })
+})
+
+describe('AC-7 · a SUM spanning more than one column sums all of them', () => {
+  /**
+   * Reno's file only uses single-column SUMs, so this doctors one into the
+   * two-column form. Summing just the first column would under-report and
+   * leave no trace, which is why the range is walked rather than assumed.
+   */
+  const edit = { sheet: 'RKB TOILET ', rowNumber: 12, day: 6, value: 1 } as const
+
+  it('sums both columns, not just the first', () => {
+    const singleColumn = Number(cellOf(writeActuals(original, [edit]).bytes, TOILET, 'N18').cached)
+
+    const widened = doctor(original, '<f>SUM(O11:O16)</f>', '<f>SUM(N11:O16)</f>')
+    const bothColumns = Number(cellOf(writeActuals(widened, [edit]).bytes, TOILET, 'N18').cached)
+
+    expect(singleColumn).toBe(1)
+    expect(bothColumns).toBeGreaterThan(singleColumn)
+  })
+})
