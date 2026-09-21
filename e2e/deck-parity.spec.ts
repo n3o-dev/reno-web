@@ -158,3 +158,22 @@ test.describe('Manpower & Billing', () => {
     await expect(page.locator(figure('manpower.payable'))).toHaveText('Rate not loaded')
   })
 })
+
+test.describe('RKB Realisation', () => {
+  test('mirrors the workbook and computes realisation from it', async ({ page }) => {
+    await page.goto('/rkb')
+    // 533 planned job-row days across the six sheets of RKB Juli 2026.
+    await expect(page.locator(figure('rkb.planned'))).toHaveText('533')
+    await expect(page.locator(figure('rkb.net'))).toHaveText('50%')
+    await expect(page.locator(figure('rkb.gross'))).toHaveText('50%')
+    await expect(page.locator(figure('rkb.realisation.facade'))).toHaveText('100%')
+    await expect(page.locator(figure('rkb.realisation.car-park'))).toHaveText('0%')
+  })
+
+  test('a sheet opens its own day grid', async ({ page }) => {
+    await page.goto('/rkb')
+    await page.getByRole('link', { name: 'FACADE' }).click()
+    await expect(page.getByRole('heading', { name: 'FACADE', level: 1 })).toBeVisible()
+    await expect(page.getByRole('table')).toHaveCount(1)
+  })
+})
