@@ -129,18 +129,127 @@ export const workOrderRecord = trackable({
   due_date: z.iso.date(),
 })
 
-export const RECORD_TYPES = ['message', 'complaint', 'work_order'] as const
+/** Closed set of report defects. Drives the Report Quality screen and Rapor Pimpro D.3. */
+export const DEFECTS = [
+  'no_area',
+  'no_caption',
+  'done_without_complaint',
+  'photo_reused',
+  'photo_late_1h',
+  'photo_late_3h',
+  'photo_before_complaint',
+] as const
+
+export const ROLES = [
+  'operational_manager',
+  'project_coordinator',
+  'pimpro',
+  'team_leader',
+  'cleaner',
+  'admin',
+  'client_pic',
+] as const
+
+/** Shift 1 06:00-15:00, shift 2 15:00-23:00, shift 3 23:00-06:00. */
+const shift = z.union([z.literal(1), z.literal(2), z.literal(3)])
+
+/** A reported job. `area_id` is nullable because 36 of 639 reports named no area. */
+export const workReportRecord = z.strictObject({
+  ...envelope,
+  area_id: z.string().min(1).nullable(),
+  job_text: z.string(),
+  photo_ids: z.array(z.string().min(1)),
+  is_before_after: z.boolean(),
+  shift,
+  defects: z.array(z.enum(DEFECTS)),
+})
+
+/** The per-shift roster message. The only attendance record in the group. */
+export const lineupRecord = z.strictObject({
+  ...envelope,
+  shift,
+  date: z.iso.date(),
+  entries: z.array(
+    z.strictObject({
+      area_id: z.string().min(1),
+      name_raw: z.string().min(1),
+      person_id: z.string().min(1).nullable(),
+    }),
+  ),
+  total_mp: z.int().min(0),
+  off_day: z.int().min(0),
+  sakit: z.int().min(0),
+  alfa: z.int().min(0),
+  izin: z.int().min(0),
+})
+
+/** Links a work report to one RKB job row on one date. */
+export const rkbMatchRecord = z.strictObject({
+  ...envelope,
+  job_row_id: z.string().min(1),
+  date: z.iso.date(),
+  work_report_id: z.string().min(1),
+  matched_by: z.enum(['agent', 'human_override']),
+})
+
+/**
+ * `captured_at` and `received_at` are separate on purpose: the gap between
+ * them is the late-photo metric and cannot be recovered later. The hash is
+ * what makes duplicate detection possible at all.
+ */
+export const photoRecord = z.strictObject({
+  ...envelope,
+  captured_at: z.iso.datetime({ offset: true }).nullable(),
+  received_at: z.iso.datetime({ offset: true }),
+  perceptual_hash: z.string().min(1),
+  storage_ref: z.string().min(1),
+})
+
+/** The personnel master entry, including the aliases a human has confirmed. */
+export const personRecord = z.strictObject({
+  ...envelope,
+  person_id: z.string().min(1),
+  canonical_name: z.string().min(1),
+  aliases: z.array(z.string().min(1)),
+  role: z.enum(ROLES),
+  area_default: z.string().min(1).nullable(),
+  active_from: z.iso.date(),
+  active_to: z.iso.date().nullable(),
+})
+
+export const RECORD_TYPES = [
+  'message',
+  'work_report',
+  'complaint',
+  'work_order',
+  'lineup',
+  'rkb_match',
+  'photo',
+  'person',
+] as const
 export type RecordType = (typeof RECORD_TYPES)[number]
 
 export const zodSchemas = {
   message: messageRecord,
+  work_report: workReportRecord,
   complaint: complaintRecord,
   work_order: workOrderRecord,
+  lineup: lineupRecord,
+  rkb_match: rkbMatchRecord,
+  photo: photoRecord,
+  person: personRecord,
 } satisfies Record<RecordType, z.ZodType>
 
 export type MessageRecord = z.infer<typeof messageRecord>
 export type ComplaintRecord = z.infer<typeof complaintRecord>
 export type WorkOrderRecord = z.infer<typeof workOrderRecord>
+export type WorkReportRecord = z.infer<typeof workReportRecord>
+export type LineupRecord = z.infer<typeof lineupRecord>
+export type RkbMatchRecord = z.infer<typeof rkbMatchRecord>
+export type PhotoRecord = z.infer<typeof photoRecord>
+export type PersonRecord = z.infer<typeof personRecord>
+export type Defect = (typeof DEFECTS)[number]
+export type Shift = z.infer<typeof shift>
 export type Cause = (typeof CAUSES)[number]
 export type LifecycleState = (typeof LIFECYCLE_STATES)[number]
 
@@ -149,6 +258,11 @@ const TARGET = { target: 'draft-2020-12' } as const
 /** Emitted from the Zod definitions above — the artifact handed to the agent team. */
 export const JSON_SCHEMAS = {
   message: z.toJSONSchema(messageRecord, TARGET),
+  work_report: z.toJSONSchema(workReportRecord, TARGET),
   complaint: z.toJSONSchema(complaintRecord, TARGET),
   work_order: z.toJSONSchema(workOrderRecord, TARGET),
+  lineup: z.toJSONSchema(lineupRecord, TARGET),
+  rkb_match: z.toJSONSchema(rkbMatchRecord, TARGET),
+  photo: z.toJSONSchema(photoRecord, TARGET),
+  person: z.toJSONSchema(personRecord, TARGET),
 }
