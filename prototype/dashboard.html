@@ -60,9 +60,12 @@ h3{font-size:17px;line-height:1.3;letter-spacing:-.005em}
 @media(max-width:700px){.row{grid-template-columns:1fr!important}}
 
 .card{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:20px}
+.card.fit{align-self:start}
 .card>h3{margin-bottom:14px}
 .card.pad0{padding:20px 0 4px}
-.card.pad0>h3,.card.pad0>.legend{padding:0 20px}
+.card.pad0>h3{padding:0 20px}
+.card.pad0 .legend{padding:0 20px}
+.card.pad0 .tv{padding:0 20px}
 
 /* stat */
 .stat{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:18px 20px}
@@ -362,16 +365,16 @@ function stacked(el,{g,s,h=206}){
   el.innerHTML='';el.appendChild(sv);
 }
 function hbars(el,{rows,fmt=v=>v}){
-  const rh=28,W=el.clientWidth||520,m={t:2,r:52,l:Math.min(148,W*.34)},h=rows.length*rh+6,iw=W-m.l-m.r;
-  const mx=nice(Math.max(...rows.map(r=>r.v)));
+  const rh=28,W=el.clientWidth||520,m={t:2,r:58,l:Math.min(148,W*.34)},h=rows.length*rh+6,iw=W-m.l-m.r;
+  const gmx=nice(Math.max(...rows.map(r=>r.v)));
   const sv=E('svg',{viewBox:`0 0 ${W} ${h}`,width:'100%',height:h});
-  rows.forEach((r,i)=>{const y=m.t+i*rh+6,bh=15,bw=iw*r.v/mx;
+  rows.forEach((r,i)=>{const y=m.t+i*rh+6,bh=15,mx=r.max||gmx,bw=iw*Math.min(r.v/mx,1);
     sv.appendChild(E('rect',{x:m.l,y,width:iw,height:bh,rx:4,fill:'var(--line)',opacity:.5}));
     if(bw>0)sv.appendChild(E('path',{d:`M${m.l},${y} h${Math.max(bw-4,1)} q4,0 4,4 v${bh-8} q0,4 -4,4 h${-Math.max(bw-4,1)} Z`,fill:r.f||'var(--o2)'}));
     const l=E('text',{x:m.l-10,y:y+11.5,'text-anchor':'end'});l.textContent=r.k;sv.appendChild(l);
-    const v=E('text',{x:m.l+iw+9,y:y+11.5,class:'v'});v.textContent=fmt(r.v);sv.appendChild(v);
+    const v=E('text',{x:m.l+iw+9,y:y+11.5,class:'v'});v.textContent=r.lbl||fmt(r.v);sv.appendChild(v);
     const ht=E('rect',{class:'hit',x:m.l,y:y-5,width:iw,height:rh-2});
-    ht.addEventListener('mousemove',e=>tip(e,`<b>${r.k}</b><div class="l">${r.lab||''}<em>${fmt(r.v)}</em></div>${r.n?`<div class="l">${r.n}</div>`:''}`));
+    ht.addEventListener('mousemove',e=>tip(e,`<b>${r.k}</b><div class="l">${r.lab||''}<em>${r.lbl||fmt(r.v)}</em></div>${r.n?`<div class="l">${r.n}</div>`:''}`));
     ht.addEventListener('mouseleave',untip);sv.appendChild(ht);});
   el.innerHTML='';el.appendChild(sv);
 }
@@ -417,7 +420,7 @@ SC.today=()=>`
   <tr class="hv"><td><button class="ev" data-ev="c2">11:04</button></td><td>Lantai depan Skin+</td><td>Sofyan</td><td><span class="pill warn"><b>●</b>No photo</span></td><td class="num">11h 04m</td></tr>
   <tr class="hv"><td><button class="ev" data-ev="c2">09:45</button></td><td>Asbak smoking area</td><td>Rachmad Adi</td><td><span class="pill warn"><b>●</b>No photo</span></td><td class="num">9h 45m</td></tr>
   </tbody></table></div>
- <div class="card"><h3>Slots${I('slots')}</h3><div id="k-today"></div></div>
+ <div class="card fit"><h3>Slots${I('slots')}</h3><div id="k-today"></div></div>
 </div>
 <div class="card"><h3>RKB due today${I('rkbtoday')}</h3>
  <table><thead><tr><th>Job</th><th>Sheet</th><th>Reported by</th><th>Status</th></tr></thead><tbody>
@@ -438,7 +441,7 @@ SC.comp=()=>`
 </div>
 <div class="row r21">
  <div class="card"><h3>Funnel${I('funnel')}</h3><div id="k-fun"></div></div>
- <div class="card pad0"><h3>Cause${I('cause')}</h3><div id="k-causeL"></div><div id="k-cause" style="padding:0 16px"></div>
+ <div class="card pad0"><h3>Cause${I('cause')}</h3><div id="k-causeL"></div><div id="k-cause" style="padding:0 6px"></div>
    <div style="padding:0 20px 8px"><button class="tbtn" data-tv="tv-cause">Table</button><div class="tv" id="tv-cause"></div></div></div>
 </div>
 <div class="row r2">
@@ -455,8 +458,8 @@ SC.comp=()=>`
   <td style="color:var(--muted);font-size:12.5px">${r.n}</td></tr>`).join('')}
  </tbody></table></div>
 <div class="row r2">
- <div class="card pad0"><h3>By shift${I('byshift')}</h3><div id="k-csL"></div><div id="k-cs" style="padding:0 16px"></div></div>
- <div class="card pad0"><h3>Raised, answered, closed${I('rac')}</h3><div id="k-cdL"></div><div id="k-cd" style="padding:0 16px"></div></div>
+ <div class="card pad0"><h3>By shift${I('byshift')}</h3><div id="k-csL"></div><div id="k-cs" style="padding:0 6px"></div></div>
+ <div class="card pad0"><h3>Raised, answered, closed${I('rac')}</h3><div id="k-cdL"></div><div id="k-cd" style="padding:0 6px"></div></div>
 </div>`;
 
 SC.wo=()=>`
@@ -567,9 +570,9 @@ SC.qa=()=>`
  ${stat('Sent 3h+ late','25','Median gap 3 min','bad')}
 </div>
 <div class="row r2">
- <div class="card pad0"><h3>Defects${I('defects')}</h3><div id="k-defL"></div><div id="k-def" style="padding:0 16px"></div>
+ <div class="card pad0"><h3>Defects${I('defects')}</h3><div id="k-defL"></div><div id="k-def" style="padding:0 6px"></div>
   <div style="padding:0 20px 8px"><button class="tbtn" data-tv="tv-def">Table</button><div class="tv" id="tv-def"></div></div></div>
- <div class="card pad0"><h3>Late photos${I('late')}</h3><div id="k-lateL"></div><div id="k-late" style="padding:0 16px"></div></div>
+ <div class="card pad0"><h3>Late photos${I('late')}</h3><div id="k-lateL"></div><div id="k-late" style="padding:0 6px"></div></div>
 </div>
 <div class="row r2">
  <div class="card"><h3>Before &amp; after by reporter${I('ba')}</h3><div id="k-ba"></div></div>
@@ -644,8 +647,8 @@ SC.month=()=>`
   <button class="renoonly" style="border:1px solid var(--line);border-radius:9px;padding:10px 18px;font-size:13.5px">QBR material</button>
  </div></div>
 <div class="row r2">
- <div class="card pad0"><h3>Volume${I('volume')}</h3><div id="k-volL"></div><div id="k-vol" style="padding:0 16px"></div></div>
- <div class="card pad0"><h3>Reports by shift${I('repshift')}</h3><div id="k-rsL"></div><div id="k-rs" style="padding:0 16px"></div></div>
+ <div class="card pad0"><h3>Volume${I('volume')}</h3><div id="k-volL"></div><div id="k-vol" style="padding:0 6px"></div></div>
+ <div class="card pad0"><h3>Reports by shift${I('repshift')}</h3><div id="k-rsL"></div><div id="k-rs" style="padding:0 6px"></div></div>
 </div>`;
 
 SC.ppl=()=>`
@@ -681,7 +684,9 @@ function go(id){const v=V.find(x=>x.id===id)||V[0]; if(document.body.dataset.rol
 
 function draw(id){
  const sh=[{k:'Shift 1',f:ORD[0]},{k:'Shift 2',f:ORD[1]},{k:'Shift 3',f:ORD[2]}];
- if(id==='today') hbars($('k-today'),{rows:D.slots.map(s=>({k:s.s,v:s.f[3],lab:'Filled',n:'Contracted '+s.c,f:s.f[3]<s.c?'var(--critical)':'var(--o2)'}))});
+ if(id==='today') hbars($('k-today'),{rows:D.slots.map(s=>({k:s.s,v:s.f[3],max:s.c,
+   lbl:s.f[3]+' / '+s.c,lab:'Filled',n:s.f[3]<s.c?(s.c-s.f[3])+' short':'Full',
+   f:s.f[3]<s.c?'var(--critical)':'var(--o2)'}))});
 
  if(id==='comp'){
   const f=[['Raised',75],['Answered',62],['Worked on',48],['Closed with photo',29]];
@@ -754,8 +759,8 @@ const INFO={
  open:{t:'Open complaints',b:`<p>Complaints raised by the client or a Reno superior that are not yet closed with a photo, ranked by time left on the 24-hour clock.</p>
   <p>A blocked complaint reads <b>paused</b>. Its clock stops while the blocker stands, and the block is invalid unless it cites the message that justifies it.</p>
   <dl><dt>Rule</dt><dd>SOP/OPS/001 A.3 — closed under 24h</dd><dt>Source</dt><dd>Agent complaint records</dd></dl>`},
- slots:{t:'Slot coverage',b:`<p>Contracted headcount per area and shift against the names in this shift's line-up message.</p>
-  <p>A slot is filled when the names meet the contracted count — whoever fills it. Red means short.</p>
+ slots:{t:'Slot coverage',b:`<p>Each bar is filled against <b>its own</b> contracted count, not against the largest team — so a full bar always means fully staffed, whatever the headcount.</p>
+  <p>A slot is filled when the names in the line-up meet the contracted count, whoever fills it. Red means short.</p>
   <dl><dt>Unit</dt><dd>Slot = area × shift × day</dd><dt>Source</dt><dd>Line-up message</dd></dl>`},
  rkbtoday:{t:'RKB due today',b:`<p>Job rows whose R column plans them for today, and whether a matching work report has landed.</p>
   <dl><dt>Source</dt><dd>RKB workbook + matched reports</dd></dl>`},
