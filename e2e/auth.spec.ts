@@ -36,6 +36,14 @@ test.describe('signed out', () => {
     await expect(page.locator('[data-figure="complaints.raised"]')).toHaveText('75')
   })
 
+  test('an API call with no session gets 401 rather than a login page', async ({ request }) => {
+    // Redirecting here would hand a machine 200 and a pile of HTML, which
+    // reads as success.
+    const response = await request.get('/api/report/rkb?month=2026-09')
+    expect(response.status()).toBe(401)
+    expect(response.headers()['content-type']).toContain('application/json')
+  })
+
   test('AC-11 · the ingest endpoint does not want a session', async ({ request }) => {
     // Still 401 — but for the bearer token, not for the missing cookie.
     const response = await request.post('/api/records', { data: { records: [] } })
@@ -89,6 +97,9 @@ test.describe('signing in', () => {
     const setCookie = response.headers()['set-cookie'] ?? ''
     expect(setCookie).toContain('HttpOnly')
     expect(setCookie).toContain('SameSite=lax')
+    // Not Secure here because the suite runs over http; on the VPS the
+    // reverse proxy sets x-forwarded-proto and it is.
+    expect(setCookie).not.toContain('Secure')
     expect(setCookie).not.toContain(E2E_EMAIL)
     expect(setCookie).not.toContain('Sarwedi')
     expect(setCookie).not.toContain(E2E_PASSWORD)

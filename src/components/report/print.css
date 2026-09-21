@@ -1,0 +1,39 @@
+/*
+ * Paper, not a screen.
+ *
+ * The dashboard's tokens carry over unchanged — this is the same design, not
+ * a second one — but the page gets margins, the plane goes white because a
+ * tinted background wastes toner and prints grey, and nothing is allowed to
+ * break across a page in the middle of a figure.
+ */
+@page {
+  size: A4;
+  margin: 18mm 16mm;
+}
+
+.report {
+  background: var(--color-surface);
+  color: var(--color-ink);
+  max-width: 190mm;
+  margin: 0 auto;
+}
+
+.report section {
+  break-inside: avoid;
+  page-break-inside: avoid;
+}
+
+.report h2 {
+  break-after: avoid;
+  page-break-after: avoid;
+}
+
+@media print {
+  .no-print {
+    display: none !important;
+  }
+  html,
+  body {
+    background: #ffffff;
+  }
+}

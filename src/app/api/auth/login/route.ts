@@ -5,6 +5,11 @@ import { signInSchema } from '@/app/login/_schemas/sign-in'
 
 const REFUSED = 'Email or password is wrong'
 
+function isHttps(request: Request): boolean {
+  if (request.headers.get('x-forwarded-proto') === 'https') return true
+  return new URL(request.url).protocol === 'https:'
+}
+
 export async function POST(request: Request): Promise<NextResponse> {
   const db = getDatabase()
   if (db === null) {
@@ -37,7 +42,10 @@ export async function POST(request: Request): Promise<NextResponse> {
   response.cookies.set(SESSION_COOKIE, result.sessionId, {
     httpOnly: true,
     sameSite: 'lax',
-    secure: process.env.NODE_ENV === 'production',
+    // From the protocol, not from NODE_ENV: a cookie should be Secure when
+    // it travelled over TLS. Behind a reverse proxy that is x-forwarded-proto,
+    // which is why the VPS must terminate TLS and set it.
+    secure: isHttps(request),
     path: '/',
     maxAge: 60 * 60 * 24 * 14,
   })

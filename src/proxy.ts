@@ -26,6 +26,12 @@ export function proxy(request: NextRequest): NextResponse {
   }
   if (request.cookies.has(SESSION_COOKIE)) return NextResponse.next()
 
+  // An API caller gets an answer, not a login page. Redirecting here would
+  // hand a machine 200 and a pile of HTML, which reads as success.
+  if (pathname.startsWith('/api/')) {
+    return NextResponse.json({ error: 'unauthorized' }, { status: 401 })
+  }
+
   const login = new URL('/login', request.url)
   login.searchParams.set('next', `${pathname}${search}`)
   return NextResponse.redirect(login)
