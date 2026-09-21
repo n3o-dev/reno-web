@@ -350,6 +350,35 @@ Object.entries(LINEUP_BY_AREA).forEach(([areaId, names]) => {
 })
 
 /*
+ * Make each cited message read like the thing that cites it.
+ *
+ * Messages all carry work-report captions, so a complaint's evidence panel
+ * would open onto "Washing manual koridor area LT 2" over a client PIC's
+ * name — evidence that contradicts the figure it is supposed to support.
+ * The citation now carries the complaint's own sender and a line naming the
+ * area, which is what the group's complaint messages look like.
+ */
+{
+  const byId = new Map(
+    out.message.map((m) => [(m as { source_message_id: string }).source_message_id, m as { sender_raw: string; text: string }]),
+  )
+  for (const record of out.complaint) {
+    const complaint = record as {
+      source_message_id: string
+      sender_raw: string
+      area_id: string | null
+    }
+    const message = byId.get(complaint.source_message_id)
+    if (message === undefined) continue
+    message.sender_raw = complaint.sender_raw
+    message.text =
+      complaint.area_id === null
+        ? 'Pak mohon dicek, ada komplain dari customer soal kebersihan.'
+        : `Pak mohon dicek, ${complaint.area_id.replaceAll('_', ' ')} masih kotor.`
+  }
+}
+
+/*
  * One complaint is blocked.
  *
  * The real case from this period: work that could not proceed because the
