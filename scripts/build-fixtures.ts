@@ -257,10 +257,15 @@ const rosterEntries = Object.entries(LINEUP_BY_AREA).flatMap(([areaId, names]) =
   names.map((name) => ({ area_id: areaId, name_raw: name, person_id: slug(name) })),
 )
 
+/*
+ * Shift 1 and shift 2 only. The group posts a roster for each of those; there
+ * is no shift-3 message anywhere in the export, and copying the day roster
+ * onto a night shift would invent 37 people's attendance.
+ */
 DAYS.forEach((_, d) => {
-  for (const shift of [1, 2, 3] as const) {
+  for (const shift of [1, 2] as const) {
     out.lineup.push({
-      ...envelope(`lu_${d}_${shift}`, d, shift === 1 ? 7 * 60 : shift === 2 ? 15 * 60 : 23 * 60, 'Amartha'),
+      ...envelope(`lu_${d}_${shift}`, d, shift === 1 ? 7 * 60 : 15 * 60, 'Amartha'),
       shift,
       date: DAYS[d] as string,
       entries: rosterEntries,

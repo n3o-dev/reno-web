@@ -31,7 +31,7 @@ const EXPECTED: Record<string, number> = {
   work_report: 639,
   complaint: 75,
   work_order: 3,
-  lineup: 12,
+  lineup: 8,
   rkb_match: 1,
   photo: 1052,
   person: 45,

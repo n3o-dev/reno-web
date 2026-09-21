@@ -131,3 +131,30 @@ test.describe('Work Orders', () => {
     await expect(page.getByText('WO to HK — Pioneer DJ (12 – 13 September 2026)')).toBeVisible()
   })
 })
+
+test.describe('Manpower & Billing', () => {
+  test.beforeEach(async ({ page }) => {
+    await page.goto('/manpower')
+  })
+
+  test('slot-day coverage comes off the line-ups', async ({ page }) => {
+    // 37 people across 8 areas, two shifts, four days.
+    await expect(page.locator(figure('manpower.filled_slot_days'))).toHaveText('296')
+    await expect(page.locator(figure('manpower.filled.gf.1'))).toContainText('32')
+  })
+
+  test('attendance is claimed, never verified (AC-9)', async ({ page }) => {
+    // Not the first /claimed/ in the DOM: the info panels are closed <details>
+    // and their text is present but hidden.
+    await expect(page.getByText('Claimed, not yet admin-confirmed')).toBeVisible()
+    await expect(page.getByText(/\bverified\b/i)).toHaveCount(0)
+  })
+
+  test('the anti-fraud panel is marked Reno-only (AC-3)', async ({ page }) => {
+    await expect(page.locator('[data-reno-only="true"]')).toHaveCount(1)
+  })
+
+  test('states no money while the contract rate is unloaded', async ({ page }) => {
+    await expect(page.locator(figure('manpower.payable'))).toHaveText('Rate not loaded')
+  })
+})
