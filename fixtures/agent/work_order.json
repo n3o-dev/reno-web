@@ -1,0 +1,53 @@
+[
+ {
+  "record_id": "wo_0",
+  "site_id": "lwas",
+  "source_message_id": "msg_0_660",
+  "sent_at": "2026-09-10T11:00:00+07:00",
+  "sender_raw": "Desak Made Meyasni",
+  "sender_person_id": null,
+  "confidence": 0.9,
+  "title": "Take Out Kursi Area LDL & West Lobby",
+  "document_id": "doc_0",
+  "requested_by": "p_desak",
+  "due_date": "2026-09-10",
+  "state": "closed_with_photo",
+  "state_history": [],
+  "closing_photo_id": "ph_0",
+  "blocked_reason_message_id": null
+ },
+ {
+  "record_id": "wo_1",
+  "site_id": "lwas",
+  "source_message_id": "msg_0_700",
+  "sent_at": "2026-09-10T11:40:00+07:00",
+  "sender_raw": "Desak Made Meyasni",
+  "sender_person_id": null,
+  "confidence": 0.9,
+  "title": "Peminjaman Meja & Qline — Bee Cheng Hiang",
+  "document_id": "doc_1",
+  "requested_by": "p_desak",
+  "due_date": "2026-09-12",
+  "state": "closed_with_photo",
+  "state_history": [],
+  "closing_photo_id": "ph_1",
+  "blocked_reason_message_id": null
+ },
+ {
+  "record_id": "wo_2",
+  "site_id": "lwas",
+  "source_message_id": "msg_0_740",
+  "sent_at": "2026-09-10T12:20:00+07:00",
+  "sender_raw": "Desak Made Meyasni",
+  "sender_person_id": null,
+  "confidence": 0.9,
+  "title": "WO to HK — Pioneer DJ",
+  "document_id": "doc_2",
+  "requested_by": "p_desak",
+  "due_date": "2026-09-13",
+  "state": "raised",
+  "state_history": [],
+  "closing_photo_id": null,
+  "blocked_reason_message_id": null
+ }
+]

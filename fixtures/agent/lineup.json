@@ -1,0 +1,638 @@
+[
+ {
+  "record_id": "lu_0_1",
+  "site_id": "lwas",
+  "source_message_id": "msg_0_420",
+  "sent_at": "2026-09-10T07:00:00+07:00",
+  "sender_raw": "Amartha",
+  "sender_person_id": null,
+  "confidence": 0.9,
+  "shift": 1,
+  "date": "2026-09-10",
+  "entries": [
+   {
+    "area_id": "area_0",
+    "name_raw": "Amartha",
+    "person_id": "p_0"
+   },
+   {
+    "area_id": "area_1",
+    "name_raw": "Faisal Hanafi",
+    "person_id": "p_1"
+   },
+   {
+    "area_id": "area_2",
+    "name_raw": "Aldo",
+    "person_id": "p_2"
+   },
+   {
+    "area_id": "area_3",
+    "name_raw": "Acenk (Bontot)",
+    "person_id": "p_3"
+   },
+   {
+    "area_id": "area_4",
+    "name_raw": "N",
+    "person_id": "p_4"
+   },
+   {
+    "area_id": "area_5",
+    "name_raw": "yeyenriani",
+    "person_id": "p_5"
+   },
+   {
+    "area_id": "area_6",
+    "name_raw": "Sarwedi",
+    "person_id": "p_6"
+   }
+  ],
+  "total_mp": 34,
+  "off_day": 0,
+  "sakit": 0,
+  "alfa": 0,
+  "izin": 0
+ },
+ {
+  "record_id": "lu_0_2",
+  "site_id": "lwas",
+  "source_message_id": "msg_0_900",
+  "sent_at": "2026-09-10T15:00:00+07:00",
+  "sender_raw": "Amartha",
+  "sender_person_id": null,
+  "confidence": 0.9,
+  "shift": 2,
+  "date": "2026-09-10",
+  "entries": [
+   {
+    "area_id": "area_0",
+    "name_raw": "Amartha",
+    "person_id": "p_0"
+   },
+   {
+    "area_id": "area_1",
+    "name_raw": "Faisal Hanafi",
+    "person_id": "p_1"
+   },
+   {
+    "area_id": "area_2",
+    "name_raw": "Aldo",
+    "person_id": "p_2"
+   },
+   {
+    "area_id": "area_3",
+    "name_raw": "Acenk (Bontot)",
+    "person_id": "p_3"
+   },
+   {
+    "area_id": "area_4",
+    "name_raw": "N",
+    "person_id": "p_4"
+   },
+   {
+    "area_id": "area_5",
+    "name_raw": "yeyenriani",
+    "person_id": "p_5"
+   },
+   {
+    "area_id": "area_6",
+    "name_raw": "Sarwedi",
+    "person_id": "p_6"
+   }
+  ],
+  "total_mp": 34,
+  "off_day": 0,
+  "sakit": 0,
+  "alfa": 0,
+  "izin": 0
+ },
+ {
+  "record_id": "lu_0_3",
+  "site_id": "lwas",
+  "source_message_id": "msg_0_1380",
+  "sent_at": "2026-09-10T23:00:00+07:00",
+  "sender_raw": "Amartha",
+  "sender_person_id": null,
+  "confidence": 0.9,
+  "shift": 3,
+  "date": "2026-09-10",
+  "entries": [
+   {
+    "area_id": "area_0",
+    "name_raw": "Amartha",
+    "person_id": "p_0"
+   },
+   {
+    "area_id": "area_1",
+    "name_raw": "Faisal Hanafi",
+    "person_id": "p_1"
+   },
+   {
+    "area_id": "area_2",
+    "name_raw": "Aldo",
+    "person_id": "p_2"
+   },
+   {
+    "area_id": "area_3",
+    "name_raw": "Acenk (Bontot)",
+    "person_id": "p_3"
+   },
+   {
+    "area_id": "area_4",
+    "name_raw": "N",
+    "person_id": "p_4"
+   },
+   {
+    "area_id": "area_5",
+    "name_raw": "yeyenriani",
+    "person_id": "p_5"
+   },
+   {
+    "area_id": "area_6",
+    "name_raw": "Sarwedi",
+    "person_id": "p_6"
+   }
+  ],
+  "total_mp": 34,
+  "off_day": 0,
+  "sakit": 0,
+  "alfa": 0,
+  "izin": 0
+ },
+ {
+  "record_id": "lu_1_1",
+  "site_id": "lwas",
+  "source_message_id": "msg_1_420",
+  "sent_at": "2026-09-11T07:00:00+07:00",
+  "sender_raw": "Amartha",
+  "sender_person_id": null,
+  "confidence": 0.9,
+  "shift": 1,
+  "date": "2026-09-11",
+  "entries": [
+   {
+    "area_id": "area_0",
+    "name_raw": "Amartha",
+    "person_id": "p_0"
+   },
+   {
+    "area_id": "area_1",
+    "name_raw": "Faisal Hanafi",
+    "person_id": "p_1"
+   },
+   {
+    "area_id": "area_2",
+    "name_raw": "Aldo",
+    "person_id": "p_2"
+   },
+   {
+    "area_id": "area_3",
+    "name_raw": "Acenk (Bontot)",
+    "person_id": "p_3"
+   },
+   {
+    "area_id": "area_4",
+    "name_raw": "N",
+    "person_id": "p_4"
+   },
+   {
+    "area_id": "area_5",
+    "name_raw": "yeyenriani",
+    "person_id": "p_5"
+   },
+   {
+    "area_id": "area_6",
+    "name_raw": "Sarwedi",
+    "person_id": "p_6"
+   }
+  ],
+  "total_mp": 34,
+  "off_day": 0,
+  "sakit": 0,
+  "alfa": 0,
+  "izin": 0
+ },
+ {
+  "record_id": "lu_1_2",
+  "site_id": "lwas",
+  "source_message_id": "msg_1_900",
+  "sent_at": "2026-09-11T15:00:00+07:00",
+  "sender_raw": "Amartha",
+  "sender_person_id": null,
+  "confidence": 0.9,
+  "shift": 2,
+  "date": "2026-09-11",
+  "entries": [
+   {
+    "area_id": "area_0",
+    "name_raw": "Amartha",
+    "person_id": "p_0"
+   },
+   {
+    "area_id": "area_1",
+    "name_raw": "Faisal Hanafi",
+    "person_id": "p_1"
+   },
+   {
+    "area_id": "area_2",
+    "name_raw": "Aldo",
+    "person_id": "p_2"
+   },
+   {
+    "area_id": "area_3",
+    "name_raw": "Acenk (Bontot)",
+    "person_id": "p_3"
+   },
+   {
+    "area_id": "area_4",
+    "name_raw": "N",
+    "person_id": "p_4"
+   },
+   {
+    "area_id": "area_5",
+    "name_raw": "yeyenriani",
+    "person_id": "p_5"
+   },
+   {
+    "area_id": "area_6",
+    "name_raw": "Sarwedi",
+    "person_id": "p_6"
+   }
+  ],
+  "total_mp": 34,
+  "off_day": 0,
+  "sakit": 0,
+  "alfa": 0,
+  "izin": 0
+ },
+ {
+  "record_id": "lu_1_3",
+  "site_id": "lwas",
+  "source_message_id": "msg_1_1380",
+  "sent_at": "2026-09-11T23:00:00+07:00",
+  "sender_raw": "Amartha",
+  "sender_person_id": null,
+  "confidence": 0.9,
+  "shift": 3,
+  "date": "2026-09-11",
+  "entries": [
+   {
+    "area_id": "area_0",
+    "name_raw": "Amartha",
+    "person_id": "p_0"
+   },
+   {
+    "area_id": "area_1",
+    "name_raw": "Faisal Hanafi",
+    "person_id": "p_1"
+   },
+   {
+    "area_id": "area_2",
+    "name_raw": "Aldo",
+    "person_id": "p_2"
+   },
+   {
+    "area_id": "area_3",
+    "name_raw": "Acenk (Bontot)",
+    "person_id": "p_3"
+   },
+   {
+    "area_id": "area_4",
+    "name_raw": "N",
+    "person_id": "p_4"
+   },
+   {
+    "area_id": "area_5",
+    "name_raw": "yeyenriani",
+    "person_id": "p_5"
+   },
+   {
+    "area_id": "area_6",
+    "name_raw": "Sarwedi",
+    "person_id": "p_6"
+   }
+  ],
+  "total_mp": 34,
+  "off_day": 0,
+  "sakit": 0,
+  "alfa": 0,
+  "izin": 0
+ },
+ {
+  "record_id": "lu_2_1",
+  "site_id": "lwas",
+  "source_message_id": "msg_2_420",
+  "sent_at": "2026-09-12T07:00:00+07:00",
+  "sender_raw": "Amartha",
+  "sender_person_id": null,
+  "confidence": 0.9,
+  "shift": 1,
+  "date": "2026-09-12",
+  "entries": [
+   {
+    "area_id": "area_0",
+    "name_raw": "Amartha",
+    "person_id": "p_0"
+   },
+   {
+    "area_id": "area_1",
+    "name_raw": "Faisal Hanafi",
+    "person_id": "p_1"
+   },
+   {
+    "area_id": "area_2",
+    "name_raw": "Aldo",
+    "person_id": "p_2"
+   },
+   {
+    "area_id": "area_3",
+    "name_raw": "Acenk (Bontot)",
+    "person_id": "p_3"
+   },
+   {
+    "area_id": "area_4",
+    "name_raw": "N",
+    "person_id": "p_4"
+   },
+   {
+    "area_id": "area_5",
+    "name_raw": "yeyenriani",
+    "person_id": "p_5"
+   },
+   {
+    "area_id": "area_6",
+    "name_raw": "Sarwedi",
+    "person_id": "p_6"
+   }
+  ],
+  "total_mp": 34,
+  "off_day": 0,
+  "sakit": 0,
+  "alfa": 0,
+  "izin": 0
+ },
+ {
+  "record_id": "lu_2_2",
+  "site_id": "lwas",
+  "source_message_id": "msg_2_900",
+  "sent_at": "2026-09-12T15:00:00+07:00",
+  "sender_raw": "Amartha",
+  "sender_person_id": null,
+  "confidence": 0.9,
+  "shift": 2,
+  "date": "2026-09-12",
+  "entries": [
+   {
+    "area_id": "area_0",
+    "name_raw": "Amartha",
+    "person_id": "p_0"
+   },
+   {
+    "area_id": "area_1",
+    "name_raw": "Faisal Hanafi",
+    "person_id": "p_1"
+   },
+   {
+    "area_id": "area_2",
+    "name_raw": "Aldo",
+    "person_id": "p_2"
+   },
+   {
+    "area_id": "area_3",
+    "name_raw": "Acenk (Bontot)",
+    "person_id": "p_3"
+   },
+   {
+    "area_id": "area_4",
+    "name_raw": "N",
+    "person_id": "p_4"
+   },
+   {
+    "area_id": "area_5",
+    "name_raw": "yeyenriani",
+    "person_id": "p_5"
+   },
+   {
+    "area_id": "area_6",
+    "name_raw": "Sarwedi",
+    "person_id": "p_6"
+   }
+  ],
+  "total_mp": 34,
+  "off_day": 0,
+  "sakit": 0,
+  "alfa": 0,
+  "izin": 0
+ },
+ {
+  "record_id": "lu_2_3",
+  "site_id": "lwas",
+  "source_message_id": "msg_2_1380",
+  "sent_at": "2026-09-12T23:00:00+07:00",
+  "sender_raw": "Amartha",
+  "sender_person_id": null,
+  "confidence": 0.9,
+  "shift": 3,
+  "date": "2026-09-12",
+  "entries": [
+   {
+    "area_id": "area_0",
+    "name_raw": "Amartha",
+    "person_id": "p_0"
+   },
+   {
+    "area_id": "area_1",
+    "name_raw": "Faisal Hanafi",
+    "person_id": "p_1"
+   },
+   {
+    "area_id": "area_2",
+    "name_raw": "Aldo",
+    "person_id": "p_2"
+   },
+   {
+    "area_id": "area_3",
+    "name_raw": "Acenk (Bontot)",
+    "person_id": "p_3"
+   },
+   {
+    "area_id": "area_4",
+    "name_raw": "N",
+    "person_id": "p_4"
+   },
+   {
+    "area_id": "area_5",
+    "name_raw": "yeyenriani",
+    "person_id": "p_5"
+   },
+   {
+    "area_id": "area_6",
+    "name_raw": "Sarwedi",
+    "person_id": "p_6"
+   }
+  ],
+  "total_mp": 34,
+  "off_day": 0,
+  "sakit": 0,
+  "alfa": 0,
+  "izin": 0
+ },
+ {
+  "record_id": "lu_3_1",
+  "site_id": "lwas",
+  "source_message_id": "msg_3_420",
+  "sent_at": "2026-09-13T07:00:00+07:00",
+  "sender_raw": "Amartha",
+  "sender_person_id": null,
+  "confidence": 0.9,
+  "shift": 1,
+  "date": "2026-09-13",
+  "entries": [
+   {
+    "area_id": "area_0",
+    "name_raw": "Amartha",
+    "person_id": "p_0"
+   },
+   {
+    "area_id": "area_1",
+    "name_raw": "Faisal Hanafi",
+    "person_id": "p_1"
+   },
+   {
+    "area_id": "area_2",
+    "name_raw": "Aldo",
+    "person_id": "p_2"
+   },
+   {
+    "area_id": "area_3",
+    "name_raw": "Acenk (Bontot)",
+    "person_id": "p_3"
+   },
+   {
+    "area_id": "area_4",
+    "name_raw": "N",
+    "person_id": "p_4"
+   },
+   {
+    "area_id": "area_5",
+    "name_raw": "yeyenriani",
+    "person_id": "p_5"
+   },
+   {
+    "area_id": "area_6",
+    "name_raw": "Sarwedi",
+    "person_id": "p_6"
+   }
+  ],
+  "total_mp": 34,
+  "off_day": 0,
+  "sakit": 0,
+  "alfa": 0,
+  "izin": 0
+ },
+ {
+  "record_id": "lu_3_2",
+  "site_id": "lwas",
+  "source_message_id": "msg_3_900",
+  "sent_at": "2026-09-13T15:00:00+07:00",
+  "sender_raw": "Amartha",
+  "sender_person_id": null,
+  "confidence": 0.9,
+  "shift": 2,
+  "date": "2026-09-13",
+  "entries": [
+   {
+    "area_id": "area_0",
+    "name_raw": "Amartha",
+    "person_id": "p_0"
+   },
+   {
+    "area_id": "area_1",
+    "name_raw": "Faisal Hanafi",
+    "person_id": "p_1"
+   },
+   {
+    "area_id": "area_2",
+    "name_raw": "Aldo",
+    "person_id": "p_2"
+   },
+   {
+    "area_id": "area_3",
+    "name_raw": "Acenk (Bontot)",
+    "person_id": "p_3"
+   },
+   {
+    "area_id": "area_4",
+    "name_raw": "N",
+    "person_id": "p_4"
+   },
+   {
+    "area_id": "area_5",
+    "name_raw": "yeyenriani",
+    "person_id": "p_5"
+   },
+   {
+    "area_id": "area_6",
+    "name_raw": "Sarwedi",
+    "person_id": "p_6"
+   }
+  ],
+  "total_mp": 34,
+  "off_day": 0,
+  "sakit": 0,
+  "alfa": 0,
+  "izin": 0
+ },
+ {
+  "record_id": "lu_3_3",
+  "site_id": "lwas",
+  "source_message_id": "msg_3_1380",
+  "sent_at": "2026-09-13T23:00:00+07:00",
+  "sender_raw": "Amartha",
+  "sender_person_id": null,
+  "confidence": 0.9,
+  "shift": 3,
+  "date": "2026-09-13",
+  "entries": [
+   {
+    "area_id": "area_0",
+    "name_raw": "Amartha",
+    "person_id": "p_0"
+   },
+   {
+    "area_id": "area_1",
+    "name_raw": "Faisal Hanafi",
+    "person_id": "p_1"
+   },
+   {
+    "area_id": "area_2",
+    "name_raw": "Aldo",
+    "person_id": "p_2"
+   },
+   {
+    "area_id": "area_3",
+    "name_raw": "Acenk (Bontot)",
+    "person_id": "p_3"
+   },
+   {
+    "area_id": "area_4",
+    "name_raw": "N",
+    "person_id": "p_4"
+   },
+   {
+    "area_id": "area_5",
+    "name_raw": "yeyenriani",
+    "person_id": "p_5"
+   },
+   {
+    "area_id": "area_6",
+    "name_raw": "Sarwedi",
+    "person_id": "p_6"
+   }
+  ],
+  "total_mp": 34,
+  "off_day": 0,
+  "sakit": 0,
+  "alfa": 0,
+  "izin": 0
+ }
+]
