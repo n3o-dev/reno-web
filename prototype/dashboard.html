@@ -163,13 +163,15 @@ svg .bl{stroke:var(--faint);stroke-width:1}
 .dot{display:inline-block;width:9px;height:9px;border-radius:50%}
 
 /* info control */
-.card>h3,.cardhead{display:flex;align-items:center;gap:8px}
-.card>h3>.i,.cardhead>.i{margin-left:auto}
-button.i{width:19px;height:19px;flex:0 0 auto;border-radius:50%;padding:0;cursor:pointer;
+.card>h3{display:flex;align-items:center;gap:8px;min-width:0}
+.card>h3>button.i{margin-left:auto}
+button.i{width:34px;height:34px;flex:0 0 auto;padding:0;margin:-8px -7px -8px 0;cursor:pointer;
+  position:relative;background:none;border-radius:50%;align-self:center}
+button.i::before{content:'';position:absolute;inset:0;margin:auto;width:19px;height:19px;
   background:var(--muted);opacity:.45;transition:opacity .12s,background .12s;
   -webkit-mask:var(--icInfo) center/contain no-repeat;mask:var(--icInfo) center/contain no-repeat;
   --icInfo:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Ccircle cx='12' cy='12' r='10'/%3E%3Cline x1='12' y1='16' x2='12' y2='12'/%3E%3Cline x1='12' y1='8' x2='12.01' y2='8'/%3E%3C/svg%3E")}
-button.i:hover,button.i[aria-expanded="true"]{opacity:1;background:var(--accent)}
+button.i:hover::before,button.i[aria-expanded="true"]::before{opacity:1;background:var(--accent)}
 
 .pop{position:fixed;z-index:85;width:min(340px,calc(100vw - 24px));display:none;
   background:var(--surface);border:1px solid var(--line);border-radius:12px;
@@ -197,6 +199,14 @@ button.i:hover,button.i[aria-expanded="true"]{opacity:1;background:var(--accent)
   .stat .v{font-size:28px}
   .row{gap:12px;margin-bottom:12px}
   .fpct{display:none}
+  button.i{width:44px;height:44px;margin:-12px -12px -12px 0}
+  .pop{width:calc(100vw - 20px)}
+  .hm .lbl{font-size:13px}
+  .legend{gap:10px;font-size:12.5px}
+  th{font-size:12px}
+  table{font-size:13.5px}
+  .stat .v{font-size:26px}
+  .stat.dark .v{font-size:30px}
 }
 </style>
 </head>
@@ -591,9 +601,9 @@ SC.rapor=()=>{
 </div>
 ${sec.map(s=>`<div class="card">
  <div style="display:flex;align-items:baseline;gap:12px;margin-bottom:14px">
-  <h3 style="margin:0">${s.k}. ${s.t}${I('rapor')}</h3><span class="pill">${s.w}%</span><div style="flex:1"></div>
+  <h3 style="margin:0">${s.k}. ${s.t}</h3><span class="pill">${s.w}%</span><div style="flex:1"></div>
   <div style="font-size:13px;color:var(--muted)">Average <b style="font-family:var(--head);font-size:18px;color:var(--ink);margin-left:6px">${s.av!=null?s.av.toFixed(2):'—'}</b>
-  <span style="color:var(--faint)">→ ${s.av!=null?(s.av*s.w/100).toFixed(2):'—'}</span></div></div>
+  <span style="color:var(--faint)">→ ${s.av!=null?(s.av*s.w/100).toFixed(2):'—'}</span></div>${I('rapor')}</div>
  <table><thead><tr><th style="width:30%">Indicator</th><th style="width:96px">Score</th><th style="width:130px">Source</th><th>Basis</th></tr></thead><tbody>
  ${s.i.map(i=>`<tr><td>${i.n}</td>
   <td>${i.s==null?'<span style="color:var(--faint)">—</span>':`<span style="font-family:var(--head);font-weight:700;font-size:20px;color:${i.s>=5?'var(--good)':i.s>=3?'var(--ink)':'var(--critical)'}">${i.s}</span><span style="color:var(--faint)"> / 5</span>`}</td>
