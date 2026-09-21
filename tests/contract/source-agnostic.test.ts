@@ -34,7 +34,7 @@ const EXPECTED: Record<string, number> = {
   lineup: 12,
   rkb_match: 1,
   photo: 1052,
-  person: 7,
+  person: 45,
 }
 
 describe('the rules layer cannot tell which source it is holding', () => {

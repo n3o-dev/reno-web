@@ -11,42 +11,192 @@
   "date": "2026-09-10",
   "entries": [
    {
-    "area_id": "area_0",
-    "name_raw": "Amartha",
-    "person_id": "p_0"
+    "area_id": "external",
+    "name_raw": "Ade",
+    "person_id": "ade"
    },
    {
-    "area_id": "area_1",
-    "name_raw": "Faisal Hanafi",
-    "person_id": "p_1"
+    "area_id": "external",
+    "name_raw": "Renno",
+    "person_id": "renno"
    },
    {
-    "area_id": "area_2",
-    "name_raw": "Aldo",
-    "person_id": "p_2"
+    "area_id": "external",
+    "name_raw": "Nando",
+    "person_id": "nando"
    },
    {
-    "area_id": "area_3",
-    "name_raw": "Acenk (Bontot)",
-    "person_id": "p_3"
+    "area_id": "external",
+    "name_raw": "Sandi",
+    "person_id": "sandi"
    },
    {
-    "area_id": "area_4",
-    "name_raw": "N",
-    "person_id": "p_4"
+    "area_id": "external",
+    "name_raw": "Okta",
+    "person_id": "okta"
    },
    {
-    "area_id": "area_5",
-    "name_raw": "yeyenriani",
-    "person_id": "p_5"
+    "area_id": "external",
+    "name_raw": "Marhadi",
+    "person_id": "marhadi"
    },
    {
-    "area_id": "area_6",
-    "name_raw": "Sarwedi",
-    "person_id": "p_6"
+    "area_id": "gf",
+    "name_raw": "Ani",
+    "person_id": "ani"
+   },
+   {
+    "area_id": "gf",
+    "name_raw": "Deviana",
+    "person_id": "deviana"
+   },
+   {
+    "area_id": "gf",
+    "name_raw": "Tiara",
+    "person_id": "tiara"
+   },
+   {
+    "area_id": "gf",
+    "name_raw": "Junaesi",
+    "person_id": "junaesi"
+   },
+   {
+    "area_id": "gf",
+    "name_raw": "Febby",
+    "person_id": "febby"
+   },
+   {
+    "area_id": "gf",
+    "name_raw": "Muhamad hafiz",
+    "person_id": "muhamad_hafiz"
+   },
+   {
+    "area_id": "gf",
+    "name_raw": "Warti",
+    "person_id": "warti"
+   },
+   {
+    "area_id": "gf",
+    "name_raw": "Septian",
+    "person_id": "septian"
+   },
+   {
+    "area_id": "ug",
+    "name_raw": "Mardiah",
+    "person_id": "mardiah"
+   },
+   {
+    "area_id": "ug",
+    "name_raw": "Damme",
+    "person_id": "damme"
+   },
+   {
+    "area_id": "ug",
+    "name_raw": "Farhan",
+    "person_id": "farhan"
+   },
+   {
+    "area_id": "ug",
+    "name_raw": "Sahroni",
+    "person_id": "sahroni"
+   },
+   {
+    "area_id": "ug",
+    "name_raw": "Nurul",
+    "person_id": "nurul"
+   },
+   {
+    "area_id": "lt2",
+    "name_raw": "Aryo",
+    "person_id": "aryo"
+   },
+   {
+    "area_id": "lt2",
+    "name_raw": "Naisah",
+    "person_id": "naisah"
+   },
+   {
+    "area_id": "lt2",
+    "name_raw": "Iska",
+    "person_id": "iska"
+   },
+   {
+    "area_id": "lt2",
+    "name_raw": "Inez",
+    "person_id": "inez"
+   },
+   {
+    "area_id": "lt2",
+    "name_raw": "Dikri",
+    "person_id": "dikri"
+   },
+   {
+    "area_id": "lt2",
+    "name_raw": "Hera",
+    "person_id": "hera"
+   },
+   {
+    "area_id": "lt1",
+    "name_raw": "Deviyanti",
+    "person_id": "deviyanti"
+   },
+   {
+    "area_id": "lt1",
+    "name_raw": "Heri",
+    "person_id": "heri"
+   },
+   {
+    "area_id": "lt1",
+    "name_raw": "Rangga",
+    "person_id": "rangga"
+   },
+   {
+    "area_id": "lt1",
+    "name_raw": "Nenti",
+    "person_id": "nenti"
+   },
+   {
+    "area_id": "lt1",
+    "name_raw": "Mariam",
+    "person_id": "mariam"
+   },
+   {
+    "area_id": "lk",
+    "name_raw": "Hermawati",
+    "person_id": "hermawati"
+   },
+   {
+    "area_id": "lk",
+    "name_raw": "Agus",
+    "person_id": "agus"
+   },
+   {
+    "area_id": "lk",
+    "name_raw": "Revaldi",
+    "person_id": "revaldi"
+   },
+   {
+    "area_id": "garbage",
+    "name_raw": "muhamad Abdullah",
+    "person_id": "muhamad_abdullah"
+   },
+   {
+    "area_id": "gondola",
+    "name_raw": "afif",
+    "person_id": "afif"
+   },
+   {
+    "area_id": "gondola",
+    "name_raw": "riyan",
+    "person_id": "riyan"
+   },
+   {
+    "area_id": "gondola",
+    "name_raw": "Sahrul",
+    "person_id": "sahrul"
    }
   ],
-  "total_mp": 34,
+  "total_mp": 37,
   "off_day": 0,
   "sakit": 0,
   "alfa": 0,
@@ -64,42 +214,192 @@
   "date": "2026-09-10",
   "entries": [
    {
-    "area_id": "area_0",
-    "name_raw": "Amartha",
-    "person_id": "p_0"
+    "area_id": "external",
+    "name_raw": "Ade",
+    "person_id": "ade"
    },
    {
-    "area_id": "area_1",
-    "name_raw": "Faisal Hanafi",
-    "person_id": "p_1"
+    "area_id": "external",
+    "name_raw": "Renno",
+    "person_id": "renno"
    },
    {
-    "area_id": "area_2",
-    "name_raw": "Aldo",
-    "person_id": "p_2"
+    "area_id": "external",
+    "name_raw": "Nando",
+    "person_id": "nando"
    },
    {
-    "area_id": "area_3",
-    "name_raw": "Acenk (Bontot)",
-    "person_id": "p_3"
+    "area_id": "external",
+    "name_raw": "Sandi",
+    "person_id": "sandi"
    },
    {
-    "area_id": "area_4",
-    "name_raw": "N",
-    "person_id": "p_4"
+    "area_id": "external",
+    "name_raw": "Okta",
+    "person_id": "okta"
    },
    {
-    "area_id": "area_5",
-    "name_raw": "yeyenriani",
-    "person_id": "p_5"
+    "area_id": "external",
+    "name_raw": "Marhadi",
+    "person_id": "marhadi"
    },
    {
-    "area_id": "area_6",
-    "name_raw": "Sarwedi",
-    "person_id": "p_6"
+    "area_id": "gf",
+    "name_raw": "Ani",
+    "person_id": "ani"
+   },
+   {
+    "area_id": "gf",
+    "name_raw": "Deviana",
+    "person_id": "deviana"
+   },
+   {
+    "area_id": "gf",
+    "name_raw": "Tiara",
+    "person_id": "tiara"
+   },
+   {
+    "area_id": "gf",
+    "name_raw": "Junaesi",
+    "person_id": "junaesi"
+   },
+   {
+    "area_id": "gf",
+    "name_raw": "Febby",
+    "person_id": "febby"
+   },
+   {
+    "area_id": "gf",
+    "name_raw": "Muhamad hafiz",
+    "person_id": "muhamad_hafiz"
+   },
+   {
+    "area_id": "gf",
+    "name_raw": "Warti",
+    "person_id": "warti"
+   },
+   {
+    "area_id": "gf",
+    "name_raw": "Septian",
+    "person_id": "septian"
+   },
+   {
+    "area_id": "ug",
+    "name_raw": "Mardiah",
+    "person_id": "mardiah"
+   },
+   {
+    "area_id": "ug",
+    "name_raw": "Damme",
+    "person_id": "damme"
+   },
+   {
+    "area_id": "ug",
+    "name_raw": "Farhan",
+    "person_id": "farhan"
+   },
+   {
+    "area_id": "ug",
+    "name_raw": "Sahroni",
+    "person_id": "sahroni"
+   },
+   {
+    "area_id": "ug",
+    "name_raw": "Nurul",
+    "person_id": "nurul"
+   },
+   {
+    "area_id": "lt2",
+    "name_raw": "Aryo",
+    "person_id": "aryo"
+   },
+   {
+    "area_id": "lt2",
+    "name_raw": "Naisah",
+    "person_id": "naisah"
+   },
+   {
+    "area_id": "lt2",
+    "name_raw": "Iska",
+    "person_id": "iska"
+   },
+   {
+    "area_id": "lt2",
+    "name_raw": "Inez",
+    "person_id": "inez"
+   },
+   {
+    "area_id": "lt2",
+    "name_raw": "Dikri",
+    "person_id": "dikri"
+   },
+   {
+    "area_id": "lt2",
+    "name_raw": "Hera",
+    "person_id": "hera"
+   },
+   {
+    "area_id": "lt1",
+    "name_raw": "Deviyanti",
+    "person_id": "deviyanti"
+   },
+   {
+    "area_id": "lt1",
+    "name_raw": "Heri",
+    "person_id": "heri"
+   },
+   {
+    "area_id": "lt1",
+    "name_raw": "Rangga",
+    "person_id": "rangga"
+   },
+   {
+    "area_id": "lt1",
+    "name_raw": "Nenti",
+    "person_id": "nenti"
+   },
+   {
+    "area_id": "lt1",
+    "name_raw": "Mariam",
+    "person_id": "mariam"
+   },
+   {
+    "area_id": "lk",
+    "name_raw": "Hermawati",
+    "person_id": "hermawati"
+   },
+   {
+    "area_id": "lk",
+    "name_raw": "Agus",
+    "person_id": "agus"
+   },
+   {
+    "area_id": "lk",
+    "name_raw": "Revaldi",
+    "person_id": "revaldi"
+   },
+   {
+    "area_id": "garbage",
+    "name_raw": "muhamad Abdullah",
+    "person_id": "muhamad_abdullah"
+   },
+   {
+    "area_id": "gondola",
+    "name_raw": "afif",
+    "person_id": "afif"
+   },
+   {
+    "area_id": "gondola",
+    "name_raw": "riyan",
+    "person_id": "riyan"
+   },
+   {
+    "area_id": "gondola",
+    "name_raw": "Sahrul",
+    "person_id": "sahrul"
    }
   ],
-  "total_mp": 34,
+  "total_mp": 37,
   "off_day": 0,
   "sakit": 0,
   "alfa": 0,
@@ -117,42 +417,192 @@
   "date": "2026-09-10",
   "entries": [
    {
-    "area_id": "area_0",
-    "name_raw": "Amartha",
-    "person_id": "p_0"
+    "area_id": "external",
+    "name_raw": "Ade",
+    "person_id": "ade"
    },
    {
-    "area_id": "area_1",
-    "name_raw": "Faisal Hanafi",
-    "person_id": "p_1"
+    "area_id": "external",
+    "name_raw": "Renno",
+    "person_id": "renno"
    },
    {
-    "area_id": "area_2",
-    "name_raw": "Aldo",
-    "person_id": "p_2"
+    "area_id": "external",
+    "name_raw": "Nando",
+    "person_id": "nando"
    },
    {
-    "area_id": "area_3",
-    "name_raw": "Acenk (Bontot)",
-    "person_id": "p_3"
+    "area_id": "external",
+    "name_raw": "Sandi",
+    "person_id": "sandi"
    },
    {
-    "area_id": "area_4",
-    "name_raw": "N",
-    "person_id": "p_4"
+    "area_id": "external",
+    "name_raw": "Okta",
+    "person_id": "okta"
    },
    {
-    "area_id": "area_5",
-    "name_raw": "yeyenriani",
-    "person_id": "p_5"
+    "area_id": "external",
+    "name_raw": "Marhadi",
+    "person_id": "marhadi"
    },
    {
-    "area_id": "area_6",
-    "name_raw": "Sarwedi",
-    "person_id": "p_6"
+    "area_id": "gf",
+    "name_raw": "Ani",
+    "person_id": "ani"
+   },
+   {
+    "area_id": "gf",
+    "name_raw": "Deviana",
+    "person_id": "deviana"
+   },
+   {
+    "area_id": "gf",
+    "name_raw": "Tiara",
+    "person_id": "tiara"
+   },
+   {
+    "area_id": "gf",
+    "name_raw": "Junaesi",
+    "person_id": "junaesi"
+   },
+   {
+    "area_id": "gf",
+    "name_raw": "Febby",
+    "person_id": "febby"
+   },
+   {
+    "area_id": "gf",
+    "name_raw": "Muhamad hafiz",
+    "person_id": "muhamad_hafiz"
+   },
+   {
+    "area_id": "gf",
+    "name_raw": "Warti",
+    "person_id": "warti"
+   },
+   {
+    "area_id": "gf",
+    "name_raw": "Septian",
+    "person_id": "septian"
+   },
+   {
+    "area_id": "ug",
+    "name_raw": "Mardiah",
+    "person_id": "mardiah"
+   },
+   {
+    "area_id": "ug",
+    "name_raw": "Damme",
+    "person_id": "damme"
+   },
+   {
+    "area_id": "ug",
+    "name_raw": "Farhan",
+    "person_id": "farhan"
+   },
+   {
+    "area_id": "ug",
+    "name_raw": "Sahroni",
+    "person_id": "sahroni"
+   },
+   {
+    "area_id": "ug",
+    "name_raw": "Nurul",
+    "person_id": "nurul"
+   },
+   {
+    "area_id": "lt2",
+    "name_raw": "Aryo",
+    "person_id": "aryo"
+   },
+   {
+    "area_id": "lt2",
+    "name_raw": "Naisah",
+    "person_id": "naisah"
+   },
+   {
+    "area_id": "lt2",
+    "name_raw": "Iska",
+    "person_id": "iska"
+   },
+   {
+    "area_id": "lt2",
+    "name_raw": "Inez",
+    "person_id": "inez"
+   },
+   {
+    "area_id": "lt2",
+    "name_raw": "Dikri",
+    "person_id": "dikri"
+   },
+   {
+    "area_id": "lt2",
+    "name_raw": "Hera",
+    "person_id": "hera"
+   },
+   {
+    "area_id": "lt1",
+    "name_raw": "Deviyanti",
+    "person_id": "deviyanti"
+   },
+   {
+    "area_id": "lt1",
+    "name_raw": "Heri",
+    "person_id": "heri"
+   },
+   {
+    "area_id": "lt1",
+    "name_raw": "Rangga",
+    "person_id": "rangga"
+   },
+   {
+    "area_id": "lt1",
+    "name_raw": "Nenti",
+    "person_id": "nenti"
+   },
+   {
+    "area_id": "lt1",
+    "name_raw": "Mariam",
+    "person_id": "mariam"
+   },
+   {
+    "area_id": "lk",
+    "name_raw": "Hermawati",
+    "person_id": "hermawati"
+   },
+   {
+    "area_id": "lk",
+    "name_raw": "Agus",
+    "person_id": "agus"
+   },
+   {
+    "area_id": "lk",
+    "name_raw": "Revaldi",
+    "person_id": "revaldi"
+   },
+   {
+    "area_id": "garbage",
+    "name_raw": "muhamad Abdullah",
+    "person_id": "muhamad_abdullah"
+   },
+   {
+    "area_id": "gondola",
+    "name_raw": "afif",
+    "person_id": "afif"
+   },
+   {
+    "area_id": "gondola",
+    "name_raw": "riyan",
+    "person_id": "riyan"
+   },
+   {
+    "area_id": "gondola",
+    "name_raw": "Sahrul",
+    "person_id": "sahrul"
    }
   ],
-  "total_mp": 34,
+  "total_mp": 37,
   "off_day": 0,
   "sakit": 0,
   "alfa": 0,
@@ -170,42 +620,192 @@
   "date": "2026-09-11",
   "entries": [
    {
-    "area_id": "area_0",
-    "name_raw": "Amartha",
-    "person_id": "p_0"
+    "area_id": "external",
+    "name_raw": "Ade",
+    "person_id": "ade"
    },
    {
-    "area_id": "area_1",
-    "name_raw": "Faisal Hanafi",
-    "person_id": "p_1"
+    "area_id": "external",
+    "name_raw": "Renno",
+    "person_id": "renno"
    },
    {
-    "area_id": "area_2",
-    "name_raw": "Aldo",
-    "person_id": "p_2"
+    "area_id": "external",
+    "name_raw": "Nando",
+    "person_id": "nando"
    },
    {
-    "area_id": "area_3",
-    "name_raw": "Acenk (Bontot)",
-    "person_id": "p_3"
+    "area_id": "external",
+    "name_raw": "Sandi",
+    "person_id": "sandi"
    },
    {
-    "area_id": "area_4",
-    "name_raw": "N",
-    "person_id": "p_4"
+    "area_id": "external",
+    "name_raw": "Okta",
+    "person_id": "okta"
    },
    {
-    "area_id": "area_5",
-    "name_raw": "yeyenriani",
-    "person_id": "p_5"
+    "area_id": "external",
+    "name_raw": "Marhadi",
+    "person_id": "marhadi"
    },
    {
-    "area_id": "area_6",
-    "name_raw": "Sarwedi",
-    "person_id": "p_6"
+    "area_id": "gf",
+    "name_raw": "Ani",
+    "person_id": "ani"
+   },
+   {
+    "area_id": "gf",
+    "name_raw": "Deviana",
+    "person_id": "deviana"
+   },
+   {
+    "area_id": "gf",
+    "name_raw": "Tiara",
+    "person_id": "tiara"
+   },
+   {
+    "area_id": "gf",
+    "name_raw": "Junaesi",
+    "person_id": "junaesi"
+   },
+   {
+    "area_id": "gf",
+    "name_raw": "Febby",
+    "person_id": "febby"
+   },
+   {
+    "area_id": "gf",
+    "name_raw": "Muhamad hafiz",
+    "person_id": "muhamad_hafiz"
+   },
+   {
+    "area_id": "gf",
+    "name_raw": "Warti",
+    "person_id": "warti"
+   },
+   {
+    "area_id": "gf",
+    "name_raw": "Septian",
+    "person_id": "septian"
+   },
+   {
+    "area_id": "ug",
+    "name_raw": "Mardiah",
+    "person_id": "mardiah"
+   },
+   {
+    "area_id": "ug",
+    "name_raw": "Damme",
+    "person_id": "damme"
+   },
+   {
+    "area_id": "ug",
+    "name_raw": "Farhan",
+    "person_id": "farhan"
+   },
+   {
+    "area_id": "ug",
+    "name_raw": "Sahroni",
+    "person_id": "sahroni"
+   },
+   {
+    "area_id": "ug",
+    "name_raw": "Nurul",
+    "person_id": "nurul"
+   },
+   {
+    "area_id": "lt2",
+    "name_raw": "Aryo",
+    "person_id": "aryo"
+   },
+   {
+    "area_id": "lt2",
+    "name_raw": "Naisah",
+    "person_id": "naisah"
+   },
+   {
+    "area_id": "lt2",
+    "name_raw": "Iska",
+    "person_id": "iska"
+   },
+   {
+    "area_id": "lt2",
+    "name_raw": "Inez",
+    "person_id": "inez"
+   },
+   {
+    "area_id": "lt2",
+    "name_raw": "Dikri",
+    "person_id": "dikri"
+   },
+   {
+    "area_id": "lt2",
+    "name_raw": "Hera",
+    "person_id": "hera"
+   },
+   {
+    "area_id": "lt1",
+    "name_raw": "Deviyanti",
+    "person_id": "deviyanti"
+   },
+   {
+    "area_id": "lt1",
+    "name_raw": "Heri",
+    "person_id": "heri"
+   },
+   {
+    "area_id": "lt1",
+    "name_raw": "Rangga",
+    "person_id": "rangga"
+   },
+   {
+    "area_id": "lt1",
+    "name_raw": "Nenti",
+    "person_id": "nenti"
+   },
+   {
+    "area_id": "lt1",
+    "name_raw": "Mariam",
+    "person_id": "mariam"
+   },
+   {
+    "area_id": "lk",
+    "name_raw": "Hermawati",
+    "person_id": "hermawati"
+   },
+   {
+    "area_id": "lk",
+    "name_raw": "Agus",
+    "person_id": "agus"
+   },
+   {
+    "area_id": "lk",
+    "name_raw": "Revaldi",
+    "person_id": "revaldi"
+   },
+   {
+    "area_id": "garbage",
+    "name_raw": "muhamad Abdullah",
+    "person_id": "muhamad_abdullah"
+   },
+   {
+    "area_id": "gondola",
+    "name_raw": "afif",
+    "person_id": "afif"
+   },
+   {
+    "area_id": "gondola",
+    "name_raw": "riyan",
+    "person_id": "riyan"
+   },
+   {
+    "area_id": "gondola",
+    "name_raw": "Sahrul",
+    "person_id": "sahrul"
    }
   ],
-  "total_mp": 34,
+  "total_mp": 37,
   "off_day": 0,
   "sakit": 0,
   "alfa": 0,
@@ -223,42 +823,192 @@
   "date": "2026-09-11",
   "entries": [
    {
-    "area_id": "area_0",
-    "name_raw": "Amartha",
-    "person_id": "p_0"
+    "area_id": "external",
+    "name_raw": "Ade",
+    "person_id": "ade"
    },
    {
-    "area_id": "area_1",
-    "name_raw": "Faisal Hanafi",
-    "person_id": "p_1"
+    "area_id": "external",
+    "name_raw": "Renno",
+    "person_id": "renno"
    },
    {
-    "area_id": "area_2",
-    "name_raw": "Aldo",
-    "person_id": "p_2"
+    "area_id": "external",
+    "name_raw": "Nando",
+    "person_id": "nando"
    },
    {
-    "area_id": "area_3",
-    "name_raw": "Acenk (Bontot)",
-    "person_id": "p_3"
+    "area_id": "external",
+    "name_raw": "Sandi",
+    "person_id": "sandi"
    },
    {
-    "area_id": "area_4",
-    "name_raw": "N",
-    "person_id": "p_4"
+    "area_id": "external",
+    "name_raw": "Okta",
+    "person_id": "okta"
    },
    {
-    "area_id": "area_5",
-    "name_raw": "yeyenriani",
-    "person_id": "p_5"
+    "area_id": "external",
+    "name_raw": "Marhadi",
+    "person_id": "marhadi"
    },
    {
-    "area_id": "area_6",
-    "name_raw": "Sarwedi",
-    "person_id": "p_6"
+    "area_id": "gf",
+    "name_raw": "Ani",
+    "person_id": "ani"
+   },
+   {
+    "area_id": "gf",
+    "name_raw": "Deviana",
+    "person_id": "deviana"
+   },
+   {
+    "area_id": "gf",
+    "name_raw": "Tiara",
+    "person_id": "tiara"
+   },
+   {
+    "area_id": "gf",
+    "name_raw": "Junaesi",
+    "person_id": "junaesi"
+   },
+   {
+    "area_id": "gf",
+    "name_raw": "Febby",
+    "person_id": "febby"
+   },
+   {
+    "area_id": "gf",
+    "name_raw": "Muhamad hafiz",
+    "person_id": "muhamad_hafiz"
+   },
+   {
+    "area_id": "gf",
+    "name_raw": "Warti",
+    "person_id": "warti"
+   },
+   {
+    "area_id": "gf",
+    "name_raw": "Septian",
+    "person_id": "septian"
+   },
+   {
+    "area_id": "ug",
+    "name_raw": "Mardiah",
+    "person_id": "mardiah"
+   },
+   {
+    "area_id": "ug",
+    "name_raw": "Damme",
+    "person_id": "damme"
+   },
+   {
+    "area_id": "ug",
+    "name_raw": "Farhan",
+    "person_id": "farhan"
+   },
+   {
+    "area_id": "ug",
+    "name_raw": "Sahroni",
+    "person_id": "sahroni"
+   },
+   {
+    "area_id": "ug",
+    "name_raw": "Nurul",
+    "person_id": "nurul"
+   },
+   {
+    "area_id": "lt2",
+    "name_raw": "Aryo",
+    "person_id": "aryo"
+   },
+   {
+    "area_id": "lt2",
+    "name_raw": "Naisah",
+    "person_id": "naisah"
+   },
+   {
+    "area_id": "lt2",
+    "name_raw": "Iska",
+    "person_id": "iska"
+   },
+   {
+    "area_id": "lt2",
+    "name_raw": "Inez",
+    "person_id": "inez"
+   },
+   {
+    "area_id": "lt2",
+    "name_raw": "Dikri",
+    "person_id": "dikri"
+   },
+   {
+    "area_id": "lt2",
+    "name_raw": "Hera",
+    "person_id": "hera"
+   },
+   {
+    "area_id": "lt1",
+    "name_raw": "Deviyanti",
+    "person_id": "deviyanti"
+   },
+   {
+    "area_id": "lt1",
+    "name_raw": "Heri",
+    "person_id": "heri"
+   },
+   {
+    "area_id": "lt1",
+    "name_raw": "Rangga",
+    "person_id": "rangga"
+   },
+   {
+    "area_id": "lt1",
+    "name_raw": "Nenti",
+    "person_id": "nenti"
+   },
+   {
+    "area_id": "lt1",
+    "name_raw": "Mariam",
+    "person_id": "mariam"
+   },
+   {
+    "area_id": "lk",
+    "name_raw": "Hermawati",
+    "person_id": "hermawati"
+   },
+   {
+    "area_id": "lk",
+    "name_raw": "Agus",
+    "person_id": "agus"
+   },
+   {
+    "area_id": "lk",
+    "name_raw": "Revaldi",
+    "person_id": "revaldi"
+   },
+   {
+    "area_id": "garbage",
+    "name_raw": "muhamad Abdullah",
+    "person_id": "muhamad_abdullah"
+   },
+   {
+    "area_id": "gondola",
+    "name_raw": "afif",
+    "person_id": "afif"
+   },
+   {
+    "area_id": "gondola",
+    "name_raw": "riyan",
+    "person_id": "riyan"
+   },
+   {
+    "area_id": "gondola",
+    "name_raw": "Sahrul",
+    "person_id": "sahrul"
    }
   ],
-  "total_mp": 34,
+  "total_mp": 37,
   "off_day": 0,
   "sakit": 0,
   "alfa": 0,
@@ -276,42 +1026,192 @@
   "date": "2026-09-11",
   "entries": [
    {
-    "area_id": "area_0",
-    "name_raw": "Amartha",
-    "person_id": "p_0"
+    "area_id": "external",
+    "name_raw": "Ade",
+    "person_id": "ade"
    },
    {
-    "area_id": "area_1",
-    "name_raw": "Faisal Hanafi",
-    "person_id": "p_1"
+    "area_id": "external",
+    "name_raw": "Renno",
+    "person_id": "renno"
    },
    {
-    "area_id": "area_2",
-    "name_raw": "Aldo",
-    "person_id": "p_2"
+    "area_id": "external",
+    "name_raw": "Nando",
+    "person_id": "nando"
    },
    {
-    "area_id": "area_3",
-    "name_raw": "Acenk (Bontot)",
-    "person_id": "p_3"
+    "area_id": "external",
+    "name_raw": "Sandi",
+    "person_id": "sandi"
    },
    {
-    "area_id": "area_4",
-    "name_raw": "N",
-    "person_id": "p_4"
+    "area_id": "external",
+    "name_raw": "Okta",
+    "person_id": "okta"
    },
    {
-    "area_id": "area_5",
-    "name_raw": "yeyenriani",
-    "person_id": "p_5"
+    "area_id": "external",
+    "name_raw": "Marhadi",
+    "person_id": "marhadi"
    },
    {
-    "area_id": "area_6",
-    "name_raw": "Sarwedi",
-    "person_id": "p_6"
+    "area_id": "gf",
+    "name_raw": "Ani",
+    "person_id": "ani"
+   },
+   {
+    "area_id": "gf",
+    "name_raw": "Deviana",
+    "person_id": "deviana"
+   },
+   {
+    "area_id": "gf",
+    "name_raw": "Tiara",
+    "person_id": "tiara"
+   },
+   {
+    "area_id": "gf",
+    "name_raw": "Junaesi",
+    "person_id": "junaesi"
+   },
+   {
+    "area_id": "gf",
+    "name_raw": "Febby",
+    "person_id": "febby"
+   },
+   {
+    "area_id": "gf",
+    "name_raw": "Muhamad hafiz",
+    "person_id": "muhamad_hafiz"
+   },
+   {
+    "area_id": "gf",
+    "name_raw": "Warti",
+    "person_id": "warti"
+   },
+   {
+    "area_id": "gf",
+    "name_raw": "Septian",
+    "person_id": "septian"
+   },
+   {
+    "area_id": "ug",
+    "name_raw": "Mardiah",
+    "person_id": "mardiah"
+   },
+   {
+    "area_id": "ug",
+    "name_raw": "Damme",
+    "person_id": "damme"
+   },
+   {
+    "area_id": "ug",
+    "name_raw": "Farhan",
+    "person_id": "farhan"
+   },
+   {
+    "area_id": "ug",
+    "name_raw": "Sahroni",
+    "person_id": "sahroni"
+   },
+   {
+    "area_id": "ug",
+    "name_raw": "Nurul",
+    "person_id": "nurul"
+   },
+   {
+    "area_id": "lt2",
+    "name_raw": "Aryo",
+    "person_id": "aryo"
+   },
+   {
+    "area_id": "lt2",
+    "name_raw": "Naisah",
+    "person_id": "naisah"
+   },
+   {
+    "area_id": "lt2",
+    "name_raw": "Iska",
+    "person_id": "iska"
+   },
+   {
+    "area_id": "lt2",
+    "name_raw": "Inez",
+    "person_id": "inez"
+   },
+   {
+    "area_id": "lt2",
+    "name_raw": "Dikri",
+    "person_id": "dikri"
+   },
+   {
+    "area_id": "lt2",
+    "name_raw": "Hera",
+    "person_id": "hera"
+   },
+   {
+    "area_id": "lt1",
+    "name_raw": "Deviyanti",
+    "person_id": "deviyanti"
+   },
+   {
+    "area_id": "lt1",
+    "name_raw": "Heri",
+    "person_id": "heri"
+   },
+   {
+    "area_id": "lt1",
+    "name_raw": "Rangga",
+    "person_id": "rangga"
+   },
+   {
+    "area_id": "lt1",
+    "name_raw": "Nenti",
+    "person_id": "nenti"
+   },
+   {
+    "area_id": "lt1",
+    "name_raw": "Mariam",
+    "person_id": "mariam"
+   },
+   {
+    "area_id": "lk",
+    "name_raw": "Hermawati",
+    "person_id": "hermawati"
+   },
+   {
+    "area_id": "lk",
+    "name_raw": "Agus",
+    "person_id": "agus"
+   },
+   {
+    "area_id": "lk",
+    "name_raw": "Revaldi",
+    "person_id": "revaldi"
+   },
+   {
+    "area_id": "garbage",
+    "name_raw": "muhamad Abdullah",
+    "person_id": "muhamad_abdullah"
+   },
+   {
+    "area_id": "gondola",
+    "name_raw": "afif",
+    "person_id": "afif"
+   },
+   {
+    "area_id": "gondola",
+    "name_raw": "riyan",
+    "person_id": "riyan"
+   },
+   {
+    "area_id": "gondola",
+    "name_raw": "Sahrul",
+    "person_id": "sahrul"
    }
   ],
-  "total_mp": 34,
+  "total_mp": 37,
   "off_day": 0,
   "sakit": 0,
   "alfa": 0,
@@ -329,42 +1229,192 @@
   "date": "2026-09-12",
   "entries": [
    {
-    "area_id": "area_0",
-    "name_raw": "Amartha",
-    "person_id": "p_0"
+    "area_id": "external",
+    "name_raw": "Ade",
+    "person_id": "ade"
    },
    {
-    "area_id": "area_1",
-    "name_raw": "Faisal Hanafi",
-    "person_id": "p_1"
+    "area_id": "external",
+    "name_raw": "Renno",
+    "person_id": "renno"
    },
    {
-    "area_id": "area_2",
-    "name_raw": "Aldo",
-    "person_id": "p_2"
+    "area_id": "external",
+    "name_raw": "Nando",
+    "person_id": "nando"
    },
    {
-    "area_id": "area_3",
-    "name_raw": "Acenk (Bontot)",
-    "person_id": "p_3"
+    "area_id": "external",
+    "name_raw": "Sandi",
+    "person_id": "sandi"
    },
    {
-    "area_id": "area_4",
-    "name_raw": "N",
-    "person_id": "p_4"
+    "area_id": "external",
+    "name_raw": "Okta",
+    "person_id": "okta"
    },
    {
-    "area_id": "area_5",
-    "name_raw": "yeyenriani",
-    "person_id": "p_5"
+    "area_id": "external",
+    "name_raw": "Marhadi",
+    "person_id": "marhadi"
    },
    {
-    "area_id": "area_6",
-    "name_raw": "Sarwedi",
-    "person_id": "p_6"
+    "area_id": "gf",
+    "name_raw": "Ani",
+    "person_id": "ani"
+   },
+   {
+    "area_id": "gf",
+    "name_raw": "Deviana",
+    "person_id": "deviana"
+   },
+   {
+    "area_id": "gf",
+    "name_raw": "Tiara",
+    "person_id": "tiara"
+   },
+   {
+    "area_id": "gf",
+    "name_raw": "Junaesi",
+    "person_id": "junaesi"
+   },
+   {
+    "area_id": "gf",
+    "name_raw": "Febby",
+    "person_id": "febby"
+   },
+   {
+    "area_id": "gf",
+    "name_raw": "Muhamad hafiz",
+    "person_id": "muhamad_hafiz"
+   },
+   {
+    "area_id": "gf",
+    "name_raw": "Warti",
+    "person_id": "warti"
+   },
+   {
+    "area_id": "gf",
+    "name_raw": "Septian",
+    "person_id": "septian"
+   },
+   {
+    "area_id": "ug",
+    "name_raw": "Mardiah",
+    "person_id": "mardiah"
+   },
+   {
+    "area_id": "ug",
+    "name_raw": "Damme",
+    "person_id": "damme"
+   },
+   {
+    "area_id": "ug",
+    "name_raw": "Farhan",
+    "person_id": "farhan"
+   },
+   {
+    "area_id": "ug",
+    "name_raw": "Sahroni",
+    "person_id": "sahroni"
+   },
+   {
+    "area_id": "ug",
+    "name_raw": "Nurul",
+    "person_id": "nurul"
+   },
+   {
+    "area_id": "lt2",
+    "name_raw": "Aryo",
+    "person_id": "aryo"
+   },
+   {
+    "area_id": "lt2",
+    "name_raw": "Naisah",
+    "person_id": "naisah"
+   },
+   {
+    "area_id": "lt2",
+    "name_raw": "Iska",
+    "person_id": "iska"
+   },
+   {
+    "area_id": "lt2",
+    "name_raw": "Inez",
+    "person_id": "inez"
+   },
+   {
+    "area_id": "lt2",
+    "name_raw": "Dikri",
+    "person_id": "dikri"
+   },
+   {
+    "area_id": "lt2",
+    "name_raw": "Hera",
+    "person_id": "hera"
+   },
+   {
+    "area_id": "lt1",
+    "name_raw": "Deviyanti",
+    "person_id": "deviyanti"
+   },
+   {
+    "area_id": "lt1",
+    "name_raw": "Heri",
+    "person_id": "heri"
+   },
+   {
+    "area_id": "lt1",
+    "name_raw": "Rangga",
+    "person_id": "rangga"
+   },
+   {
+    "area_id": "lt1",
+    "name_raw": "Nenti",
+    "person_id": "nenti"
+   },
+   {
+    "area_id": "lt1",
+    "name_raw": "Mariam",
+    "person_id": "mariam"
+   },
+   {
+    "area_id": "lk",
+    "name_raw": "Hermawati",
+    "person_id": "hermawati"
+   },
+   {
+    "area_id": "lk",
+    "name_raw": "Agus",
+    "person_id": "agus"
+   },
+   {
+    "area_id": "lk",
+    "name_raw": "Revaldi",
+    "person_id": "revaldi"
+   },
+   {
+    "area_id": "garbage",
+    "name_raw": "muhamad Abdullah",
+    "person_id": "muhamad_abdullah"
+   },
+   {
+    "area_id": "gondola",
+    "name_raw": "afif",
+    "person_id": "afif"
+   },
+   {
+    "area_id": "gondola",
+    "name_raw": "riyan",
+    "person_id": "riyan"
+   },
+   {
+    "area_id": "gondola",
+    "name_raw": "Sahrul",
+    "person_id": "sahrul"
    }
   ],
-  "total_mp": 34,
+  "total_mp": 37,
   "off_day": 0,
   "sakit": 0,
   "alfa": 0,
@@ -382,42 +1432,192 @@
   "date": "2026-09-12",
   "entries": [
    {
-    "area_id": "area_0",
-    "name_raw": "Amartha",
-    "person_id": "p_0"
+    "area_id": "external",
+    "name_raw": "Ade",
+    "person_id": "ade"
    },
    {
-    "area_id": "area_1",
-    "name_raw": "Faisal Hanafi",
-    "person_id": "p_1"
+    "area_id": "external",
+    "name_raw": "Renno",
+    "person_id": "renno"
    },
    {
-    "area_id": "area_2",
-    "name_raw": "Aldo",
-    "person_id": "p_2"
+    "area_id": "external",
+    "name_raw": "Nando",
+    "person_id": "nando"
    },
    {
-    "area_id": "area_3",
-    "name_raw": "Acenk (Bontot)",
-    "person_id": "p_3"
+    "area_id": "external",
+    "name_raw": "Sandi",
+    "person_id": "sandi"
    },
    {
-    "area_id": "area_4",
-    "name_raw": "N",
-    "person_id": "p_4"
+    "area_id": "external",
+    "name_raw": "Okta",
+    "person_id": "okta"
    },
    {
-    "area_id": "area_5",
-    "name_raw": "yeyenriani",
-    "person_id": "p_5"
+    "area_id": "external",
+    "name_raw": "Marhadi",
+    "person_id": "marhadi"
    },
    {
-    "area_id": "area_6",
-    "name_raw": "Sarwedi",
-    "person_id": "p_6"
+    "area_id": "gf",
+    "name_raw": "Ani",
+    "person_id": "ani"
+   },
+   {
+    "area_id": "gf",
+    "name_raw": "Deviana",
+    "person_id": "deviana"
+   },
+   {
+    "area_id": "gf",
+    "name_raw": "Tiara",
+    "person_id": "tiara"
+   },
+   {
+    "area_id": "gf",
+    "name_raw": "Junaesi",
+    "person_id": "junaesi"
+   },
+   {
+    "area_id": "gf",
+    "name_raw": "Febby",
+    "person_id": "febby"
+   },
+   {
+    "area_id": "gf",
+    "name_raw": "Muhamad hafiz",
+    "person_id": "muhamad_hafiz"
+   },
+   {
+    "area_id": "gf",
+    "name_raw": "Warti",
+    "person_id": "warti"
+   },
+   {
+    "area_id": "gf",
+    "name_raw": "Septian",
+    "person_id": "septian"
+   },
+   {
+    "area_id": "ug",
+    "name_raw": "Mardiah",
+    "person_id": "mardiah"
+   },
+   {
+    "area_id": "ug",
+    "name_raw": "Damme",
+    "person_id": "damme"
+   },
+   {
+    "area_id": "ug",
+    "name_raw": "Farhan",
+    "person_id": "farhan"
+   },
+   {
+    "area_id": "ug",
+    "name_raw": "Sahroni",
+    "person_id": "sahroni"
+   },
+   {
+    "area_id": "ug",
+    "name_raw": "Nurul",
+    "person_id": "nurul"
+   },
+   {
+    "area_id": "lt2",
+    "name_raw": "Aryo",
+    "person_id": "aryo"
+   },
+   {
+    "area_id": "lt2",
+    "name_raw": "Naisah",
+    "person_id": "naisah"
+   },
+   {
+    "area_id": "lt2",
+    "name_raw": "Iska",
+    "person_id": "iska"
+   },
+   {
+    "area_id": "lt2",
+    "name_raw": "Inez",
+    "person_id": "inez"
+   },
+   {
+    "area_id": "lt2",
+    "name_raw": "Dikri",
+    "person_id": "dikri"
+   },
+   {
+    "area_id": "lt2",
+    "name_raw": "Hera",
+    "person_id": "hera"
+   },
+   {
+    "area_id": "lt1",
+    "name_raw": "Deviyanti",
+    "person_id": "deviyanti"
+   },
+   {
+    "area_id": "lt1",
+    "name_raw": "Heri",
+    "person_id": "heri"
+   },
+   {
+    "area_id": "lt1",
+    "name_raw": "Rangga",
+    "person_id": "rangga"
+   },
+   {
+    "area_id": "lt1",
+    "name_raw": "Nenti",
+    "person_id": "nenti"
+   },
+   {
+    "area_id": "lt1",
+    "name_raw": "Mariam",
+    "person_id": "mariam"
+   },
+   {
+    "area_id": "lk",
+    "name_raw": "Hermawati",
+    "person_id": "hermawati"
+   },
+   {
+    "area_id": "lk",
+    "name_raw": "Agus",
+    "person_id": "agus"
+   },
+   {
+    "area_id": "lk",
+    "name_raw": "Revaldi",
+    "person_id": "revaldi"
+   },
+   {
+    "area_id": "garbage",
+    "name_raw": "muhamad Abdullah",
+    "person_id": "muhamad_abdullah"
+   },
+   {
+    "area_id": "gondola",
+    "name_raw": "afif",
+    "person_id": "afif"
+   },
+   {
+    "area_id": "gondola",
+    "name_raw": "riyan",
+    "person_id": "riyan"
+   },
+   {
+    "area_id": "gondola",
+    "name_raw": "Sahrul",
+    "person_id": "sahrul"
    }
   ],
-  "total_mp": 34,
+  "total_mp": 37,
   "off_day": 0,
   "sakit": 0,
   "alfa": 0,
@@ -435,42 +1635,192 @@
   "date": "2026-09-12",
   "entries": [
    {
-    "area_id": "area_0",
-    "name_raw": "Amartha",
-    "person_id": "p_0"
+    "area_id": "external",
+    "name_raw": "Ade",
+    "person_id": "ade"
    },
    {
-    "area_id": "area_1",
-    "name_raw": "Faisal Hanafi",
-    "person_id": "p_1"
+    "area_id": "external",
+    "name_raw": "Renno",
+    "person_id": "renno"
    },
    {
-    "area_id": "area_2",
-    "name_raw": "Aldo",
-    "person_id": "p_2"
+    "area_id": "external",
+    "name_raw": "Nando",
+    "person_id": "nando"
    },
    {
-    "area_id": "area_3",
-    "name_raw": "Acenk (Bontot)",
-    "person_id": "p_3"
+    "area_id": "external",
+    "name_raw": "Sandi",
+    "person_id": "sandi"
    },
    {
-    "area_id": "area_4",
-    "name_raw": "N",
-    "person_id": "p_4"
+    "area_id": "external",
+    "name_raw": "Okta",
+    "person_id": "okta"
    },
    {
-    "area_id": "area_5",
-    "name_raw": "yeyenriani",
-    "person_id": "p_5"
+    "area_id": "external",
+    "name_raw": "Marhadi",
+    "person_id": "marhadi"
    },
    {
-    "area_id": "area_6",
-    "name_raw": "Sarwedi",
-    "person_id": "p_6"
+    "area_id": "gf",
+    "name_raw": "Ani",
+    "person_id": "ani"
+   },
+   {
+    "area_id": "gf",
+    "name_raw": "Deviana",
+    "person_id": "deviana"
+   },
+   {
+    "area_id": "gf",
+    "name_raw": "Tiara",
+    "person_id": "tiara"
+   },
+   {
+    "area_id": "gf",
+    "name_raw": "Junaesi",
+    "person_id": "junaesi"
+   },
+   {
+    "area_id": "gf",
+    "name_raw": "Febby",
+    "person_id": "febby"
+   },
+   {
+    "area_id": "gf",
+    "name_raw": "Muhamad hafiz",
+    "person_id": "muhamad_hafiz"
+   },
+   {
+    "area_id": "gf",
+    "name_raw": "Warti",
+    "person_id": "warti"
+   },
+   {
+    "area_id": "gf",
+    "name_raw": "Septian",
+    "person_id": "septian"
+   },
+   {
+    "area_id": "ug",
+    "name_raw": "Mardiah",
+    "person_id": "mardiah"
+   },
+   {
+    "area_id": "ug",
+    "name_raw": "Damme",
+    "person_id": "damme"
+   },
+   {
+    "area_id": "ug",
+    "name_raw": "Farhan",
+    "person_id": "farhan"
+   },
+   {
+    "area_id": "ug",
+    "name_raw": "Sahroni",
+    "person_id": "sahroni"
+   },
+   {
+    "area_id": "ug",
+    "name_raw": "Nurul",
+    "person_id": "nurul"
+   },
+   {
+    "area_id": "lt2",
+    "name_raw": "Aryo",
+    "person_id": "aryo"
+   },
+   {
+    "area_id": "lt2",
+    "name_raw": "Naisah",
+    "person_id": "naisah"
+   },
+   {
+    "area_id": "lt2",
+    "name_raw": "Iska",
+    "person_id": "iska"
+   },
+   {
+    "area_id": "lt2",
+    "name_raw": "Inez",
+    "person_id": "inez"
+   },
+   {
+    "area_id": "lt2",
+    "name_raw": "Dikri",
+    "person_id": "dikri"
+   },
+   {
+    "area_id": "lt2",
+    "name_raw": "Hera",
+    "person_id": "hera"
+   },
+   {
+    "area_id": "lt1",
+    "name_raw": "Deviyanti",
+    "person_id": "deviyanti"
+   },
+   {
+    "area_id": "lt1",
+    "name_raw": "Heri",
+    "person_id": "heri"
+   },
+   {
+    "area_id": "lt1",
+    "name_raw": "Rangga",
+    "person_id": "rangga"
+   },
+   {
+    "area_id": "lt1",
+    "name_raw": "Nenti",
+    "person_id": "nenti"
+   },
+   {
+    "area_id": "lt1",
+    "name_raw": "Mariam",
+    "person_id": "mariam"
+   },
+   {
+    "area_id": "lk",
+    "name_raw": "Hermawati",
+    "person_id": "hermawati"
+   },
+   {
+    "area_id": "lk",
+    "name_raw": "Agus",
+    "person_id": "agus"
+   },
+   {
+    "area_id": "lk",
+    "name_raw": "Revaldi",
+    "person_id": "revaldi"
+   },
+   {
+    "area_id": "garbage",
+    "name_raw": "muhamad Abdullah",
+    "person_id": "muhamad_abdullah"
+   },
+   {
+    "area_id": "gondola",
+    "name_raw": "afif",
+    "person_id": "afif"
+   },
+   {
+    "area_id": "gondola",
+    "name_raw": "riyan",
+    "person_id": "riyan"
+   },
+   {
+    "area_id": "gondola",
+    "name_raw": "Sahrul",
+    "person_id": "sahrul"
    }
   ],
-  "total_mp": 34,
+  "total_mp": 37,
   "off_day": 0,
   "sakit": 0,
   "alfa": 0,
@@ -488,42 +1838,192 @@
   "date": "2026-09-13",
   "entries": [
    {
-    "area_id": "area_0",
-    "name_raw": "Amartha",
-    "person_id": "p_0"
+    "area_id": "external",
+    "name_raw": "Ade",
+    "person_id": "ade"
    },
    {
-    "area_id": "area_1",
-    "name_raw": "Faisal Hanafi",
-    "person_id": "p_1"
+    "area_id": "external",
+    "name_raw": "Renno",
+    "person_id": "renno"
    },
    {
-    "area_id": "area_2",
-    "name_raw": "Aldo",
-    "person_id": "p_2"
+    "area_id": "external",
+    "name_raw": "Nando",
+    "person_id": "nando"
    },
    {
-    "area_id": "area_3",
-    "name_raw": "Acenk (Bontot)",
-    "person_id": "p_3"
+    "area_id": "external",
+    "name_raw": "Sandi",
+    "person_id": "sandi"
    },
    {
-    "area_id": "area_4",
-    "name_raw": "N",
-    "person_id": "p_4"
+    "area_id": "external",
+    "name_raw": "Okta",
+    "person_id": "okta"
    },
    {
-    "area_id": "area_5",
-    "name_raw": "yeyenriani",
-    "person_id": "p_5"
+    "area_id": "external",
+    "name_raw": "Marhadi",
+    "person_id": "marhadi"
    },
    {
-    "area_id": "area_6",
-    "name_raw": "Sarwedi",
-    "person_id": "p_6"
+    "area_id": "gf",
+    "name_raw": "Ani",
+    "person_id": "ani"
+   },
+   {
+    "area_id": "gf",
+    "name_raw": "Deviana",
+    "person_id": "deviana"
+   },
+   {
+    "area_id": "gf",
+    "name_raw": "Tiara",
+    "person_id": "tiara"
+   },
+   {
+    "area_id": "gf",
+    "name_raw": "Junaesi",
+    "person_id": "junaesi"
+   },
+   {
+    "area_id": "gf",
+    "name_raw": "Febby",
+    "person_id": "febby"
+   },
+   {
+    "area_id": "gf",
+    "name_raw": "Muhamad hafiz",
+    "person_id": "muhamad_hafiz"
+   },
+   {
+    "area_id": "gf",
+    "name_raw": "Warti",
+    "person_id": "warti"
+   },
+   {
+    "area_id": "gf",
+    "name_raw": "Septian",
+    "person_id": "septian"
+   },
+   {
+    "area_id": "ug",
+    "name_raw": "Mardiah",
+    "person_id": "mardiah"
+   },
+   {
+    "area_id": "ug",
+    "name_raw": "Damme",
+    "person_id": "damme"
+   },
+   {
+    "area_id": "ug",
+    "name_raw": "Farhan",
+    "person_id": "farhan"
+   },
+   {
+    "area_id": "ug",
+    "name_raw": "Sahroni",
+    "person_id": "sahroni"
+   },
+   {
+    "area_id": "ug",
+    "name_raw": "Nurul",
+    "person_id": "nurul"
+   },
+   {
+    "area_id": "lt2",
+    "name_raw": "Aryo",
+    "person_id": "aryo"
+   },
+   {
+    "area_id": "lt2",
+    "name_raw": "Naisah",
+    "person_id": "naisah"
+   },
+   {
+    "area_id": "lt2",
+    "name_raw": "Iska",
+    "person_id": "iska"
+   },
+   {
+    "area_id": "lt2",
+    "name_raw": "Inez",
+    "person_id": "inez"
+   },
+   {
+    "area_id": "lt2",
+    "name_raw": "Dikri",
+    "person_id": "dikri"
+   },
+   {
+    "area_id": "lt2",
+    "name_raw": "Hera",
+    "person_id": "hera"
+   },
+   {
+    "area_id": "lt1",
+    "name_raw": "Deviyanti",
+    "person_id": "deviyanti"
+   },
+   {
+    "area_id": "lt1",
+    "name_raw": "Heri",
+    "person_id": "heri"
+   },
+   {
+    "area_id": "lt1",
+    "name_raw": "Rangga",
+    "person_id": "rangga"
+   },
+   {
+    "area_id": "lt1",
+    "name_raw": "Nenti",
+    "person_id": "nenti"
+   },
+   {
+    "area_id": "lt1",
+    "name_raw": "Mariam",
+    "person_id": "mariam"
+   },
+   {
+    "area_id": "lk",
+    "name_raw": "Hermawati",
+    "person_id": "hermawati"
+   },
+   {
+    "area_id": "lk",
+    "name_raw": "Agus",
+    "person_id": "agus"
+   },
+   {
+    "area_id": "lk",
+    "name_raw": "Revaldi",
+    "person_id": "revaldi"
+   },
+   {
+    "area_id": "garbage",
+    "name_raw": "muhamad Abdullah",
+    "person_id": "muhamad_abdullah"
+   },
+   {
+    "area_id": "gondola",
+    "name_raw": "afif",
+    "person_id": "afif"
+   },
+   {
+    "area_id": "gondola",
+    "name_raw": "riyan",
+    "person_id": "riyan"
+   },
+   {
+    "area_id": "gondola",
+    "name_raw": "Sahrul",
+    "person_id": "sahrul"
    }
   ],
-  "total_mp": 34,
+  "total_mp": 37,
   "off_day": 0,
   "sakit": 0,
   "alfa": 0,
@@ -541,42 +2041,192 @@
   "date": "2026-09-13",
   "entries": [
    {
-    "area_id": "area_0",
-    "name_raw": "Amartha",
-    "person_id": "p_0"
+    "area_id": "external",
+    "name_raw": "Ade",
+    "person_id": "ade"
    },
    {
-    "area_id": "area_1",
-    "name_raw": "Faisal Hanafi",
-    "person_id": "p_1"
+    "area_id": "external",
+    "name_raw": "Renno",
+    "person_id": "renno"
    },
    {
-    "area_id": "area_2",
-    "name_raw": "Aldo",
-    "person_id": "p_2"
+    "area_id": "external",
+    "name_raw": "Nando",
+    "person_id": "nando"
    },
    {
-    "area_id": "area_3",
-    "name_raw": "Acenk (Bontot)",
-    "person_id": "p_3"
+    "area_id": "external",
+    "name_raw": "Sandi",
+    "person_id": "sandi"
    },
    {
-    "area_id": "area_4",
-    "name_raw": "N",
-    "person_id": "p_4"
+    "area_id": "external",
+    "name_raw": "Okta",
+    "person_id": "okta"
    },
    {
-    "area_id": "area_5",
-    "name_raw": "yeyenriani",
-    "person_id": "p_5"
+    "area_id": "external",
+    "name_raw": "Marhadi",
+    "person_id": "marhadi"
    },
    {
-    "area_id": "area_6",
-    "name_raw": "Sarwedi",
-    "person_id": "p_6"
+    "area_id": "gf",
+    "name_raw": "Ani",
+    "person_id": "ani"
+   },
+   {
+    "area_id": "gf",
+    "name_raw": "Deviana",
+    "person_id": "deviana"
+   },
+   {
+    "area_id": "gf",
+    "name_raw": "Tiara",
+    "person_id": "tiara"
+   },
+   {
+    "area_id": "gf",
+    "name_raw": "Junaesi",
+    "person_id": "junaesi"
+   },
+   {
+    "area_id": "gf",
+    "name_raw": "Febby",
+    "person_id": "febby"
+   },
+   {
+    "area_id": "gf",
+    "name_raw": "Muhamad hafiz",
+    "person_id": "muhamad_hafiz"
+   },
+   {
+    "area_id": "gf",
+    "name_raw": "Warti",
+    "person_id": "warti"
+   },
+   {
+    "area_id": "gf",
+    "name_raw": "Septian",
+    "person_id": "septian"
+   },
+   {
+    "area_id": "ug",
+    "name_raw": "Mardiah",
+    "person_id": "mardiah"
+   },
+   {
+    "area_id": "ug",
+    "name_raw": "Damme",
+    "person_id": "damme"
+   },
+   {
+    "area_id": "ug",
+    "name_raw": "Farhan",
+    "person_id": "farhan"
+   },
+   {
+    "area_id": "ug",
+    "name_raw": "Sahroni",
+    "person_id": "sahroni"
+   },
+   {
+    "area_id": "ug",
+    "name_raw": "Nurul",
+    "person_id": "nurul"
+   },
+   {
+    "area_id": "lt2",
+    "name_raw": "Aryo",
+    "person_id": "aryo"
+   },
+   {
+    "area_id": "lt2",
+    "name_raw": "Naisah",
+    "person_id": "naisah"
+   },
+   {
+    "area_id": "lt2",
+    "name_raw": "Iska",
+    "person_id": "iska"
+   },
+   {
+    "area_id": "lt2",
+    "name_raw": "Inez",
+    "person_id": "inez"
+   },
+   {
+    "area_id": "lt2",
+    "name_raw": "Dikri",
+    "person_id": "dikri"
+   },
+   {
+    "area_id": "lt2",
+    "name_raw": "Hera",
+    "person_id": "hera"
+   },
+   {
+    "area_id": "lt1",
+    "name_raw": "Deviyanti",
+    "person_id": "deviyanti"
+   },
+   {
+    "area_id": "lt1",
+    "name_raw": "Heri",
+    "person_id": "heri"
+   },
+   {
+    "area_id": "lt1",
+    "name_raw": "Rangga",
+    "person_id": "rangga"
+   },
+   {
+    "area_id": "lt1",
+    "name_raw": "Nenti",
+    "person_id": "nenti"
+   },
+   {
+    "area_id": "lt1",
+    "name_raw": "Mariam",
+    "person_id": "mariam"
+   },
+   {
+    "area_id": "lk",
+    "name_raw": "Hermawati",
+    "person_id": "hermawati"
+   },
+   {
+    "area_id": "lk",
+    "name_raw": "Agus",
+    "person_id": "agus"
+   },
+   {
+    "area_id": "lk",
+    "name_raw": "Revaldi",
+    "person_id": "revaldi"
+   },
+   {
+    "area_id": "garbage",
+    "name_raw": "muhamad Abdullah",
+    "person_id": "muhamad_abdullah"
+   },
+   {
+    "area_id": "gondola",
+    "name_raw": "afif",
+    "person_id": "afif"
+   },
+   {
+    "area_id": "gondola",
+    "name_raw": "riyan",
+    "person_id": "riyan"
+   },
+   {
+    "area_id": "gondola",
+    "name_raw": "Sahrul",
+    "person_id": "sahrul"
    }
   ],
-  "total_mp": 34,
+  "total_mp": 37,
   "off_day": 0,
   "sakit": 0,
   "alfa": 0,
@@ -594,42 +2244,192 @@
   "date": "2026-09-13",
   "entries": [
    {
-    "area_id": "area_0",
-    "name_raw": "Amartha",
-    "person_id": "p_0"
+    "area_id": "external",
+    "name_raw": "Ade",
+    "person_id": "ade"
    },
    {
-    "area_id": "area_1",
-    "name_raw": "Faisal Hanafi",
-    "person_id": "p_1"
+    "area_id": "external",
+    "name_raw": "Renno",
+    "person_id": "renno"
    },
    {
-    "area_id": "area_2",
-    "name_raw": "Aldo",
-    "person_id": "p_2"
+    "area_id": "external",
+    "name_raw": "Nando",
+    "person_id": "nando"
    },
    {
-    "area_id": "area_3",
-    "name_raw": "Acenk (Bontot)",
-    "person_id": "p_3"
+    "area_id": "external",
+    "name_raw": "Sandi",
+    "person_id": "sandi"
    },
    {
-    "area_id": "area_4",
-    "name_raw": "N",
-    "person_id": "p_4"
+    "area_id": "external",
+    "name_raw": "Okta",
+    "person_id": "okta"
    },
    {
-    "area_id": "area_5",
-    "name_raw": "yeyenriani",
-    "person_id": "p_5"
+    "area_id": "external",
+    "name_raw": "Marhadi",
+    "person_id": "marhadi"
    },
    {
-    "area_id": "area_6",
-    "name_raw": "Sarwedi",
-    "person_id": "p_6"
+    "area_id": "gf",
+    "name_raw": "Ani",
+    "person_id": "ani"
+   },
+   {
+    "area_id": "gf",
+    "name_raw": "Deviana",
+    "person_id": "deviana"
+   },
+   {
+    "area_id": "gf",
+    "name_raw": "Tiara",
+    "person_id": "tiara"
+   },
+   {
+    "area_id": "gf",
+    "name_raw": "Junaesi",
+    "person_id": "junaesi"
+   },
+   {
+    "area_id": "gf",
+    "name_raw": "Febby",
+    "person_id": "febby"
+   },
+   {
+    "area_id": "gf",
+    "name_raw": "Muhamad hafiz",
+    "person_id": "muhamad_hafiz"
+   },
+   {
+    "area_id": "gf",
+    "name_raw": "Warti",
+    "person_id": "warti"
+   },
+   {
+    "area_id": "gf",
+    "name_raw": "Septian",
+    "person_id": "septian"
+   },
+   {
+    "area_id": "ug",
+    "name_raw": "Mardiah",
+    "person_id": "mardiah"
+   },
+   {
+    "area_id": "ug",
+    "name_raw": "Damme",
+    "person_id": "damme"
+   },
+   {
+    "area_id": "ug",
+    "name_raw": "Farhan",
+    "person_id": "farhan"
+   },
+   {
+    "area_id": "ug",
+    "name_raw": "Sahroni",
+    "person_id": "sahroni"
+   },
+   {
+    "area_id": "ug",
+    "name_raw": "Nurul",
+    "person_id": "nurul"
+   },
+   {
+    "area_id": "lt2",
+    "name_raw": "Aryo",
+    "person_id": "aryo"
+   },
+   {
+    "area_id": "lt2",
+    "name_raw": "Naisah",
+    "person_id": "naisah"
+   },
+   {
+    "area_id": "lt2",
+    "name_raw": "Iska",
+    "person_id": "iska"
+   },
+   {
+    "area_id": "lt2",
+    "name_raw": "Inez",
+    "person_id": "inez"
+   },
+   {
+    "area_id": "lt2",
+    "name_raw": "Dikri",
+    "person_id": "dikri"
+   },
+   {
+    "area_id": "lt2",
+    "name_raw": "Hera",
+    "person_id": "hera"
+   },
+   {
+    "area_id": "lt1",
+    "name_raw": "Deviyanti",
+    "person_id": "deviyanti"
+   },
+   {
+    "area_id": "lt1",
+    "name_raw": "Heri",
+    "person_id": "heri"
+   },
+   {
+    "area_id": "lt1",
+    "name_raw": "Rangga",
+    "person_id": "rangga"
+   },
+   {
+    "area_id": "lt1",
+    "name_raw": "Nenti",
+    "person_id": "nenti"
+   },
+   {
+    "area_id": "lt1",
+    "name_raw": "Mariam",
+    "person_id": "mariam"
+   },
+   {
+    "area_id": "lk",
+    "name_raw": "Hermawati",
+    "person_id": "hermawati"
+   },
+   {
+    "area_id": "lk",
+    "name_raw": "Agus",
+    "person_id": "agus"
+   },
+   {
+    "area_id": "lk",
+    "name_raw": "Revaldi",
+    "person_id": "revaldi"
+   },
+   {
+    "area_id": "garbage",
+    "name_raw": "muhamad Abdullah",
+    "person_id": "muhamad_abdullah"
+   },
+   {
+    "area_id": "gondola",
+    "name_raw": "afif",
+    "person_id": "afif"
+   },
+   {
+    "area_id": "gondola",
+    "name_raw": "riyan",
+    "person_id": "riyan"
+   },
+   {
+    "area_id": "gondola",
+    "name_raw": "Sahrul",
+    "person_id": "sahrul"
    }
   ],
-  "total_mp": 34,
+  "total_mp": 37,
   "off_day": 0,
   "sakit": 0,
   "alfa": 0,

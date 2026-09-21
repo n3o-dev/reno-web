@@ -15,7 +15,6 @@ import {
   DUPLICATE_PAIRS,
   REPLY_MINUTES,
   CLOSURE_MINUTES,
-  REPEAT_AREAS,
 } from './fixtures/published-figures'
 
 /**
@@ -30,8 +29,16 @@ import {
  * test pass.
  */
 
-const REPORTERS = ['Amartha', 'Faisal Hanafi', 'Aldo', 'Acenk (Bontot)', 'N', 'yeyenriani', 'Sarwedi']
-const CLIENT_PICS = ['Cristian B. Suryanto', 'Rachmad Adi', 'Sofyan', 'Desak Made Meyasni']
+import {
+  REPORTERS,
+  CLIENT_PICS,
+  JOB_CAPTIONS,
+  REPEAT_AREAS,
+  ONE_OFF_AREAS,
+  LINEUP_BY_AREA,
+  WORK_ORDERS,
+  slug,
+} from './fixtures/real-content'
 
 /** Mulberry32 — small, seeded, deterministic. */
 function rng(seed: number): () => number {
@@ -44,6 +51,12 @@ function rng(seed: number): () => number {
   }
 }
 const rand = rng(20260910)
+
+/** Every area named anywhere in the sources, for tagging work reports. */
+const AREA_POOL: readonly string[] = [
+  ...REPEAT_AREAS.map((a) => a.label),
+  ...ONE_OFF_AREAS.flat(),
+]
 const pick = <T>(xs: readonly T[]): T => xs[Math.floor(rand() * xs.length)] as T
 
 /** WIB timestamp inside a working day. */
@@ -82,7 +95,7 @@ DAYS.forEach((_, d) => {
     out.message.push({
       ...envelope(`msg_${d}_${i}`, d, minute, pick([...REPORTERS, ...CLIENT_PICS])),
       source_message_id: `msg_${d}_${i}`,
-      text: 'Progres area',
+      text: JOB_CAPTIONS[i % JOB_CAPTIONS.length] as string,
       photo_ids: [],
       reply_to_message_id: null,
       edited: false,
@@ -132,8 +145,10 @@ DAYS.forEach((_, d) => {
     const defects = defectsToday[i] ?? []
     out.work_report.push({
       ...envelope(`wr_${reportN}`, d, minute, pick(REPORTERS)),
-      area_id: defects.includes('no_area') ? null : `area_${i % 12}`,
-      job_text: defects.includes('no_caption') ? '' : 'Mopping koridor',
+      area_id: defects.includes('no_area') ? null : slug(AREA_POOL[i % AREA_POOL.length] as string),
+      job_text: defects.includes('no_caption')
+        ? ''
+        : (JOB_CAPTIONS[reportN % JOB_CAPTIONS.length] as string),
       photo_ids: [],
       is_before_after: i < beforeAfterToday,
       shift: ((i % 3) + 1) as 1 | 2 | 3,
@@ -146,14 +161,22 @@ DAYS.forEach((_, d) => {
 // ---- complaints -----------------------------------------------------------
 // The seven repeat areas are placed on their real days first; the remainder
 // get an area seen on no other day, so exactly seven areas recur.
-const complaintsByDay: string[][] = DAYS.map(() => [])
-for (const [area, days] of REPEAT_AREAS) {
-  for (const d of days) (complaintsByDay[d] as string[]).push(area)
+/**
+ * Real area ids per day: the seven recurring areas on the days the deck shows
+ * them, then that day's transcribed one-offs. Where the deck shows a complaint
+ * with no readable label, the fixture carries null rather than a made-up name.
+ */
+const complaintsByDay: (string | null)[][] = DAYS.map(() => [])
+for (const area of REPEAT_AREAS) {
+  for (const d of area.days) (complaintsByDay[d] as (string | null)[]).push(area.id)
 }
-let uniqueArea = 0
 DAYS.forEach((_, d) => {
-  const list = complaintsByDay[d] as string[]
-  while (list.length < (COMPLAINTS[d] as number)) list.push(`once_${uniqueArea++}`)
+  const list = complaintsByDay[d] as (string | null)[]
+  for (const label of ONE_OFF_AREAS[d] ?? []) {
+    if (list.length >= (COMPLAINTS[d] as number)) break
+    list.push(slug(label))
+  }
+  while (list.length < (COMPLAINTS[d] as number)) list.push(null)
 })
 
 let complaintN = 0
@@ -163,13 +186,13 @@ let complaintN = 0
 interface Pending {
   readonly day: number
   readonly minute: number
-  readonly area: string
+  readonly area: string | null
   readonly index: number
   state: 'raised' | 'answered' | 'closed_with_photo'
 }
 const pending: Pending[] = []
 DAYS.forEach((_, d) => {
-  const list = complaintsByDay[d] as string[]
+  const list = complaintsByDay[d] as (string | null)[]
   const closed = CLOSED_WITH_PHOTO[d] as number
   const answered = ANSWERED[d] as number
   list.forEach((area, i) => {
@@ -230,18 +253,24 @@ for (const p of pending) {
 }
 
 // ---- supporting records ---------------------------------------------------
+const rosterEntries = Object.entries(LINEUP_BY_AREA).flatMap(([areaId, names]) =>
+  names.map((name) => ({ area_id: areaId, name_raw: name, person_id: slug(name) })),
+)
+
 DAYS.forEach((_, d) => {
   for (const shift of [1, 2, 3] as const) {
     out.lineup.push({
       ...envelope(`lu_${d}_${shift}`, d, shift === 1 ? 7 * 60 : shift === 2 ? 15 * 60 : 23 * 60, 'Amartha'),
       shift,
       date: DAYS[d] as string,
-      entries: REPORTERS.map((name, n) => ({
-        area_id: `area_${n}`,
-        name_raw: name,
-        person_id: `p_${n}`,
-      })),
-      total_mp: 34,
+      entries: rosterEntries,
+      /**
+       * The group's shift-1 line-up states "Total mp : 34". This roster is the
+       * union of every area named across the shift-1 and shift-2 messages, so
+       * the count follows the names actually listed rather than quoting a
+       * figure the entries would contradict.
+       */
+      total_mp: rosterEntries.length,
       off_day: 0,
       sakit: 0,
       alfa: 0,
@@ -252,32 +281,42 @@ DAYS.forEach((_, d) => {
 
 REPORTERS.forEach((name, n) => {
   out.person.push({
-    ...envelope(`per_${n}`, 0, 7 * 60, name),
-    person_id: `p_${n}`,
+    ...envelope(`per_tl_${n}`, 0, 7 * 60, name),
+    person_id: slug(name),
     canonical_name: name,
     aliases: [],
-    role: n === 1 ? 'pimpro' : 'team_leader',
-    area_default: `area_${n}`,
+    role: name === 'Faisal Hanafi' ? 'pimpro' : 'team_leader',
+    area_default: null,
     active_from: '2026-01-01',
     active_to: null,
   })
 })
+Object.entries(LINEUP_BY_AREA).forEach(([areaId, names]) => {
+  names.forEach((name, n) => {
+    out.person.push({
+      ...envelope(`per_${areaId}_${n}`, 0, 7 * 60, name),
+      person_id: slug(name),
+      canonical_name: name,
+      // Damme is the alias case the personnel master exists to resolve.
+      aliases: name === 'Damme' ? ['Dame'] : [],
+      role: 'cleaner',
+      area_default: areaId,
+      active_from: '2026-01-01',
+      active_to: null,
+    })
+  })
+})
 
-const WORK_ORDERS = [
-  ['Take Out Kursi Area LDL & West Lobby', 0, '2026-09-10', 'closed_with_photo'],
-  ['Peminjaman Meja & Qline — Bee Cheng Hiang', 0, '2026-09-12', 'closed_with_photo'],
-  ['WO to HK — Pioneer DJ', 0, '2026-09-13', 'raised'],
-] as const
-WORK_ORDERS.forEach(([title, d, due, state], n) => {
+WORK_ORDERS.forEach((wo, n) => {
   out.work_order.push({
-    ...envelope(`wo_${n}`, d, 11 * 60 + n * 40, 'Desak Made Meyasni'),
-    title,
+    ...envelope(`wo_${n}`, wo.dayIndex, wo.minute, wo.requestedBy),
+    title: wo.title,
     document_id: `doc_${n}`,
-    requested_by: 'p_desak',
-    due_date: due,
-    state,
+    requested_by: slug(wo.requestedBy),
+    due_date: wo.due,
+    state: wo.state,
     state_history: [],
-    closing_photo_id: state === 'closed_with_photo' ? `ph_${n}` : null,
+    closing_photo_id: wo.state === 'closed_with_photo' ? `ph_${n}` : null,
     blocked_reason_message_id: null,
   })
 })
