@@ -1,0 +1,80 @@
+@import 'tailwindcss';
+
+/*
+ * Every value here comes from DESIGN.md. Nothing is invented at the point of
+ * use: a screen that needs a colour or a step takes it from this file, and a
+ * screen that needs one this file does not have is a design question, not a
+ * Tailwind question.
+ */
+@theme {
+  /* From the brand kit */
+  --color-surface: #ffffff;
+  --color-ink: #1d1409;
+  --color-cream: #f4e3d0;
+  --color-accent: #4b3d2e;
+  --color-line: #dfdedd;
+
+  /* Derived — see DESIGN.md for the reasoning behind each */
+  --color-plane: #f7f5f2;
+  --color-muted: #6f6558;
+  --color-faint: #8d8377;
+
+  /* Ordinal: shifts, funnel stages. Dark step is the brand accent. */
+  --color-ordinal-1: #c4b39c;
+  --color-ordinal-2: #8a7354;
+  --color-ordinal-3: #4b3d2e;
+
+  /* Sequential: heatmaps. Cream is step 2, accent is step 9. */
+  --color-seq-1: #faf5ef;
+  --color-seq-2: #f4e3d0;
+  --color-seq-3: #e7d2b8;
+  --color-seq-4: #d7bd9c;
+  --color-seq-5: #c4a67f;
+  --color-seq-6: #ac8b62;
+  --color-seq-7: #8f7049;
+  --color-seq-8: #6b5436;
+  --color-seq-9: #4b3d2e;
+
+  /*
+   * Categorical: fixed order, never cycled, a sixth category folds into
+   * "Other". Off-brand by necessity — the four brand colours measure chroma
+   * 0.031–0.053 against a 0.1 floor, so none of them can lead a categorical
+   * set. Used on exactly two charts: complaint Cause and report Defects.
+   */
+  --color-cat-1: #2a78d6;
+  --color-cat-2: #eb6834;
+  --color-cat-3: #1baf7a;
+  --color-cat-4: #eda100;
+  --color-cat-5: #e87ba4;
+
+  /* Status: fixed, never themed, never a data series, never colour alone. */
+  --color-good: #0ca30c;
+  --color-warning: #fab219;
+  --color-serious: #ec835a;
+  --color-critical: #d03b3b;
+
+  --font-display: var(--font-space-grotesk), system-ui, sans-serif;
+  --font-sans: var(--font-dm-sans), system-ui, sans-serif;
+
+  --radius-card: 14px;
+  --radius-control: 9px;
+  --radius-bar: 4px;
+}
+
+html {
+  background: var(--color-plane);
+  color: var(--color-ink);
+}
+
+body {
+  font-family: var(--font-sans);
+  font-size: 16px;
+  line-height: 1.55;
+}
+
+h1,
+h2,
+h3 {
+  font-family: var(--font-display);
+  letter-spacing: -0.01em;
+}
