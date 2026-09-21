@@ -60,7 +60,9 @@ admin types by hand today.
 
 **4 · RKB Realisation** — a faithful mirror of the workbook: sheet, block, job row, R and A per
 day, with `JUMLAH` / `REALISASI` / `PERSENTASI` computed live. Blocked cells read *blocked*
-and link to the message that justifies them. Gross and net realisation both shown.
+and link to the message that justifies them. Gross and net realisation both shown. The plan
+is frozen for the month (ADR-0004): job rows keep their positional ids, and an upload whose
+job-row structure differs from the month in progress is refused rather than absorbed.
 
 **5 · Manpower & Billing** — contracted slots against filled slots per area per shift per day;
 Off Day, Sakit, Alfa and Izin broken out; unfilled slot-days flagged replaced or not; ending
@@ -98,6 +100,7 @@ other nine left blank and marked human input. Weighted total marked provisional 
 - **AC-13**: Records with low `confidence` render visibly distinguished and are never dropped. A test injects a 0.4-confidence complaint and asserts it appears and carries a confidence marker.
 - **AC-14**: `pnpm build` succeeds, `pnpm typecheck` reports no errors, and `pnpm lint` is clean.
 - **AC-15**: Over 10–13 September 2026 the screens render the case-study deck's published figures exactly — per-day messages, photos, work reports, complaints, answered and closed-with-photo; reply and closure medians; before-after coverage; the defect breakdown; photos sent over three hours after capture; duplicate pairs; and the seven repeat areas. `pnpm test:e2e -- deck-parity` reads each figure off the rendered DOM and compares it to `scripts/fixtures/published-figures.ts`. The deck is the source of truth: a mismatch is a dashboard defect, never a reason to edit the figure.
+- **AC-16**: The RKB plan is frozen for the month. The workbook's job-row structure is fingerprinted on upload, and an upload whose structure differs from the month in progress is refused with a message naming the rows that were inserted, deleted or reordered. Changed wording alone is accepted. A test uploads a workbook with a row inserted mid-month and asserts the refusal names that row; a second uploads the same workbook with one activity reworded and asserts it is accepted.
 
 ## Verification
 ```
