@@ -1,10 +1,10 @@
 # Design tokens
 
-Source: **Space Grotesk & DM Sans brand kit** (`space-grotesk-dm-sans-brand-kit.pdf`, fontpair.co).
-Type, the four brand colours and the icon set come from that kit unchanged. Everything the kit
-does not specify — a page plane, muted inks, and the data-viz ramps — is derived here and
-recorded with its reasoning. Data-viz slots are validated with the `dataviz` skill's
-`validate_palette.js`; re-run it if any value changes.
+Source: **Space Grotesk & DM Sans brand kit** (`space-grotesk-dm-sans-brand-kit_1.pdf`,
+fontpair.co). Type, the four brand colours, the border and the icon set come from that kit
+unchanged. Everything the kit does not specify — a page plane, muted inks, and the data-viz
+ramps — is derived here and recorded with its reasoning. Data-viz slots are validated with the
+`dataviz` skill's `validate_palette.js`; re-run it if any value changes.
 
 ## Type
 
@@ -13,7 +13,7 @@ Stacks: `"Space Grotesk", system-ui, sans-serif` · `"DM Sans", system-ui, sans-
 
 The kit's scale is built for marketing pages, where the body step is 20px. A dense dashboard
 cannot use that for table cells, so the register below uses the scale's lower steps and adds
-two, both marked. Nothing else is altered.
+three, each marked. Nothing else is altered.
 
 | Role | Step | Family | Size / line / tracking |
 |---|---|---|---|
@@ -31,60 +31,71 @@ Body 20 is unused: there is no long-form copy.
 
 ## Colour
 
+This kit is **warm neutral** — espresso, cream, brown, white. There is no saturated hue in it
+at all. That single fact drives every decision below.
+
 ### From the kit
 | Token | Hex | Kit role |
 |---|---|---|
 | `--surface` | `#FFFFFF` | Background / Surface |
-| `--ink` | `#400000` | Text |
-| `--primary` | `#DC5F05` | Primary |
-| `--accent` | `#820000` | Accent |
-| `--line` | `#E4DBDB` | Border |
+| `--ink` | `#1D1409` | Text |
+| `--cream` | `#F4E3D0` | Primary |
+| `--accent` | `#4B3D2E` | Accent |
+| `--line` | `#DFDEDD` | Border |
+
+**`--cream` is a surface, not an accent.** The kit's own contrast page puts `#F4E3D0` at
+1.25:1 on white. It can never be a chart mark, a rule, an icon or text. It is a fill you put
+things *on*: highlight rows, the hero tile, the active toggle. Named `--cream` rather than
+`--primary` so nothing reaches for it as an accent by reflex.
 
 ### Derived, with reasoning
 | Token | Hex | Why |
 |---|---|---|
-| `--plane` | `#f8f4f4` | The kit sets Background and Surface both to `#FFFFFF`, so cards would not separate from the page. A warm tint one step off white, keyed to the border hue. 1.09:1 against a card — present, never loud. |
-| `--muted` | `#7a5c5c` | Secondary ink. 5.98:1 on white, clears AA for body. |
-| `--faint` | `#947878` | Axis labels and tertiary meta. 4.03:1 — AA for large and UI text; never carries a value on its own. |
-| `--tint` | `#fdf0e6` | Selected rows and soft highlight. The lightest step of the sequential ramp, so highlights stay in the brand hue. |
+| `--plane` | `#f7f5f2` | The kit sets Background and Surface both to `#FFFFFF`, so cards would not separate from the page. A warm off-white; 1.09:1 against a card — present, never loud. |
+| `--muted` | `#6f6558` | Secondary ink. 5.71:1 on white, clears AA for body. |
+| `--faint` | `#8d8377` | Axis labels and tertiary meta. 3.72:1 — AA for large and UI text; never carries a value alone. |
 
-### Two contrast rules that come from the kit's own check page
-
-1. **Text on a primary surface is `#400000`, never white.** White on `#DC5F05` is 3.70:1; `#400000` on `#DC5F05` is 4.67:1. The kit's own sample card does the same.
-2. **`#DC5F05` is never small text on white.** 3.70:1 is large-text-only. Where an accent must read as text, use `--accent` `#820000` (10.77:1). The eyebrow is therefore `#820000`, not orange.
-
-Dark surfaces use `--ink` `#400000` with white text (17.24:1).
+### Contrast rules taken from the kit's own check page
+| Pairing | Ratio | Use |
+|---|---|---|
+| `#1D1409` on white | 18.16 | Body text |
+| `#4B3D2E` on white | 10.47 | Eyebrow, accent text, single-series marks |
+| white on `#1D1409` | 18.16 | Dark surfaces — the header |
+| `#1D1409` on `#F4E3D0` | 14.48 | The hero tile and the active toggle |
+| `#F4E3D0` on white | **1.25** | Surface only. Never a mark, never text. |
 
 ### Data — ordinal (shifts, funnel stages)
-`#f2a065` → `#dc5f05` → `#8a3c03`. Brand primary is the middle step.
+`#c4b39c` → `#8a7354` → `#4b3d2e`. The dark step **is** brand accent `#4B3D2E`.
 Shifts are ordered — morning, afternoon, night — so they take a ramp, not a categorical set.
 Darkest is shift 1, the largest; lightest is shift 3, the smallest.
 
 > Validated `--ordinal --mode light --surface #ffffff`: monotone PASS, adjacent ΔL PASS,
-> light-end contrast 2.10:1 PASS, single hue (9° spread) PASS.
+> light-end contrast 2.04:1 PASS, single hue (7° spread) PASS.
+
+Single-series bars use the mid step `#8a7354` — dark enough to read, distinct from body text.
 
 ### Data — sequential (heatmaps)
-`#fdf0e6` `#fbdcc4` `#f8c49c` `#f4a870` `#ee8a42` `#dc5f05` `#b94e04` `#8a3c03` `#5c2802`
+`#faf5ef` `#f4e3d0` `#e7d2b8` `#d7bd9c` `#c4a67f` `#ac8b62` `#8f7049` `#6b5436` `#4b3d2e`
 
-> Verified: lightness monotone light→dark PASS, hue spread 14° PASS (single hue).
-> The lightest step is allowed to recede toward the surface — that is what "near zero" means
-> on a sequential scale.
+> Verified: lightness monotone light→dark PASS, hue spread 5° PASS (single hue).
+> Brand cream is step 2 and brand accent is step 9, so the whole ramp is on-brand.
 
 ### Data — categorical (unordered: complaint causes, report defects)
-`#dc5f05` `#2a78d6` `#1baf7a` `#7f66ff` `#e87ba4` — fixed order, never cycled. A sixth
+`#2a78d6` `#eb6834` `#1baf7a` `#eda100` `#e87ba4` — fixed order, never cycled. A sixth
 category folds into "Other".
 
 > Validated `--mode light --surface #ffffff`: lightness band PASS, chroma floor PASS,
-> CVD separation 18.1 PASS, normal-vision floor 24.0 PASS.
-> Contrast WARN on `#1baf7a` and `#e87ba4` — **relief is mandatory**: these series always ship
-> visible direct labels and a table view.
+> CVD separation 9.1 PASS, normal-vision floor 19.6 PASS.
+> Contrast WARN on `#1baf7a`, `#eda100`, `#e87ba4` — **relief is mandatory**: these series
+> always ship visible direct labels and a table view.
 
-**Why this leaves the brand hue.** The kit is warm monochrome — orange, dark red, maroon all
-sit within about 30° of hue. Unordered categories need separable hues, and any set drawn only
-from the kit fails CVD separation outright. Brand orange therefore leads as slot 1 and the
-remaining slots are chosen to pass the gate. This is the documented onboarding method: keep the
-brand's hue where it can lead, snap the rest to passing steps. Ordinal, sequential and all
-chrome stay fully on-brand; only unordered categorical work leaves it.
+**Why none of this is brand colour.** A categorical slot must carry chroma ≥ 0.1 or it reads
+as grey and stops separating anything. Measured, the four brand colours come in at 0.031,
+0.053, 0.037 and 0.031 — all grey by that test — and the brand's two closest steps also fail
+the normal-vision floor at ΔE 15.0. So unlike a branded-hue kit, this one has nothing that can
+lead the set, and the reference theme is used in its own documented order. This affects exactly
+two charts: complaint Cause and report Defects. Ordinal, sequential, status and every piece of
+chrome stay fully on-brand.
 
 ### Data — status (fixed, never themed)
 | Role | Hex |
@@ -94,17 +105,16 @@ chrome stay fully on-brand; only unordered categorical work leaves it.
 | serious | `#ec835a` |
 | critical | `#d03b3b` |
 
-**Collision warning.** With a warm brand these sit close to brand colours — `#ec835a` against
-primary `#DC5F05`, `#d03b3b` against accent `#820000`. Status therefore **never travels as
-colour alone**: every status carries a Feather icon and a text label, and status colour is
-never used for a data series.
+Against a neutral brand these read cleanly with no collision — the hazard the previous warm
+kit created is gone. Status still never travels as colour alone: every status carries a Feather
+icon and a text label, and status colour is never used for a data series.
 
 ## Icons
 
 **Feather, 2px stroke**, from the kit. Status mapping:
 good → `check-circle` · warning → `alert-triangle` · critical → `alert-octagon` ·
 blocked → `pause-circle` · human input → `edit-2` · external → `external-link` ·
-unknown → `help-circle` · neutral → `circle`.
+unknown → `help-circle` · neutral → `circle` · chart explainer → `info`.
 
 ## Spacing and shape
 
@@ -125,6 +135,9 @@ Categorical hues in fixed order, never cycled · never a dual-axis chart · 2px 
 gap between stacked segments and adjacent bars · 4px rounded data-end, flat at the baseline ·
 legend for two or more series, direct labels at four or fewer · hover tooltip on every mark ·
 table view on every chart · text wears ink tokens, never the series colour.
+
+Every chart also carries an `info` control: what it shows, how the number is computed, and the
+SOP rule or source behind it — behind a click, never printed on the page.
 
 ## Not covered yet
 
