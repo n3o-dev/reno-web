@@ -25,7 +25,8 @@
     "test:ingest": "vitest run tests/ingest",
     "db:migrate": "tsx scripts/db-migrate.ts",
     "user:add": "tsx scripts/user-add.ts",
-    "seed:e2e": "tsx scripts/seed-e2e.ts"
+    "seed:e2e": "tsx scripts/seed-e2e.ts",
+    "test:report": "vitest run tests/report"
   },
   "devDependencies": {
     "@playwright/test": "^1.63.0",
