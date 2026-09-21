@@ -18,12 +18,20 @@
   margin: 0 auto;
 }
 
-.report section {
+/*
+ * Rows are what must not split, not whole sections. Keeping a section
+ * together pushed Complaints onto its own page and left half of page one
+ * blank; keeping a row together is what actually stops a figure being
+ * separated from its label.
+ */
+.report section > div,
+.report section > h3 {
   break-inside: avoid;
   page-break-inside: avoid;
 }
 
-.report h2 {
+.report h2,
+.report h3 {
   break-after: avoid;
   page-break-after: avoid;
 }

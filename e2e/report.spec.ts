@@ -32,6 +32,18 @@ test('the gates are shown, and the unconfirmed roster holds the pack', async ({ 
   await expect(page.getByText(/Nobody has confirmed the roster for 2026-09/)).toBeVisible()
 })
 
+test('the print view saves as PDF, and a draft says so on paper', async ({ page }) => {
+  await page.goto(`/print/${MONTH}`)
+  const save = page.getByRole('button', { name: 'Save as PDF' })
+  await expect(save).toBeVisible()
+
+  await page.emulateMedia({ media: 'print' })
+  // The control is for the screen; the draft mark is for the paper. A draft
+  // that prints looking final is the failure worth preventing.
+  await expect(save).toBeHidden()
+  await expect(page.getByText(/Draft\./)).toBeVisible()
+})
+
 test('the workbook refuses to generate while a gate is open', async ({ page }) => {
   // page.request, not the request fixture: this needs the signed-in cookie.
   const response = await page.request.get(`/api/report/rkb?month=${MONTH}`)

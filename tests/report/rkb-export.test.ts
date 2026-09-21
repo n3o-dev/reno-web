@@ -130,3 +130,40 @@ describe('what the workbook looks like afterwards', () => {
     expect(result.blocked).toEqual([])
   })
 })
+
+describe('AC-9 · two exports of the same month agree', () => {
+  /*
+   * Contents, not bytes. writeActuals rebuilds the zip archive, so entry
+   * timestamps move between runs and two exports of identical data differ as
+   * files while being identical as a spreadsheet. Comparing checksums would
+   * measure the clock.
+   */
+  const first = exportRkb(original, book, matchesFor(75), MONTH)
+  const second = exportRkb(original, book, matchesFor(75), MONTH)
+
+  it('writes the same cells', () => {
+    const cells = (bytes: Uint8Array) =>
+      parseWorkbook(bytes).sheets.map((sheet) => ({
+        name: sheet.name,
+        rows: sheet.sections.flatMap((section) =>
+          section.rows.map((row) => ({
+            no: row.no,
+            days: row.days.map((d) => [d.day, d.planned, d.actual]),
+          })),
+        ),
+      }))
+    expect(cells(second.bytes)).toEqual(cells(first.bytes))
+  })
+
+  it('reports the same stale totals and the same blocks', () => {
+    expect(second.staleTotals).toEqual(first.staleTotals)
+    expect(second.blocked).toEqual(first.blocked)
+    expect(second.plan.done).toBe(first.plan.done)
+  })
+
+  it('holds the same zip entries, even though the bytes differ', () => {
+    expect(Object.keys(unzipSync(second.bytes)).sort()).toEqual(
+      Object.keys(unzipSync(first.bytes)).sort(),
+    )
+  })
+})

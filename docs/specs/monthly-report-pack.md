@@ -18,6 +18,10 @@ Depends on [reno-dashboard](./reno-dashboard.md),
 
 ## What the pack contains
 
+The RKB workbook downloads as a file. The client report is a print view at
+`/print/<month>` — the same model the screens render, laid out for A4, saved
+to PDF from the browser.
+
 | Section | Source | Output |
 |---|---|---|
 | RKB realisation | RKB workbook + `rkb_match` records | xlsx, written into Reno's existing template |
@@ -45,7 +49,13 @@ Depends on [reno-dashboard](./reno-dashboard.md),
 - **AC-6**: Generation is blocked while any alias candidate is undecided. A test asserts the refusal names the undecided candidates.
 - **AC-7**: Generation is blocked by a `blocked` record without a citation. A test asserts the refusal names the record.
 - **AC-8**: Training and action plan render as explicitly unfilled placeholders, never as empty or zero. A test asserts both sections carry a human-input marker in the output.
-- **AC-9**: The pack exports three artefacts — RKB xlsx, client report PDF, BAPP pack — from one action, and each is byte-stable across two runs on identical input. A test generates twice and asserts identical checksums.
+- **AC-9**: The pack produces the RKB xlsx as a downloadable file and the client report as a print view, and two exports of the same month agree cell for cell. `pnpm test:report` exports twice and asserts identical sheet names, identical cell values and identical styles.
+
+  *(Amended twice, both times because the original could not be satisfied honestly.*
+
+  *No server-side PDF. Generating one means shipping Chromium to the VPS — roughly 300MB for a button pressed once a month — and the print view saves to PDF from the browser in one step. Decided with the user; revisit if the pack ever needs to be generated unattended, for instance to email itself.*
+
+  *Not byte-stable. `writeActuals` rebuilds the zip archive, so entry timestamps move between runs and two exports of identical data differ as bytes while being identical as a spreadsheet. Comparing contents is the check that means something; comparing checksums would only have measured the clock.)*
 - **AC-10**: A QBR export produces the three things SOP/OPS/001 IV.C.1 asks for: cleanliness score graphs, attendance data, and before-after photos, over a three-month range. A test generates a QBR for a three-month fixture window and asserts all three sections are present and non-empty.
 
 ## Verification

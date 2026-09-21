@@ -1,5 +1,6 @@
 import { areaLabel } from '@/rules/area'
 import type { MonthReport } from '@/services/report'
+import { PrintButton } from './PrintButton'
 import './print.css'
 
 interface PrintableReportProps {
@@ -60,19 +61,23 @@ export function PrintableReport({ report }: PrintableReportProps) {
 
   return (
     <main className="report px-6 py-8">
-      <header className="border-b-2 border-ink pb-3">
-        <h1 className="font-[family-name:var(--font-display)] text-[28px] leading-[1.2]">
-          Monthly Report
-        </h1>
-        <p className="text-[14px] text-muted">
-          {pack.site.label} · {pack.period.label}
-        </p>
+      <header className="flex items-start justify-between gap-4 border-b-2 border-ink pb-3">
+        <div>
+          <h1 className="font-[family-name:var(--font-display)] text-[28px] leading-[1.2]">
+            Monthly Report
+          </h1>
+          <p className="text-[14px] text-muted">
+            {pack.site.label} · {pack.period.label}
+          </p>
+        </div>
+        <PrintButton />
       </header>
 
       {!report.generatable && (
-        <p className="no-print mt-4 rounded-[var(--radius-control)] border border-line bg-cream p-3 text-[13px]">
-          Draft — {open === 1 ? 'one check is' : `${open} checks are`} still outstanding. Not a
-          final pack.
+        <p className="mt-4 rounded-[var(--radius-control)] border border-line bg-cream p-3 text-[13px]">
+          <strong>Draft.</strong> {open === 1 ? 'One check is' : `${open} checks are`} still
+          outstanding, so this is not a final pack. Printed on purpose: a draft that prints
+          looking final is worse than one that does not print at all.
         </p>
       )}
 
