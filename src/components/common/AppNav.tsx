@@ -38,7 +38,8 @@ export function AppNav() {
             href={item.href}
             aria-current={active ? 'page' : undefined}
             className={[
-              'shrink-0 rounded-[var(--radius-control)] px-3 py-2 text-[14px] whitespace-nowrap',
+              // min-h-11 is 44px: the smallest target a thumb reliably hits (AC-12).
+              'flex min-h-11 shrink-0 items-center rounded-[var(--radius-control)] px-3 text-[14px] whitespace-nowrap',
               active ? 'bg-cream text-ink' : 'text-muted hover:bg-plane',
             ].join(' ')}
           >
