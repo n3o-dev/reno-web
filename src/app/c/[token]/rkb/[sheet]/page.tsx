@@ -6,16 +6,11 @@ import { WORKBOOK_LABEL, WORKBOOK_MONTH, getWorkbook, planCells, sheetSlug } fro
 import { DayGrid } from '@/components/screens/parts/DayGrid'
 
 interface SheetPageProps {
-  readonly params: Promise<{ readonly sheet: string }>
-}
-
-export async function generateStaticParams(): Promise<{ sheet: string }[]> {
-  const book = await getWorkbook()
-  return book.sheets.map((sheet) => ({ sheet: sheetSlug(sheet.name) }))
+  readonly params: Promise<{ readonly sheet: string; readonly token: string }>
 }
 
 export default async function SheetPage({ params }: SheetPageProps) {
-  const { sheet: slug } = await params
+  const { sheet: slug, token } = await params
   const book = await getWorkbook()
   const sheet = book.sheets.find((s) => sheetSlug(s.name) === slug)
   if (sheet === undefined) notFound()
@@ -24,7 +19,7 @@ export default async function SheetPage({ params }: SheetPageProps) {
 
   return (
     <>
-      <Link href="/rkb" className="text-[13px] text-muted underline decoration-line">
+      <Link href={`/c/${token}/rkb`} className="text-[13px] text-muted underline decoration-line">
         ← All sheets
       </Link>
       <ScreenHeader

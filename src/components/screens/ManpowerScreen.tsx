@@ -1,0 +1,114 @@
+import type { ScreenProps } from '@/components/screens/props'
+import { ScreenHeader } from '@/components/common/ScreenHeader'
+import { Card } from '@/components/styled/Card'
+import {
+  absenceTotals,
+  coverage,
+  doubleListings,
+  headcountMismatches,
+  provisionalContracts,
+  slotDays,
+} from '@/rules/manpower'
+import { getRecords } from '@/services/records'
+import { CoverageTable } from '@/components/screens/parts/CoverageTable'
+import { SignalsPanel } from '@/components/screens/parts/SignalsPanel'
+
+const ABSENCE_LABEL = {
+  off_day: 'Off Day',
+  sakit: 'Sakit',
+  izin: 'Izin',
+  alfa: 'Alfa',
+} as const
+
+interface ManpowerScreenProps extends ScreenProps {
+  /** The anti-fraud queue is Reno's. The client link never renders it (AC-3). */
+  readonly showSignals?: boolean
+}
+
+export async function ManpowerScreen({ siteId, showSignals = true }: ManpowerScreenProps) {
+  const records = await getRecords(siteId)
+  const lineups = records.lineups
+  const contracts = provisionalContracts(lineups)
+  const days = slotDays(lineups)
+  const rows = coverage(contracts, days)
+  const absences = absenceTotals(lineups)
+  const totalFilled = rows.reduce((n, r) => n + r.filled, 0)
+  const totalContracted = rows.reduce((n, r) => n + r.contractedSlotDays, 0)
+
+  return (
+    <>
+      <ScreenHeader
+        title="Manpower & Billing"
+        question="Who was on site and what the client owes"
+      />
+      <div className="grid gap-4 md:grid-cols-3">
+        <Card
+          title="Slot-days filled"
+          info="A slot is one area, one shift, one day, and it is the unit the contract bills in. A slot bills in full whoever fills it. Attendance here is claimed — read from the line-up the project leader posts — and stays claimed until an admin confirms it."
+        >
+          <p className="font-[family-name:var(--font-display)] text-[38px] leading-[1.15] tabular-nums">
+            <span data-figure="manpower.filled_slot_days">{totalFilled}</span>
+            <span className="text-faint"> / {totalContracted}</span>
+          </p>
+          <p className="text-[13px] text-muted">Claimed, not yet admin-confirmed</p>
+        </Card>
+        <Card
+          title="Absences"
+          info="Off Day is planned leave and is already priced into the contract, so it never deducts. Sakit, Izin and Alfa deduct only when the slot went unfilled and nobody replaced the person."
+        >
+          <dl className="grid grid-cols-2 gap-x-4 gap-y-2 text-[14px]">
+            {Object.entries(ABSENCE_LABEL).map(([key, label]) => (
+              <div key={key} className="flex justify-between gap-2">
+                <dt className="text-muted">{label}</dt>
+                <dd
+                  data-figure={`manpower.absence.${key}`}
+                  className="tabular-nums"
+                >
+                  {absences[key as keyof typeof ABSENCE_LABEL]}
+                </dd>
+              </div>
+            ))}
+          </dl>
+          <p className="mt-3 border-t border-line pt-3 text-[13px] text-muted">
+            None reported in this period.
+          </p>
+        </Card>
+        <Card
+          title="Amount payable"
+          info="Gross less any unfilled, unreplaced slot-days. The arithmetic is shown in full on the BAPP pack. Complaints never touch this figure: a filthy toilet costs the Pimpro his score, not the invoice."
+        >
+          <p
+            data-figure="manpower.payable"
+            className="font-[family-name:var(--font-display)] text-[20px] leading-[1.2] text-muted"
+          >
+            Rate not loaded
+          </p>
+          <p className="mt-1 text-[13px] text-muted">
+            The monthly rate per MP comes from the service contract. Until it is loaded this
+            screen counts slot-days and states no money.
+          </p>
+        </Card>
+      </div>
+
+      <div className="mt-4 grid gap-4 lg:grid-cols-[2fr_1fr]">
+        <section className="rounded-[var(--radius-card)] border border-line bg-surface p-5">
+          <h2 className="font-[family-name:var(--font-display)] text-[17px]">
+            Coverage by area and shift
+          </h2>
+          <p className="mt-1 mb-2 text-[13px] text-muted">
+            Contracted figures are provisional — taken from the fullest roster the period shows,
+            not from the service contract.
+          </p>
+          <CoverageTable rows={rows} />
+        </section>
+        {showSignals && (
+          <SignalsPanel
+            doubles={doubleListings(lineups)}
+            mismatches={headcountMismatches(lineups)}
+            aliasCandidates={records.people.filter((p) => p.aliases.length > 0)}
+          />
+        )}
+      </div>
+    </>
+  )
+}
