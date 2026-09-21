@@ -184,7 +184,14 @@ export const LINEUP_BY_AREA: Readonly<Record<string, readonly string[]>> = {
   gondola: ['afif', 'riyan', 'Sahrul'],
 }
 
-/** Work orders the client actually sent into the group as PDFs. */
+/**
+ * Work orders the client actually sent into the group as PDFs.
+ *
+ * `closed` is when the closing photo went up. The group's own timeline gives
+ * the day; the minute is chosen inside it, because a work order with no
+ * closure time cannot be judged delivered on time or late, and "unknown" is
+ * not a state the client's recap has ever shown.
+ */
 export const WORK_ORDERS = [
   {
     title: 'WO to HK — Take Out Kursi Area LDL & West Lobby (10 September 2026)',
@@ -193,6 +200,7 @@ export const WORK_ORDERS = [
     minute: 12 * 60 + 31,
     due: '2026-09-10',
     state: 'closed_with_photo',
+    closed: { dayIndex: 0, minute: 16 * 60 + 10 },
   },
   {
     title: 'MR WO peminjaman Meja dan Qline — GO Bee Cheng Hiang',
@@ -201,6 +209,7 @@ export const WORK_ORDERS = [
     minute: 11 * 60 + 17,
     due: '2026-09-12',
     state: 'closed_with_photo',
+    closed: { dayIndex: 2, minute: 9 * 60 + 40 },
   },
   {
     title: 'WO to HK — Pioneer DJ (12 – 13 September 2026)',

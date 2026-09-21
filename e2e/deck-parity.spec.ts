@@ -120,3 +120,14 @@ test.describe('Report Quality', () => {
     await expect(page.locator('[data-figure-kind="completion"]')).toHaveCount(0)
   })
 })
+
+test.describe('Work Orders', () => {
+  test('the delivery counts and every request are shown', async ({ page }) => {
+    await page.goto('/work-orders')
+    await expect(page.locator(figure('work_orders.on_time'))).toHaveText('2')
+    await expect(page.locator(figure('work_orders.open'))).toHaveText('1')
+    await expect(page.locator(figure('work_orders.blocked'))).toHaveText('0')
+    await expect(page.getByRole('row')).toHaveCount(4) // header + three requests
+    await expect(page.getByText('WO to HK — Pioneer DJ (12 – 13 September 2026)')).toBeVisible()
+  })
+})

@@ -32,7 +32,8 @@
     "typescript/ban-ts-comment": "error",
     "react/react-in-jsx-scope": "off",
     "oxc/no-map-spread": "off",
-    "react-perf/jsx-no-new-object-as-prop": "off"
+    "react-perf/jsx-no-new-object-as-prop": "off",
+    "react-perf/jsx-no-new-array-as-prop": "off"
   },
   "ignorePatterns": [
     ".next",

@@ -12,7 +12,18 @@
   "requested_by": "desak_made_meyasni",
   "due_date": "2026-09-10",
   "state": "closed_with_photo",
-  "state_history": [],
+  "state_history": [
+   {
+    "state": "raised",
+    "at": "2026-09-10T12:31:00+07:00",
+    "source_message_id": "msg_0_750"
+   },
+   {
+    "state": "closed_with_photo",
+    "at": "2026-09-10T16:10:00+07:00",
+    "source_message_id": "msg_0_760"
+   }
+  ],
   "closing_photo_id": "ph_0",
   "blocked_reason_message_id": null
  },
@@ -29,7 +40,18 @@
   "requested_by": "desak_made_meyasni",
   "due_date": "2026-09-12",
   "state": "closed_with_photo",
-  "state_history": [],
+  "state_history": [
+   {
+    "state": "raised",
+    "at": "2026-09-10T11:17:00+07:00",
+    "source_message_id": "msg_0_751"
+   },
+   {
+    "state": "closed_with_photo",
+    "at": "2026-09-12T09:40:00+07:00",
+    "source_message_id": "msg_2_761"
+   }
+  ],
   "closing_photo_id": "ph_1",
   "blocked_reason_message_id": null
  },
@@ -46,7 +68,13 @@
   "requested_by": "rachmad_adi",
   "due_date": "2026-09-13",
   "state": "raised",
-  "state_history": [],
+  "state_history": [
+   {
+    "state": "raised",
+    "at": "2026-09-10T21:41:00+07:00",
+    "source_message_id": "msg_0_752"
+   }
+  ],
   "closing_photo_id": null,
   "blocked_reason_message_id": null
  }

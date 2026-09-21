@@ -315,7 +315,18 @@ WORK_ORDERS.forEach((wo, n) => {
     requested_by: slug(wo.requestedBy),
     due_date: wo.due,
     state: wo.state,
-    state_history: [],
+    state_history: [
+      { state: 'raised' as const, at: at(wo.dayIndex, wo.minute), source_message_id: `msg_${wo.dayIndex}_${750 + n}` },
+      ...('closed' in wo && wo.closed !== undefined
+        ? [
+            {
+              state: 'closed_with_photo' as const,
+              at: at(wo.closed.dayIndex, wo.closed.minute),
+              source_message_id: `msg_${wo.closed.dayIndex}_${760 + n}`,
+            },
+          ]
+        : []),
+    ],
     closing_photo_id: wo.state === 'closed_with_photo' ? `ph_${n}` : null,
     blocked_reason_message_id: null,
   })
