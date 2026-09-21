@@ -30,7 +30,7 @@ describe('AC-6 · A values land in the right cell for all three layouts', () => 
 
   it('writes the value into that cell and reads it back', () => {
     const edits: ActualEdit[] = [{ sheet: 'RKB TOILET ', rowNumber: 12, day: 3, value: 1 }]
-    const out = writeActuals(original, edits)
+    const out = writeActuals(original, edits).bytes
     expect(rowOf(out, 'RKB TOILET ', 1)?.days[2]?.actual).toBe(1)
     // Untouched in the original, so this proves the write, not the fixture.
     expect(rowOf(original, 'RKB TOILET ', 1)?.days[2]?.actual).toBeNull()
@@ -41,7 +41,7 @@ describe('AC-6 · A values land in the right cell for all three layouts', () => 
     // row 12. Every cell in this workbook exists; only some hold values.
     const out = writeActuals(original, [
       { sheet: 'RKB TOILET ', rowNumber: 12, day: 6, value: 1 },
-    ])
+    ]).bytes
     expect(rowOf(out, 'RKB TOILET ', 1)?.days[5]?.actual).toBe(1)
     expect(rowOf(out, 'RKB TOILET ', 1)?.days[5]?.planned).toBe(1)
   })
@@ -49,7 +49,7 @@ describe('AC-6 · A values land in the right cell for all three layouts', () => 
   it('keeps the cell’s own formatting when filling it', () => {
     const out = writeActuals(original, [
       { sheet: 'RKB TOILET ', rowNumber: 12, day: 6, value: 1 },
-    ])
+    ]).bytes
     const xml = strFromU8(unzipSync(out)['xl/worksheets/sheet2.xml'] as Uint8Array)
     const styleOf = (ref: string, doc: string): string | null =>
       /\ss="(\d+)"/.exec(new RegExp(`<c[^>]*r="${ref}"[^>]*>`).exec(doc)?.[0] ?? '')?.[1] ?? null
@@ -77,14 +77,14 @@ describe('AC-6 · A values land in the right cell for all three layouts', () => 
     it('inserts the missing cell and reads it back', () => {
       const out = writeActuals(stripped, [
         { sheet: 'RKB TOILET ', rowNumber: 12, day: 6, value: 1 },
-      ])
+      ]).bytes
       expect(rowOf(out, 'RKB TOILET ', 1)?.days[5]?.actual).toBe(1)
     })
 
     it('borrows a neighbour’s formatting for the inserted cell', () => {
       const out = writeActuals(stripped, [
         { sheet: 'RKB TOILET ', rowNumber: 12, day: 6, value: 1 },
-      ])
+      ]).bytes
       const xml = strFromU8(unzipSync(out)['xl/worksheets/sheet2.xml'] as Uint8Array)
       const inserted = /<c[^>]*r="O12"[^>]*>/.exec(xml)?.[0] ?? ''
       expect(/\ss="\d+"/.test(inserted)).toBe(true)
@@ -93,7 +93,7 @@ describe('AC-6 · A values land in the right cell for all three layouts', () => 
     it('inserts in column order, not at the end of the row', () => {
       const out = writeActuals(stripped, [
         { sheet: 'RKB TOILET ', rowNumber: 12, day: 6, value: 1 },
-      ])
+      ]).bytes
       const xml = strFromU8(unzipSync(out)['xl/worksheets/sheet2.xml'] as Uint8Array)
       const rowStart = xml.indexOf('<row r="12"')
       const body = xml.slice(rowStart, xml.indexOf('</row>', rowStart))
@@ -109,27 +109,27 @@ describe('AC-6 · A values land in the right cell for all three layouts', () => 
     const out = writeActuals(original, [
       { sheet: 'RKB FACADE', rowNumber: 12, day: 3, value: 1 },
       { sheet: 'RKB RUANG UTILITY', rowNumber: 12, day: 3, value: 1 },
-    ])
+    ]).bytes
     expect(rowOf(out, 'RKB FACADE', 1)?.days[2]?.actual).toBe(1)
     expect(rowOf(out, 'RKB RUANG UTILITY', 1)?.days[2]?.actual).toBe(1)
   })
 
   it('refuses an edit naming a sheet that does not exist', () => {
     expect(() =>
-      writeActuals(original, [{ sheet: 'RKB BASEMENT', rowNumber: 12, day: 1, value: 1 }]),
+      writeActuals(original, [{ sheet: 'RKB BASEMENT', rowNumber: 12, day: 1, value: 1 }]).bytes,
     ).toThrowError(/RKB BASEMENT/)
   })
 
   it('refuses an edit naming a row that is not a job row', () => {
     expect(() =>
-      writeActuals(original, [{ sheet: 'RKB TOILET ', rowNumber: 9999, day: 1, value: 1 }]),
+      writeActuals(original, [{ sheet: 'RKB TOILET ', rowNumber: 9999, day: 1, value: 1 }]).bytes,
     ).toThrowError(/9999/)
   })
 
   it('refuses a day outside 1..31 by name, not by falling off the array', () => {
     for (const day of [0, 32, -1, 1.5]) {
       expect(() =>
-        writeActuals(original, [{ sheet: 'RKB TOILET ', rowNumber: 12, day, value: 1 }]),
+        writeActuals(original, [{ sheet: 'RKB TOILET ', rowNumber: 12, day, value: 1 }]).bytes,
       ).toThrowError(/outside 1\.\.31/)
     }
   })
@@ -142,7 +142,7 @@ describe('AC-5 · the output is Reno’s file with only the A cells changed', ()
     { sheet: 'RKB TOILET ', rowNumber: 12, day: 3, value: 1 },
     { sheet: 'RKB FACADE', rowNumber: 12, day: 5, value: 1 },
   ]
-  const out = writeActuals(original, edits)
+  const out = writeActuals(original, edits).bytes
 
   it('keeps every zip entry, none added and none dropped', () => {
     const before = Object.keys(unzipSync(original)).sort()
@@ -203,7 +203,7 @@ describe('AC-5 · the output is Reno’s file with only the A cells changed', ()
     const before = unzipSync(original)['xl/worksheets/sheet4.xml'] as Uint8Array
     const same = writeActuals(original, [
       { sheet: 'RKB FACADE', rowNumber: 12, day: 3, value: 1 },
-    ])
+    ]).bytes
     const after = unzipSync(same)['xl/worksheets/sheet4.xml'] as Uint8Array
     expect(Buffer.compare(Buffer.from(before), Buffer.from(after))).toBe(0)
   })
@@ -230,7 +230,7 @@ describe('AC-5 · the output is Reno’s file with only the A cells changed', ()
   })
 
   it('is a no-op when there are no edits', () => {
-    const untouched = writeActuals(original, [])
+    const untouched = writeActuals(original, []).bytes
     const before = unzipSync(original)
     const after = unzipSync(untouched)
     for (const path of Object.keys(before)) {

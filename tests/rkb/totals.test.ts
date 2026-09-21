@@ -27,7 +27,7 @@ describe('AC-7 · the three totals rows recompute from the written values', () =
   // Day 6 is column N (R) / O (A); before the write, REALISASI N18 is 0.
   const out = writeActuals(original, [
     { sheet: 'RKB TOILET ', rowNumber: 12, day: 6, value: 1 },
-  ])
+  ]).bytes
 
   it('starts from a file where that column has nothing realised', () => {
     expect(cellOf(original, TOILET, 'N18').cached).toBe('0')
@@ -71,7 +71,7 @@ describe('AC-7 · a zero denominator stays #DIV/0!, never a misleading 0%', () =
   it('stays #DIV/0! after a write elsewhere on the sheet', () => {
     const out = writeActuals(original, [
       { sheet: 'RKB TOILET ', rowNumber: 12, day: 6, value: 1 },
-    ])
+    ]).bytes
     const after = cellOf(out, TOILET, 'J19')
     expect(after.cached).toBe('#DIV/0!')
     expect(after.isError).toBe(true)
@@ -82,7 +82,7 @@ describe('AC-7 · a zero denominator stays #DIV/0!, never a misleading 0%', () =
     // so the percentage has no denominator and must not become 0 or 100.
     const out = writeActuals(original, [
       { sheet: 'RKB TOILET ', rowNumber: 12, day: 4, value: 1 },
-    ])
+    ]).bytes
     expect(cellOf(out, TOILET, 'J18').cached).toBe('1')
     const pct = cellOf(out, TOILET, 'J19')
     expect(pct.cached).toBe('#DIV/0!')
@@ -94,7 +94,7 @@ describe('AC-7 · the refresh is confined to the section that was written', () =
   it('does not touch another section’s totals on the same sheet', () => {
     const out = writeActuals(original, [
       { sheet: 'RKB TOILET ', rowNumber: 12, day: 6, value: 1 },
-    ])
+    ]).bytes
     // Section 2 computes at rows 31/32/33.
     for (const ref of ['N31', 'N32', 'N33']) {
       expect(cellOf(out, TOILET, ref), ref).toEqual(cellOf(original, TOILET, ref))
@@ -107,7 +107,7 @@ describe('AC-7 · the percentage is realised over planned, not the reverse', () 
   // it 3 of 4 — a ratio that reads differently if the division is inverted.
   const out = writeActuals(original, [
     { sheet: 'RKB TOILET ', rowNumber: 14, day: 1, value: 1 },
-  ])
+  ]).bytes
 
   it('starts from 2 of 4', () => {
     expect(cellOf(original, TOILET, 'D17').cached).toBe('4')
@@ -138,7 +138,7 @@ describe('AC-7 · the error flag tracks the denominator', () => {
 
     const out = writeActuals(stripped, [
       { sheet: 'RKB TOILET ', rowNumber: 12, day: 4, value: 1 },
-    ])
+    ]).bytes
     const pct = cellOf(out, TOILET, 'J19')
     expect(pct.isError).toBe(true)
     expect(pct.cached).toBe('#DIV/0!')
@@ -151,7 +151,7 @@ describe('AC-7 · the error flag tracks the denominator', () => {
 
     const out = writeActuals(marked, [
       { sheet: 'RKB TOILET ', rowNumber: 14, day: 1, value: 1 },
-    ])
+    ]).bytes
     const pct = cellOf(out, TOILET, 'D19')
     expect(pct.isError).toBe(false)
     expect(Number(pct.cached)).toBeCloseTo(0.75)

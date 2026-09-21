@@ -17,6 +17,12 @@ import { DAYS_IN_GRID } from './layout'
  * See docs/specs/rkb-workbook-io.md (AC-5, AC-6)
  */
 
+export interface BlockedReason {
+  readonly reason: string
+  /** The message that justifies the block. A block without one is invalid. */
+  readonly source_message_id: string
+}
+
 export interface ActualEdit {
   /** Sheet name exactly as the workbook spells it, trailing spaces included. */
   readonly sheet: string
@@ -25,6 +31,29 @@ export interface ActualEdit {
   /** 1-based day of the month. */
   readonly day: number
   readonly value: number
+  /**
+   * Present when the row could not proceed for a reason outside Reno's
+   * control. The workbook still records a plain 0 — Reno has not agreed to any
+   * marker for this, and inventing one would put a word in their file that
+   * their own process does not recognise. The block travels back to the caller
+   * instead, on `WriteResult.blocked`.
+   */
+  readonly blocked?: BlockedReason
+}
+
+export interface BlockedCell {
+  readonly sheet: string
+  readonly rowNumber: number
+  readonly day: number
+  readonly ref: string
+  readonly reason: string
+  readonly source_message_id: string
+}
+
+export interface WriteResult {
+  readonly bytes: Uint8Array
+  /** Blocks recorded alongside the file, never written into it. */
+  readonly blocked: readonly BlockedCell[]
 }
 
 export class RkbWriteError extends Error {
@@ -45,6 +74,7 @@ interface ResolvedEdit {
    */
   readonly totalsColumn: string
   readonly totalsRows: Section['totalsRows']
+  readonly blocked: BlockedCell | null
 }
 
 /** Maps each edit to the exact cell reference it targets, or refuses it. */
@@ -52,6 +82,21 @@ function resolve(book: Workbook, edits: readonly ActualEdit[]): ResolvedEdit[] {
   return edits.map((edit) => {
     if (!Number.isInteger(edit.day) || edit.day < 1 || edit.day > DAYS_IN_GRID) {
       throw new RkbWriteError(`day ${edit.day} is outside 1..${DAYS_IN_GRID}`)
+    }
+    if (edit.blocked !== undefined) {
+      if (edit.value !== 0) {
+        throw new RkbWriteError(
+          `a blocked row must write 0, not ${edit.value}: blocked work is not realised work`,
+        )
+      }
+      if (edit.blocked.reason.trim() === '') {
+        throw new RkbWriteError('a block requires a written reason')
+      }
+      if (edit.blocked.source_message_id.trim() === '') {
+        throw new RkbWriteError(
+          'a block requires a citation: the source message that justifies it',
+        )
+      }
     }
     const sheet = book.sheets.find((s) => s.name === edit.sheet)
     if (sheet === undefined) {
@@ -70,22 +115,37 @@ function resolve(book: Workbook, edits: readonly ActualEdit[]): ResolvedEdit[] {
     if (day === undefined) {
       throw new RkbWriteError(`row ${edit.rowNumber} has no day ${edit.day}`)
     }
+    const ref = `${day.aColumn}${row.rowNumber}`
     return {
       path: sheet.path,
-      ref: `${day.aColumn}${row.rowNumber}`,
+      ref,
       rowNumber: row.rowNumber,
       value: edit.value,
       totalsColumn: day.rColumn,
       totalsRows: section.totalsRows,
+      blocked:
+        edit.blocked === undefined
+          ? null
+          : {
+              sheet: edit.sheet,
+              rowNumber: edit.rowNumber,
+              day: edit.day,
+              ref,
+              reason: edit.blocked.reason,
+              source_message_id: edit.blocked.source_message_id,
+            },
     }
   })
 }
 
-export function writeActuals(bytes: Uint8Array, edits: readonly ActualEdit[]): Uint8Array {
+export function writeActuals(bytes: Uint8Array, edits: readonly ActualEdit[]): WriteResult {
   const entries = unzipSync(bytes)
-  if (edits.length === 0) return zipSync(entries)
+  if (edits.length === 0) return { bytes: zipSync(entries), blocked: [] }
 
   const resolved = resolve(parseWorkbook(bytes), edits)
+  const blocked = resolved
+    .map((edit) => edit.blocked)
+    .filter((b): b is BlockedCell => b !== null)
 
   const bySheet = new Map<string, ResolvedEdit[]>()
   for (const edit of resolved) {
@@ -101,7 +161,7 @@ export function writeActuals(bytes: Uint8Array, edits: readonly ActualEdit[]): U
     const edited = applyToSheet(strFromU8(xml), sheetEdits)
     next[path] = strToU8(refreshTotals(edited, sheetEdits))
   }
-  return zipSync(next)
+  return { bytes: zipSync(next), blocked }
 }
 
 /** A numeric cell: `<c r="I12" s="105"><v>1</v></c>`. */
