@@ -18,9 +18,9 @@ describe('AC-1 · the reader parses Reno’s workbook as it actually is', () => 
 
   it('yields 144 job rows across 21 sections', () => {
     const rows = book.sheets.flatMap((s) => s.sections.flatMap((b) => b.rows))
-    const blocks = book.sheets.flatMap((s) => s.sections)
+    const sections = book.sheets.flatMap((s) => s.sections)
     expect(rows).toHaveLength(144)
-    expect(blocks).toHaveLength(21)
+    expect(sections).toHaveLength(21)
   })
 
   it('splits per sheet as 39 / 25 / 36 / 7 / 29 / 8', () => {
@@ -41,7 +41,7 @@ describe('AC-1 · the reader parses Reno’s workbook as it actually is', () => 
     expect(rows.map((r) => r.no)).not.toContain(5)
   })
 
-  it('carries the location and job text of each row', () => {
+  it('carries the subject and work text of each row', () => {
     const toilet = book.sheets.find((s) => s.name === 'RKB TOILET ')
     const first = toilet?.sections[0]?.rows[0]
     expect(first?.subject).toBe('Cover lampu')

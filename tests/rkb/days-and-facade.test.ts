@@ -54,6 +54,13 @@ describe('AC-3 · every job row exposes the full 31-day grid', () => {
 
   // The A column is what this whole feature exists to fill, so its read path
   // is asserted directly rather than inferred from the R column beside it.
+  /**
+   * Facade and Ruang Utility assert only the column reference, not a
+   * discriminating value: in this workbook R and A are identical in every
+   * cell of both sheets, so no assertion over real data could tell the two
+   * columns apart there. Revisit when a workbook with real facade realisation
+   * arrives. The day-6 case below pins the read path on layout A.
+   */
   it.each([
     ['RKB TOILET ', 'E'],
     ['RKB FACADE', 'G'],
@@ -95,6 +102,17 @@ describe('AC-3 · every job row exposes the full 31-day grid', () => {
     expect(firstRow('RKB FACADE')?.work).toContain('GLASS CLEANING')
     expect(firstRow('RKB RUANG UTILITY')?.subject).toBe('RUANG LVMDP')
     expect(firstRow('RKB RUANG UTILITY')?.work).toContain('SWEEPING')
+  })
+
+  it('locates the totals rows at their exact positions, not merely present', () => {
+    // Toilet section 1 computes at rows 17/18/19; Facade's labels sit in
+    // column D, not B, which is what the row-wide scan exists to handle.
+    const toilet = sheet('RKB TOILET ')?.sections[0]
+    expect(toilet?.totalsRows).toEqual({ jumlah: 17, realisasi: 18, persentasi: 19 })
+    const facade = sheet('RKB FACADE')?.sections[0]
+    expect(facade?.totalsRows).toEqual({ jumlah: 19, realisasi: 20, persentasi: 21 })
+    const utility = sheet('RKB RUANG UTILITY')?.sections[0]
+    expect(utility?.totalsRows).toEqual({ jumlah: 41, realisasi: 42, persentasi: 43 })
   })
 
   it('locates the three totals rows on every sheet, wherever the label sits', () => {
