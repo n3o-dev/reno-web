@@ -12,293 +12,440 @@
   "raised_at": "2026-09-10T07:00:00+07:00",
   "cause": "hk_standard",
   "state": "closed_with_photo",
-  "state_history": [],
+  "state_history": [
+   {
+    "state": "answered",
+    "at": "2026-09-10T07:25:00+07:00",
+    "source_message_id": "msg_r_0"
+   },
+   {
+    "state": "closed_with_photo",
+    "at": "2026-09-10T23:50:00+07:00",
+    "source_message_id": "msg_c_0"
+   }
+  ],
   "closing_photo_id": "ph_0",
   "blocked_reason_message_id": null
  },
  {
   "record_id": "cmp_1",
   "site_id": "lwas",
-  "source_message_id": "msg_0_464",
-  "sent_at": "2026-09-10T07:44:00+07:00",
+  "source_message_id": "msg_0_457",
+  "sent_at": "2026-09-10T07:37:00+07:00",
   "sender_raw": "Rachmad Adi",
   "sender_person_id": null,
   "confidence": 0.9,
   "area_id": "tangga_carpark_p1_p10",
   "raised_by": "p_client",
-  "raised_at": "2026-09-10T07:44:00+07:00",
+  "raised_at": "2026-09-10T07:37:00+07:00",
   "cause": "hk_standard",
   "state": "closed_with_photo",
-  "state_history": [],
+  "state_history": [
+   {
+    "state": "answered",
+    "at": "2026-09-10T07:41:00+07:00",
+    "source_message_id": "msg_r_1"
+   },
+   {
+    "state": "closed_with_photo",
+    "at": "2026-09-10T08:37:00+07:00",
+    "source_message_id": "msg_c_1"
+   }
+  ],
   "closing_photo_id": "ph_1",
   "blocked_reason_message_id": null
  },
  {
   "record_id": "cmp_2",
   "site_id": "lwas",
-  "source_message_id": "msg_0_508",
-  "sent_at": "2026-09-10T08:28:00+07:00",
+  "source_message_id": "msg_0_495",
+  "sent_at": "2026-09-10T08:15:00+07:00",
   "sender_raw": "Rachmad Adi",
   "sender_person_id": null,
   "confidence": 0.9,
   "area_id": "carpark_p1_zona_a",
   "raised_by": "p_client",
-  "raised_at": "2026-09-10T08:28:00+07:00",
+  "raised_at": "2026-09-10T08:15:00+07:00",
   "cause": "hk_standard",
   "state": "closed_with_photo",
-  "state_history": [],
+  "state_history": [
+   {
+    "state": "answered",
+    "at": "2026-09-10T08:19:00+07:00",
+    "source_message_id": "msg_r_2"
+   },
+   {
+    "state": "closed_with_photo",
+    "at": "2026-09-10T09:15:00+07:00",
+    "source_message_id": "msg_c_2"
+   }
+  ],
   "closing_photo_id": "ph_2",
   "blocked_reason_message_id": null
  },
  {
   "record_id": "cmp_3",
   "site_id": "lwas",
-  "source_message_id": "msg_0_552",
-  "sent_at": "2026-09-10T09:12:00+07:00",
+  "source_message_id": "msg_0_533",
+  "sent_at": "2026-09-10T08:53:00+07:00",
   "sender_raw": "Desak Made Meyasni",
   "sender_person_id": null,
   "confidence": 0.9,
   "area_id": "area_apong",
   "raised_by": "p_client",
-  "raised_at": "2026-09-10T09:12:00+07:00",
+  "raised_at": "2026-09-10T08:53:00+07:00",
   "cause": "hk_standard",
   "state": "closed_with_photo",
-  "state_history": [],
+  "state_history": [
+   {
+    "state": "answered",
+    "at": "2026-09-10T08:57:00+07:00",
+    "source_message_id": "msg_r_3"
+   },
+   {
+    "state": "closed_with_photo",
+    "at": "2026-09-10T09:53:00+07:00",
+    "source_message_id": "msg_c_3"
+   }
+  ],
   "closing_photo_id": "ph_3",
   "blocked_reason_message_id": null
  },
  {
   "record_id": "cmp_4",
   "site_id": "lwas",
-  "source_message_id": "msg_0_596",
-  "sent_at": "2026-09-10T09:56:00+07:00",
+  "source_message_id": "msg_0_571",
+  "sent_at": "2026-09-10T09:31:00+07:00",
   "sender_raw": "Rachmad Adi",
   "sender_person_id": null,
   "confidence": 0.9,
   "area_id": "depan_skin_plus",
   "raised_by": "p_client",
-  "raised_at": "2026-09-10T09:56:00+07:00",
+  "raised_at": "2026-09-10T09:31:00+07:00",
   "cause": "tenant_project_event",
   "state": "closed_with_photo",
-  "state_history": [],
+  "state_history": [
+   {
+    "state": "answered",
+    "at": "2026-09-10T09:35:00+07:00",
+    "source_message_id": "msg_r_4"
+   },
+   {
+    "state": "closed_with_photo",
+    "at": "2026-09-10T10:31:00+07:00",
+    "source_message_id": "msg_c_4"
+   }
+  ],
   "closing_photo_id": "ph_4",
   "blocked_reason_message_id": null
  },
  {
   "record_id": "cmp_5",
   "site_id": "lwas",
-  "source_message_id": "msg_0_641",
-  "sent_at": "2026-09-10T10:41:00+07:00",
+  "source_message_id": "msg_0_609",
+  "sent_at": "2026-09-10T10:09:00+07:00",
   "sender_raw": "Rachmad Adi",
   "sender_person_id": null,
   "confidence": 0.9,
   "area_id": "once_0",
   "raised_by": "p_client",
-  "raised_at": "2026-09-10T10:41:00+07:00",
+  "raised_at": "2026-09-10T10:09:00+07:00",
   "cause": "hk_standard",
   "state": "closed_with_photo",
-  "state_history": [],
+  "state_history": [
+   {
+    "state": "answered",
+    "at": "2026-09-10T10:13:00+07:00",
+    "source_message_id": "msg_r_5"
+   },
+   {
+    "state": "closed_with_photo",
+    "at": "2026-09-10T11:09:00+07:00",
+    "source_message_id": "msg_c_5"
+   }
+  ],
   "closing_photo_id": "ph_5",
   "blocked_reason_message_id": null
  },
  {
   "record_id": "cmp_6",
   "site_id": "lwas",
-  "source_message_id": "msg_0_685",
-  "sent_at": "2026-09-10T11:25:00+07:00",
+  "source_message_id": "msg_0_647",
+  "sent_at": "2026-09-10T10:47:00+07:00",
   "sender_raw": "Sofyan",
   "sender_person_id": null,
   "confidence": 0.9,
   "area_id": "once_1",
   "raised_by": "p_client",
-  "raised_at": "2026-09-10T11:25:00+07:00",
+  "raised_at": "2026-09-10T10:47:00+07:00",
   "cause": "hk_standard",
   "state": "closed_with_photo",
-  "state_history": [],
+  "state_history": [
+   {
+    "state": "answered",
+    "at": "2026-09-10T10:51:00+07:00",
+    "source_message_id": "msg_r_6"
+   },
+   {
+    "state": "closed_with_photo",
+    "at": "2026-09-10T11:47:00+07:00",
+    "source_message_id": "msg_c_6"
+   }
+  ],
   "closing_photo_id": "ph_6",
   "blocked_reason_message_id": null
  },
  {
   "record_id": "cmp_7",
   "site_id": "lwas",
-  "source_message_id": "msg_0_729",
-  "sent_at": "2026-09-10T12:09:00+07:00",
+  "source_message_id": "msg_0_685",
+  "sent_at": "2026-09-10T11:25:00+07:00",
   "sender_raw": "Desak Made Meyasni",
   "sender_person_id": null,
   "confidence": 0.9,
   "area_id": "once_2",
   "raised_by": "p_client",
-  "raised_at": "2026-09-10T12:09:00+07:00",
+  "raised_at": "2026-09-10T11:25:00+07:00",
   "cause": "hk_standard",
   "state": "closed_with_photo",
-  "state_history": [],
+  "state_history": [
+   {
+    "state": "answered",
+    "at": "2026-09-10T11:29:00+07:00",
+    "source_message_id": "msg_r_7"
+   },
+   {
+    "state": "closed_with_photo",
+    "at": "2026-09-10T12:25:00+07:00",
+    "source_message_id": "msg_c_7"
+   }
+  ],
   "closing_photo_id": "ph_7",
   "blocked_reason_message_id": null
  },
  {
   "record_id": "cmp_8",
   "site_id": "lwas",
-  "source_message_id": "msg_0_773",
-  "sent_at": "2026-09-10T12:53:00+07:00",
+  "source_message_id": "msg_0_723",
+  "sent_at": "2026-09-10T12:03:00+07:00",
   "sender_raw": "Desak Made Meyasni",
   "sender_person_id": null,
   "confidence": 0.9,
   "area_id": "once_3",
   "raised_by": "p_client",
-  "raised_at": "2026-09-10T12:53:00+07:00",
+  "raised_at": "2026-09-10T12:03:00+07:00",
   "cause": "hk_standard",
   "state": "closed_with_photo",
-  "state_history": [],
+  "state_history": [
+   {
+    "state": "answered",
+    "at": "2026-09-10T12:07:00+07:00",
+    "source_message_id": "msg_r_8"
+   },
+   {
+    "state": "closed_with_photo",
+    "at": "2026-09-10T13:03:00+07:00",
+    "source_message_id": "msg_c_8"
+   }
+  ],
   "closing_photo_id": "ph_8",
   "blocked_reason_message_id": null
  },
  {
   "record_id": "cmp_9",
   "site_id": "lwas",
-  "source_message_id": "msg_0_817",
-  "sent_at": "2026-09-10T13:37:00+07:00",
+  "source_message_id": "msg_0_761",
+  "sent_at": "2026-09-10T12:41:00+07:00",
   "sender_raw": "Cristian B. Suryanto",
   "sender_person_id": null,
   "confidence": 0.9,
   "area_id": "once_4",
   "raised_by": "p_client",
-  "raised_at": "2026-09-10T13:37:00+07:00",
+  "raised_at": "2026-09-10T12:41:00+07:00",
   "cause": "hk_standard",
   "state": "answered",
-  "state_history": [],
+  "state_history": [
+   {
+    "state": "answered",
+    "at": "2026-09-10T12:41:00+07:00",
+    "source_message_id": "msg_r_9"
+   }
+  ],
   "closing_photo_id": null,
   "blocked_reason_message_id": null
  },
  {
   "record_id": "cmp_10",
   "site_id": "lwas",
-  "source_message_id": "msg_0_862",
-  "sent_at": "2026-09-10T14:22:00+07:00",
+  "source_message_id": "msg_0_798",
+  "sent_at": "2026-09-10T13:18:00+07:00",
   "sender_raw": "Desak Made Meyasni",
   "sender_person_id": null,
   "confidence": 0.9,
   "area_id": "once_5",
   "raised_by": "p_client",
-  "raised_at": "2026-09-10T14:22:00+07:00",
+  "raised_at": "2026-09-10T13:18:00+07:00",
   "cause": "hk_standard",
   "state": "answered",
-  "state_history": [],
+  "state_history": [
+   {
+    "state": "answered",
+    "at": "2026-09-10T13:20:00+07:00",
+    "source_message_id": "msg_r_10"
+   }
+  ],
   "closing_photo_id": null,
   "blocked_reason_message_id": null
  },
  {
   "record_id": "cmp_11",
   "site_id": "lwas",
-  "source_message_id": "msg_0_906",
-  "sent_at": "2026-09-10T15:06:00+07:00",
+  "source_message_id": "msg_0_836",
+  "sent_at": "2026-09-10T13:56:00+07:00",
   "sender_raw": "Rachmad Adi",
   "sender_person_id": null,
   "confidence": 0.9,
   "area_id": "once_6",
   "raised_by": "p_client",
-  "raised_at": "2026-09-10T15:06:00+07:00",
+  "raised_at": "2026-09-10T13:56:00+07:00",
   "cause": "hk_standard",
   "state": "answered",
-  "state_history": [],
+  "state_history": [
+   {
+    "state": "answered",
+    "at": "2026-09-10T13:58:00+07:00",
+    "source_message_id": "msg_r_11"
+   }
+  ],
   "closing_photo_id": null,
   "blocked_reason_message_id": null
  },
  {
   "record_id": "cmp_12",
   "site_id": "lwas",
-  "source_message_id": "msg_0_950",
-  "sent_at": "2026-09-10T15:50:00+07:00",
+  "source_message_id": "msg_0_874",
+  "sent_at": "2026-09-10T14:34:00+07:00",
   "sender_raw": "Cristian B. Suryanto",
   "sender_person_id": null,
   "confidence": 0.9,
   "area_id": "once_7",
   "raised_by": "p_client",
-  "raised_at": "2026-09-10T15:50:00+07:00",
+  "raised_at": "2026-09-10T14:34:00+07:00",
   "cause": "hk_standard",
   "state": "answered",
-  "state_history": [],
+  "state_history": [
+   {
+    "state": "answered",
+    "at": "2026-09-10T14:36:00+07:00",
+    "source_message_id": "msg_r_12"
+   }
+  ],
   "closing_photo_id": null,
   "blocked_reason_message_id": null
  },
  {
   "record_id": "cmp_13",
   "site_id": "lwas",
-  "source_message_id": "msg_0_994",
-  "sent_at": "2026-09-10T16:34:00+07:00",
+  "source_message_id": "msg_0_912",
+  "sent_at": "2026-09-10T15:12:00+07:00",
   "sender_raw": "Sofyan",
   "sender_person_id": null,
   "confidence": 0.9,
   "area_id": "once_8",
   "raised_by": "p_client",
-  "raised_at": "2026-09-10T16:34:00+07:00",
+  "raised_at": "2026-09-10T15:12:00+07:00",
   "cause": "engineering_equipment",
   "state": "answered",
-  "state_history": [],
+  "state_history": [
+   {
+    "state": "answered",
+    "at": "2026-09-10T15:14:00+07:00",
+    "source_message_id": "msg_r_13"
+   }
+  ],
   "closing_photo_id": null,
   "blocked_reason_message_id": null
  },
  {
   "record_id": "cmp_14",
   "site_id": "lwas",
-  "source_message_id": "msg_0_1038",
-  "sent_at": "2026-09-10T17:18:00+07:00",
+  "source_message_id": "msg_0_950",
+  "sent_at": "2026-09-10T15:50:00+07:00",
   "sender_raw": "Sofyan",
   "sender_person_id": null,
   "confidence": 0.9,
   "area_id": "once_9",
   "raised_by": "p_client",
-  "raised_at": "2026-09-10T17:18:00+07:00",
+  "raised_at": "2026-09-10T15:50:00+07:00",
   "cause": "hk_standard",
   "state": "answered",
-  "state_history": [],
+  "state_history": [
+   {
+    "state": "answered",
+    "at": "2026-09-10T15:52:00+07:00",
+    "source_message_id": "msg_r_14"
+   }
+  ],
   "closing_photo_id": null,
   "blocked_reason_message_id": null
  },
  {
   "record_id": "cmp_15",
   "site_id": "lwas",
-  "source_message_id": "msg_0_1083",
-  "sent_at": "2026-09-10T18:03:00+07:00",
+  "source_message_id": "msg_0_988",
+  "sent_at": "2026-09-10T16:28:00+07:00",
   "sender_raw": "Sofyan",
   "sender_person_id": null,
   "confidence": 0.9,
   "area_id": "once_10",
   "raised_by": "p_client",
-  "raised_at": "2026-09-10T18:03:00+07:00",
+  "raised_at": "2026-09-10T16:28:00+07:00",
   "cause": "hk_standard",
   "state": "answered",
-  "state_history": [],
+  "state_history": [
+   {
+    "state": "answered",
+    "at": "2026-09-10T16:30:00+07:00",
+    "source_message_id": "msg_r_15"
+   }
+  ],
   "closing_photo_id": null,
   "blocked_reason_message_id": null
  },
  {
   "record_id": "cmp_16",
   "site_id": "lwas",
-  "source_message_id": "msg_0_1127",
-  "sent_at": "2026-09-10T18:47:00+07:00",
+  "source_message_id": "msg_0_1026",
+  "sent_at": "2026-09-10T17:06:00+07:00",
   "sender_raw": "Cristian B. Suryanto",
   "sender_person_id": null,
   "confidence": 0.9,
   "area_id": "once_11",
   "raised_by": "p_client",
-  "raised_at": "2026-09-10T18:47:00+07:00",
+  "raised_at": "2026-09-10T17:06:00+07:00",
   "cause": "hk_standard",
   "state": "answered",
-  "state_history": [],
+  "state_history": [
+   {
+    "state": "answered",
+    "at": "2026-09-10T17:08:00+07:00",
+    "source_message_id": "msg_r_16"
+   }
+  ],
   "closing_photo_id": null,
   "blocked_reason_message_id": null
  },
  {
   "record_id": "cmp_17",
   "site_id": "lwas",
-  "source_message_id": "msg_0_1171",
-  "sent_at": "2026-09-10T19:31:00+07:00",
+  "source_message_id": "msg_0_1064",
+  "sent_at": "2026-09-10T17:44:00+07:00",
   "sender_raw": "Sofyan",
   "sender_person_id": null,
   "confidence": 0.9,
   "area_id": "once_12",
   "raised_by": "p_client",
-  "raised_at": "2026-09-10T19:31:00+07:00",
+  "raised_at": "2026-09-10T17:44:00+07:00",
   "cause": "hk_standard",
   "state": "raised",
   "state_history": [],
@@ -308,14 +455,14 @@
  {
   "record_id": "cmp_18",
   "site_id": "lwas",
-  "source_message_id": "msg_0_1215",
-  "sent_at": "2026-09-10T20:15:00+07:00",
+  "source_message_id": "msg_0_1102",
+  "sent_at": "2026-09-10T18:22:00+07:00",
   "sender_raw": "Desak Made Meyasni",
   "sender_person_id": null,
   "confidence": 0.9,
   "area_id": "once_13",
   "raised_by": "p_client",
-  "raised_at": "2026-09-10T20:15:00+07:00",
+  "raised_at": "2026-09-10T18:22:00+07:00",
   "cause": "hk_standard",
   "state": "raised",
   "state_history": [],
@@ -335,429 +482,629 @@
   "raised_at": "2026-09-11T07:00:00+07:00",
   "cause": "hk_standard",
   "state": "closed_with_photo",
-  "state_history": [],
+  "state_history": [
+   {
+    "state": "answered",
+    "at": "2026-09-11T07:04:00+07:00",
+    "source_message_id": "msg_r_19"
+   },
+   {
+    "state": "closed_with_photo",
+    "at": "2026-09-11T08:00:00+07:00",
+    "source_message_id": "msg_c_19"
+   }
+  ],
   "closing_photo_id": "ph_0",
   "blocked_reason_message_id": null
  },
  {
   "record_id": "cmp_20",
   "site_id": "lwas",
-  "source_message_id": "msg_1_443",
-  "sent_at": "2026-09-11T07:23:00+07:00",
+  "source_message_id": "msg_1_440",
+  "sent_at": "2026-09-11T07:20:00+07:00",
   "sender_raw": "Desak Made Meyasni",
   "sender_person_id": null,
   "confidence": 0.9,
   "area_id": "tempat_sampah_cmo",
   "raised_by": "p_client",
-  "raised_at": "2026-09-11T07:23:00+07:00",
+  "raised_at": "2026-09-11T07:20:00+07:00",
   "cause": "hk_standard",
   "state": "closed_with_photo",
-  "state_history": [],
+  "state_history": [
+   {
+    "state": "answered",
+    "at": "2026-09-11T07:24:00+07:00",
+    "source_message_id": "msg_r_20"
+   },
+   {
+    "state": "closed_with_photo",
+    "at": "2026-09-11T08:20:00+07:00",
+    "source_message_id": "msg_c_20"
+   }
+  ],
   "closing_photo_id": "ph_1",
   "blocked_reason_message_id": null
  },
  {
   "record_id": "cmp_21",
   "site_id": "lwas",
-  "source_message_id": "msg_1_467",
-  "sent_at": "2026-09-11T07:47:00+07:00",
+  "source_message_id": "msg_1_461",
+  "sent_at": "2026-09-11T07:41:00+07:00",
   "sender_raw": "Desak Made Meyasni",
   "sender_person_id": null,
   "confidence": 0.9,
   "area_id": "asbak_smoking_area",
   "raised_by": "p_client",
-  "raised_at": "2026-09-11T07:47:00+07:00",
+  "raised_at": "2026-09-11T07:41:00+07:00",
   "cause": "hk_standard",
   "state": "closed_with_photo",
-  "state_history": [],
+  "state_history": [
+   {
+    "state": "answered",
+    "at": "2026-09-11T07:45:00+07:00",
+    "source_message_id": "msg_r_21"
+   },
+   {
+    "state": "closed_with_photo",
+    "at": "2026-09-11T08:41:00+07:00",
+    "source_message_id": "msg_c_21"
+   }
+  ],
   "closing_photo_id": "ph_2",
   "blocked_reason_message_id": null
  },
  {
   "record_id": "cmp_22",
   "site_id": "lwas",
-  "source_message_id": "msg_1_492",
-  "sent_at": "2026-09-11T08:12:00+07:00",
+  "source_message_id": "msg_1_481",
+  "sent_at": "2026-09-11T08:01:00+07:00",
   "sender_raw": "Rachmad Adi",
   "sender_person_id": null,
   "confidence": 0.9,
   "area_id": "carpark_p1_zona_a",
   "raised_by": "p_client",
-  "raised_at": "2026-09-11T08:12:00+07:00",
+  "raised_at": "2026-09-11T08:01:00+07:00",
   "cause": "hk_standard",
   "state": "closed_with_photo",
-  "state_history": [],
+  "state_history": [
+   {
+    "state": "answered",
+    "at": "2026-09-11T08:05:00+07:00",
+    "source_message_id": "msg_r_22"
+   },
+   {
+    "state": "closed_with_photo",
+    "at": "2026-09-11T09:01:00+07:00",
+    "source_message_id": "msg_c_22"
+   }
+  ],
   "closing_photo_id": "ph_3",
   "blocked_reason_message_id": null
  },
  {
   "record_id": "cmp_23",
   "site_id": "lwas",
-  "source_message_id": "msg_1_515",
-  "sent_at": "2026-09-11T08:35:00+07:00",
+  "source_message_id": "msg_1_502",
+  "sent_at": "2026-09-11T08:22:00+07:00",
   "sender_raw": "Rachmad Adi",
   "sender_person_id": null,
   "confidence": 0.9,
   "area_id": "area_apong",
   "raised_by": "p_client",
-  "raised_at": "2026-09-11T08:35:00+07:00",
+  "raised_at": "2026-09-11T08:22:00+07:00",
   "cause": "tenant_project_event",
   "state": "closed_with_photo",
-  "state_history": [],
+  "state_history": [
+   {
+    "state": "answered",
+    "at": "2026-09-11T08:26:00+07:00",
+    "source_message_id": "msg_r_23"
+   },
+   {
+    "state": "closed_with_photo",
+    "at": "2026-09-11T09:22:00+07:00",
+    "source_message_id": "msg_c_23"
+   }
+  ],
   "closing_photo_id": "ph_4",
   "blocked_reason_message_id": null
  },
  {
   "record_id": "cmp_24",
   "site_id": "lwas",
-  "source_message_id": "msg_1_540",
-  "sent_at": "2026-09-11T09:00:00+07:00",
+  "source_message_id": "msg_1_522",
+  "sent_at": "2026-09-11T08:42:00+07:00",
   "sender_raw": "Rachmad Adi",
   "sender_person_id": null,
   "confidence": 0.9,
   "area_id": "once_14",
   "raised_by": "p_client",
-  "raised_at": "2026-09-11T09:00:00+07:00",
+  "raised_at": "2026-09-11T08:42:00+07:00",
   "cause": "hk_standard",
   "state": "closed_with_photo",
-  "state_history": [],
+  "state_history": [
+   {
+    "state": "answered",
+    "at": "2026-09-11T08:46:00+07:00",
+    "source_message_id": "msg_r_24"
+   },
+   {
+    "state": "closed_with_photo",
+    "at": "2026-09-11T09:23:00+07:00",
+    "source_message_id": "msg_c_24"
+   }
+  ],
   "closing_photo_id": "ph_5",
   "blocked_reason_message_id": null
  },
  {
   "record_id": "cmp_25",
   "site_id": "lwas",
-  "source_message_id": "msg_1_564",
-  "sent_at": "2026-09-11T09:24:00+07:00",
+  "source_message_id": "msg_1_543",
+  "sent_at": "2026-09-11T09:03:00+07:00",
   "sender_raw": "Rachmad Adi",
   "sender_person_id": null,
   "confidence": 0.9,
   "area_id": "once_15",
   "raised_by": "p_client",
-  "raised_at": "2026-09-11T09:24:00+07:00",
+  "raised_at": "2026-09-11T09:03:00+07:00",
   "cause": "hk_standard",
   "state": "closed_with_photo",
-  "state_history": [],
+  "state_history": [
+   {
+    "state": "answered",
+    "at": "2026-09-11T09:07:00+07:00",
+    "source_message_id": "msg_r_25"
+   },
+   {
+    "state": "closed_with_photo",
+    "at": "2026-09-11T09:33:00+07:00",
+    "source_message_id": "msg_c_25"
+   }
+  ],
   "closing_photo_id": "ph_6",
   "blocked_reason_message_id": null
  },
  {
   "record_id": "cmp_26",
   "site_id": "lwas",
-  "source_message_id": "msg_1_588",
-  "sent_at": "2026-09-11T09:48:00+07:00",
+  "source_message_id": "msg_1_564",
+  "sent_at": "2026-09-11T09:24:00+07:00",
   "sender_raw": "Rachmad Adi",
   "sender_person_id": null,
   "confidence": 0.9,
   "area_id": "once_16",
   "raised_by": "p_client",
-  "raised_at": "2026-09-11T09:48:00+07:00",
+  "raised_at": "2026-09-11T09:24:00+07:00",
   "cause": "hk_standard",
   "state": "closed_with_photo",
-  "state_history": [],
+  "state_history": [
+   {
+    "state": "answered",
+    "at": "2026-09-11T09:28:00+07:00",
+    "source_message_id": "msg_r_26"
+   },
+   {
+    "state": "closed_with_photo",
+    "at": "2026-09-11T09:54:00+07:00",
+    "source_message_id": "msg_c_26"
+   }
+  ],
   "closing_photo_id": "ph_7",
   "blocked_reason_message_id": null
  },
  {
   "record_id": "cmp_27",
   "site_id": "lwas",
-  "source_message_id": "msg_1_611",
-  "sent_at": "2026-09-11T10:11:00+07:00",
+  "source_message_id": "msg_1_584",
+  "sent_at": "2026-09-11T09:44:00+07:00",
   "sender_raw": "Rachmad Adi",
   "sender_person_id": null,
   "confidence": 0.9,
   "area_id": "once_17",
   "raised_by": "p_client",
-  "raised_at": "2026-09-11T10:11:00+07:00",
+  "raised_at": "2026-09-11T09:44:00+07:00",
   "cause": "hk_standard",
   "state": "closed_with_photo",
-  "state_history": [],
+  "state_history": [
+   {
+    "state": "answered",
+    "at": "2026-09-11T09:48:00+07:00",
+    "source_message_id": "msg_r_27"
+   },
+   {
+    "state": "closed_with_photo",
+    "at": "2026-09-11T10:14:00+07:00",
+    "source_message_id": "msg_c_27"
+   }
+  ],
   "closing_photo_id": "ph_8",
   "blocked_reason_message_id": null
  },
  {
   "record_id": "cmp_28",
   "site_id": "lwas",
-  "source_message_id": "msg_1_635",
-  "sent_at": "2026-09-11T10:35:00+07:00",
+  "source_message_id": "msg_1_605",
+  "sent_at": "2026-09-11T10:05:00+07:00",
   "sender_raw": "Sofyan",
   "sender_person_id": null,
   "confidence": 0.9,
   "area_id": "once_18",
   "raised_by": "p_client",
-  "raised_at": "2026-09-11T10:35:00+07:00",
+  "raised_at": "2026-09-11T10:05:00+07:00",
   "cause": "hk_standard",
   "state": "closed_with_photo",
-  "state_history": [],
+  "state_history": [
+   {
+    "state": "answered",
+    "at": "2026-09-11T10:09:00+07:00",
+    "source_message_id": "msg_r_28"
+   },
+   {
+    "state": "closed_with_photo",
+    "at": "2026-09-11T10:35:00+07:00",
+    "source_message_id": "msg_c_28"
+   }
+  ],
   "closing_photo_id": "ph_9",
   "blocked_reason_message_id": null
  },
  {
   "record_id": "cmp_29",
   "site_id": "lwas",
-  "source_message_id": "msg_1_660",
-  "sent_at": "2026-09-11T11:00:00+07:00",
+  "source_message_id": "msg_1_625",
+  "sent_at": "2026-09-11T10:25:00+07:00",
   "sender_raw": "Desak Made Meyasni",
   "sender_person_id": null,
   "confidence": 0.9,
   "area_id": "once_19",
   "raised_by": "p_client",
-  "raised_at": "2026-09-11T11:00:00+07:00",
+  "raised_at": "2026-09-11T10:25:00+07:00",
   "cause": "hk_standard",
   "state": "answered",
-  "state_history": [],
+  "state_history": [
+   {
+    "state": "answered",
+    "at": "2026-09-11T10:27:00+07:00",
+    "source_message_id": "msg_r_29"
+   }
+  ],
   "closing_photo_id": null,
   "blocked_reason_message_id": null
  },
  {
   "record_id": "cmp_30",
   "site_id": "lwas",
-  "source_message_id": "msg_1_684",
-  "sent_at": "2026-09-11T11:24:00+07:00",
+  "source_message_id": "msg_1_646",
+  "sent_at": "2026-09-11T10:46:00+07:00",
   "sender_raw": "Rachmad Adi",
   "sender_person_id": null,
   "confidence": 0.9,
   "area_id": "once_20",
   "raised_by": "p_client",
-  "raised_at": "2026-09-11T11:24:00+07:00",
+  "raised_at": "2026-09-11T10:46:00+07:00",
   "cause": "hk_standard",
   "state": "answered",
-  "state_history": [],
+  "state_history": [
+   {
+    "state": "answered",
+    "at": "2026-09-11T10:48:00+07:00",
+    "source_message_id": "msg_r_30"
+   }
+  ],
   "closing_photo_id": null,
   "blocked_reason_message_id": null
  },
  {
   "record_id": "cmp_31",
   "site_id": "lwas",
-  "source_message_id": "msg_1_708",
-  "sent_at": "2026-09-11T11:48:00+07:00",
+  "source_message_id": "msg_1_666",
+  "sent_at": "2026-09-11T11:06:00+07:00",
   "sender_raw": "Sofyan",
   "sender_person_id": null,
   "confidence": 0.9,
   "area_id": "once_21",
   "raised_by": "p_client",
-  "raised_at": "2026-09-11T11:48:00+07:00",
+  "raised_at": "2026-09-11T11:06:00+07:00",
   "cause": "hk_standard",
   "state": "answered",
-  "state_history": [],
+  "state_history": [
+   {
+    "state": "answered",
+    "at": "2026-09-11T11:08:00+07:00",
+    "source_message_id": "msg_r_31"
+   }
+  ],
   "closing_photo_id": null,
   "blocked_reason_message_id": null
  },
  {
   "record_id": "cmp_32",
   "site_id": "lwas",
-  "source_message_id": "msg_1_732",
-  "sent_at": "2026-09-11T12:12:00+07:00",
+  "source_message_id": "msg_1_687",
+  "sent_at": "2026-09-11T11:27:00+07:00",
   "sender_raw": "Rachmad Adi",
   "sender_person_id": null,
   "confidence": 0.9,
   "area_id": "once_22",
   "raised_by": "p_client",
-  "raised_at": "2026-09-11T12:12:00+07:00",
+  "raised_at": "2026-09-11T11:27:00+07:00",
   "cause": "engineering_equipment",
   "state": "answered",
-  "state_history": [],
+  "state_history": [
+   {
+    "state": "answered",
+    "at": "2026-09-11T11:29:00+07:00",
+    "source_message_id": "msg_r_32"
+   }
+  ],
   "closing_photo_id": null,
   "blocked_reason_message_id": null
  },
  {
   "record_id": "cmp_33",
   "site_id": "lwas",
-  "source_message_id": "msg_1_756",
-  "sent_at": "2026-09-11T12:36:00+07:00",
+  "source_message_id": "msg_1_708",
+  "sent_at": "2026-09-11T11:48:00+07:00",
   "sender_raw": "Desak Made Meyasni",
   "sender_person_id": null,
   "confidence": 0.9,
   "area_id": "once_23",
   "raised_by": "p_client",
-  "raised_at": "2026-09-11T12:36:00+07:00",
+  "raised_at": "2026-09-11T11:48:00+07:00",
   "cause": "hk_standard",
   "state": "answered",
-  "state_history": [],
+  "state_history": [
+   {
+    "state": "answered",
+    "at": "2026-09-11T11:50:00+07:00",
+    "source_message_id": "msg_r_33"
+   }
+  ],
   "closing_photo_id": null,
   "blocked_reason_message_id": null
  },
  {
   "record_id": "cmp_34",
   "site_id": "lwas",
-  "source_message_id": "msg_1_780",
-  "sent_at": "2026-09-11T13:00:00+07:00",
+  "source_message_id": "msg_1_728",
+  "sent_at": "2026-09-11T12:08:00+07:00",
   "sender_raw": "Cristian B. Suryanto",
   "sender_person_id": null,
   "confidence": 0.9,
   "area_id": "once_24",
   "raised_by": "p_client",
-  "raised_at": "2026-09-11T13:00:00+07:00",
+  "raised_at": "2026-09-11T12:08:00+07:00",
   "cause": "hk_standard",
   "state": "answered",
-  "state_history": [],
+  "state_history": [
+   {
+    "state": "answered",
+    "at": "2026-09-11T12:10:00+07:00",
+    "source_message_id": "msg_r_34"
+   }
+  ],
   "closing_photo_id": null,
   "blocked_reason_message_id": null
  },
  {
   "record_id": "cmp_35",
   "site_id": "lwas",
-  "source_message_id": "msg_1_803",
-  "sent_at": "2026-09-11T13:23:00+07:00",
+  "source_message_id": "msg_1_749",
+  "sent_at": "2026-09-11T12:29:00+07:00",
   "sender_raw": "Rachmad Adi",
   "sender_person_id": null,
   "confidence": 0.9,
   "area_id": "once_25",
   "raised_by": "p_client",
-  "raised_at": "2026-09-11T13:23:00+07:00",
+  "raised_at": "2026-09-11T12:29:00+07:00",
   "cause": "hk_standard",
   "state": "answered",
-  "state_history": [],
+  "state_history": [
+   {
+    "state": "answered",
+    "at": "2026-09-11T12:31:00+07:00",
+    "source_message_id": "msg_r_35"
+   }
+  ],
   "closing_photo_id": null,
   "blocked_reason_message_id": null
  },
  {
   "record_id": "cmp_36",
   "site_id": "lwas",
-  "source_message_id": "msg_1_828",
-  "sent_at": "2026-09-11T13:48:00+07:00",
+  "source_message_id": "msg_1_769",
+  "sent_at": "2026-09-11T12:49:00+07:00",
   "sender_raw": "Rachmad Adi",
   "sender_person_id": null,
   "confidence": 0.9,
   "area_id": "once_26",
   "raised_by": "p_client",
-  "raised_at": "2026-09-11T13:48:00+07:00",
+  "raised_at": "2026-09-11T12:49:00+07:00",
   "cause": "hk_standard",
   "state": "answered",
-  "state_history": [],
+  "state_history": [
+   {
+    "state": "answered",
+    "at": "2026-09-11T12:51:00+07:00",
+    "source_message_id": "msg_r_36"
+   }
+  ],
   "closing_photo_id": null,
   "blocked_reason_message_id": null
  },
  {
   "record_id": "cmp_37",
   "site_id": "lwas",
-  "source_message_id": "msg_1_851",
-  "sent_at": "2026-09-11T14:11:00+07:00",
+  "source_message_id": "msg_1_790",
+  "sent_at": "2026-09-11T13:10:00+07:00",
   "sender_raw": "Sofyan",
   "sender_person_id": null,
   "confidence": 0.9,
   "area_id": "once_27",
   "raised_by": "p_client",
-  "raised_at": "2026-09-11T14:11:00+07:00",
+  "raised_at": "2026-09-11T13:10:00+07:00",
   "cause": "hk_standard",
   "state": "answered",
-  "state_history": [],
+  "state_history": [
+   {
+    "state": "answered",
+    "at": "2026-09-11T13:12:00+07:00",
+    "source_message_id": "msg_r_37"
+   }
+  ],
   "closing_photo_id": null,
   "blocked_reason_message_id": null
  },
  {
   "record_id": "cmp_38",
   "site_id": "lwas",
-  "source_message_id": "msg_1_876",
-  "sent_at": "2026-09-11T14:36:00+07:00",
+  "source_message_id": "msg_1_810",
+  "sent_at": "2026-09-11T13:30:00+07:00",
   "sender_raw": "Desak Made Meyasni",
   "sender_person_id": null,
   "confidence": 0.9,
   "area_id": "once_28",
   "raised_by": "p_client",
-  "raised_at": "2026-09-11T14:36:00+07:00",
+  "raised_at": "2026-09-11T13:30:00+07:00",
   "cause": "hk_standard",
   "state": "answered",
-  "state_history": [],
+  "state_history": [
+   {
+    "state": "answered",
+    "at": "2026-09-11T13:32:00+07:00",
+    "source_message_id": "msg_r_38"
+   }
+  ],
   "closing_photo_id": null,
   "blocked_reason_message_id": null
  },
  {
   "record_id": "cmp_39",
   "site_id": "lwas",
-  "source_message_id": "msg_1_900",
-  "sent_at": "2026-09-11T15:00:00+07:00",
+  "source_message_id": "msg_1_831",
+  "sent_at": "2026-09-11T13:51:00+07:00",
   "sender_raw": "Rachmad Adi",
   "sender_person_id": null,
   "confidence": 0.9,
   "area_id": "once_29",
   "raised_by": "p_client",
-  "raised_at": "2026-09-11T15:00:00+07:00",
+  "raised_at": "2026-09-11T13:51:00+07:00",
   "cause": "hk_standard",
   "state": "answered",
-  "state_history": [],
+  "state_history": [
+   {
+    "state": "answered",
+    "at": "2026-09-11T13:53:00+07:00",
+    "source_message_id": "msg_r_39"
+   }
+  ],
   "closing_photo_id": null,
   "blocked_reason_message_id": null
  },
  {
   "record_id": "cmp_40",
   "site_id": "lwas",
-  "source_message_id": "msg_1_924",
-  "sent_at": "2026-09-11T15:24:00+07:00",
+  "source_message_id": "msg_1_851",
+  "sent_at": "2026-09-11T14:11:00+07:00",
   "sender_raw": "Rachmad Adi",
   "sender_person_id": null,
   "confidence": 0.9,
   "area_id": "once_30",
   "raised_by": "p_client",
-  "raised_at": "2026-09-11T15:24:00+07:00",
+  "raised_at": "2026-09-11T14:11:00+07:00",
   "cause": "hk_standard",
   "state": "answered",
-  "state_history": [],
+  "state_history": [
+   {
+    "state": "answered",
+    "at": "2026-09-11T14:13:00+07:00",
+    "source_message_id": "msg_r_40"
+   }
+  ],
   "closing_photo_id": null,
   "blocked_reason_message_id": null
  },
  {
   "record_id": "cmp_41",
   "site_id": "lwas",
-  "source_message_id": "msg_1_948",
-  "sent_at": "2026-09-11T15:48:00+07:00",
+  "source_message_id": "msg_1_872",
+  "sent_at": "2026-09-11T14:32:00+07:00",
   "sender_raw": "Desak Made Meyasni",
   "sender_person_id": null,
   "confidence": 0.9,
   "area_id": "once_31",
   "raised_by": "p_client",
-  "raised_at": "2026-09-11T15:48:00+07:00",
+  "raised_at": "2026-09-11T14:32:00+07:00",
   "cause": "spill",
   "state": "answered",
-  "state_history": [],
+  "state_history": [
+   {
+    "state": "answered",
+    "at": "2026-09-11T14:34:00+07:00",
+    "source_message_id": "msg_r_41"
+   }
+  ],
   "closing_photo_id": null,
   "blocked_reason_message_id": null
  },
  {
   "record_id": "cmp_42",
   "site_id": "lwas",
-  "source_message_id": "msg_1_972",
-  "sent_at": "2026-09-11T16:12:00+07:00",
+  "source_message_id": "msg_1_893",
+  "sent_at": "2026-09-11T14:53:00+07:00",
   "sender_raw": "Desak Made Meyasni",
   "sender_person_id": null,
   "confidence": 0.9,
   "area_id": "once_32",
   "raised_by": "p_client",
-  "raised_at": "2026-09-11T16:12:00+07:00",
+  "raised_at": "2026-09-11T14:53:00+07:00",
   "cause": "hk_standard",
   "state": "answered",
-  "state_history": [],
+  "state_history": [
+   {
+    "state": "answered",
+    "at": "2026-09-11T14:55:00+07:00",
+    "source_message_id": "msg_r_42"
+   }
+  ],
   "closing_photo_id": null,
   "blocked_reason_message_id": null
  },
  {
   "record_id": "cmp_43",
   "site_id": "lwas",
-  "source_message_id": "msg_1_996",
-  "sent_at": "2026-09-11T16:36:00+07:00",
+  "source_message_id": "msg_1_913",
+  "sent_at": "2026-09-11T15:13:00+07:00",
   "sender_raw": "Sofyan",
   "sender_person_id": null,
   "confidence": 0.9,
   "area_id": "once_33",
   "raised_by": "p_client",
-  "raised_at": "2026-09-11T16:36:00+07:00",
+  "raised_at": "2026-09-11T15:13:00+07:00",
   "cause": "hk_standard",
   "state": "answered",
-  "state_history": [],
+  "state_history": [
+   {
+    "state": "answered",
+    "at": "2026-09-11T15:15:00+07:00",
+    "source_message_id": "msg_r_43"
+   }
+  ],
   "closing_photo_id": null,
   "blocked_reason_message_id": null
  },
  {
   "record_id": "cmp_44",
   "site_id": "lwas",
-  "source_message_id": "msg_1_1020",
-  "sent_at": "2026-09-11T17:00:00+07:00",
+  "source_message_id": "msg_1_934",
+  "sent_at": "2026-09-11T15:34:00+07:00",
   "sender_raw": "Rachmad Adi",
   "sender_person_id": null,
   "confidence": 0.9,
   "area_id": "once_34",
   "raised_by": "p_client",
-  "raised_at": "2026-09-11T17:00:00+07:00",
+  "raised_at": "2026-09-11T15:34:00+07:00",
   "cause": "hk_standard",
   "state": "raised",
   "state_history": [],
@@ -767,14 +1114,14 @@
  {
   "record_id": "cmp_45",
   "site_id": "lwas",
-  "source_message_id": "msg_1_1044",
-  "sent_at": "2026-09-11T17:24:00+07:00",
+  "source_message_id": "msg_1_954",
+  "sent_at": "2026-09-11T15:54:00+07:00",
   "sender_raw": "Cristian B. Suryanto",
   "sender_person_id": null,
   "confidence": 0.9,
   "area_id": "once_35",
   "raised_by": "p_client",
-  "raised_at": "2026-09-11T17:24:00+07:00",
+  "raised_at": "2026-09-11T15:54:00+07:00",
   "cause": "hk_standard",
   "state": "raised",
   "state_history": [],
@@ -784,14 +1131,14 @@
  {
   "record_id": "cmp_46",
   "site_id": "lwas",
-  "source_message_id": "msg_1_1068",
-  "sent_at": "2026-09-11T17:48:00+07:00",
+  "source_message_id": "msg_1_975",
+  "sent_at": "2026-09-11T16:15:00+07:00",
   "sender_raw": "Rachmad Adi",
   "sender_person_id": null,
   "confidence": 0.9,
   "area_id": "once_36",
   "raised_by": "p_client",
-  "raised_at": "2026-09-11T17:48:00+07:00",
+  "raised_at": "2026-09-11T16:15:00+07:00",
   "cause": "hk_standard",
   "state": "raised",
   "state_history": [],
@@ -801,14 +1148,14 @@
  {
   "record_id": "cmp_47",
   "site_id": "lwas",
-  "source_message_id": "msg_1_1092",
-  "sent_at": "2026-09-11T18:12:00+07:00",
+  "source_message_id": "msg_1_996",
+  "sent_at": "2026-09-11T16:36:00+07:00",
   "sender_raw": "Rachmad Adi",
   "sender_person_id": null,
   "confidence": 0.9,
   "area_id": "once_37",
   "raised_by": "p_client",
-  "raised_at": "2026-09-11T18:12:00+07:00",
+  "raised_at": "2026-09-11T16:36:00+07:00",
   "cause": "hk_standard",
   "state": "raised",
   "state_history": [],
@@ -818,14 +1165,14 @@
  {
   "record_id": "cmp_48",
   "site_id": "lwas",
-  "source_message_id": "msg_1_1116",
-  "sent_at": "2026-09-11T18:36:00+07:00",
+  "source_message_id": "msg_1_1016",
+  "sent_at": "2026-09-11T16:56:00+07:00",
   "sender_raw": "Rachmad Adi",
   "sender_person_id": null,
   "confidence": 0.9,
   "area_id": "once_38",
   "raised_by": "p_client",
-  "raised_at": "2026-09-11T18:36:00+07:00",
+  "raised_at": "2026-09-11T16:56:00+07:00",
   "cause": "hk_standard",
   "state": "raised",
   "state_history": [],
@@ -835,14 +1182,14 @@
  {
   "record_id": "cmp_49",
   "site_id": "lwas",
-  "source_message_id": "msg_1_1140",
-  "sent_at": "2026-09-11T19:00:00+07:00",
+  "source_message_id": "msg_1_1037",
+  "sent_at": "2026-09-11T17:17:00+07:00",
   "sender_raw": "Sofyan",
   "sender_person_id": null,
   "confidence": 0.9,
   "area_id": "once_39",
   "raised_by": "p_client",
-  "raised_at": "2026-09-11T19:00:00+07:00",
+  "raised_at": "2026-09-11T17:17:00+07:00",
   "cause": "hk_standard",
   "state": "raised",
   "state_history": [],
@@ -852,14 +1199,14 @@
  {
   "record_id": "cmp_50",
   "site_id": "lwas",
-  "source_message_id": "msg_1_1163",
-  "sent_at": "2026-09-11T19:23:00+07:00",
+  "source_message_id": "msg_1_1057",
+  "sent_at": "2026-09-11T17:37:00+07:00",
   "sender_raw": "Rachmad Adi",
   "sender_person_id": null,
   "confidence": 0.9,
   "area_id": "once_40",
   "raised_by": "p_client",
-  "raised_at": "2026-09-11T19:23:00+07:00",
+  "raised_at": "2026-09-11T17:37:00+07:00",
   "cause": "external_other",
   "state": "raised",
   "state_history": [],
@@ -869,14 +1216,14 @@
  {
   "record_id": "cmp_51",
   "site_id": "lwas",
-  "source_message_id": "msg_1_1187",
-  "sent_at": "2026-09-11T19:47:00+07:00",
+  "source_message_id": "msg_1_1078",
+  "sent_at": "2026-09-11T17:58:00+07:00",
   "sender_raw": "Sofyan",
   "sender_person_id": null,
   "confidence": 0.9,
   "area_id": "once_41",
   "raised_by": "p_client",
-  "raised_at": "2026-09-11T19:47:00+07:00",
+  "raised_at": "2026-09-11T17:58:00+07:00",
   "cause": "hk_standard",
   "state": "raised",
   "state_history": [],
@@ -886,14 +1233,14 @@
  {
   "record_id": "cmp_52",
   "site_id": "lwas",
-  "source_message_id": "msg_1_1212",
-  "sent_at": "2026-09-11T20:12:00+07:00",
+  "source_message_id": "msg_1_1098",
+  "sent_at": "2026-09-11T18:18:00+07:00",
   "sender_raw": "Rachmad Adi",
   "sender_person_id": null,
   "confidence": 0.9,
   "area_id": "once_42",
   "raised_by": "p_client",
-  "raised_at": "2026-09-11T20:12:00+07:00",
+  "raised_at": "2026-09-11T18:18:00+07:00",
   "cause": "hk_standard",
   "state": "raised",
   "state_history": [],
@@ -903,14 +1250,14 @@
  {
   "record_id": "cmp_53",
   "site_id": "lwas",
-  "source_message_id": "msg_1_1236",
-  "sent_at": "2026-09-11T20:36:00+07:00",
+  "source_message_id": "msg_1_1119",
+  "sent_at": "2026-09-11T18:39:00+07:00",
   "sender_raw": "Rachmad Adi",
   "sender_person_id": null,
   "confidence": 0.9,
   "area_id": "once_43",
   "raised_by": "p_client",
-  "raised_at": "2026-09-11T20:36:00+07:00",
+  "raised_at": "2026-09-11T18:39:00+07:00",
   "cause": "hk_standard",
   "state": "raised",
   "state_history": [],
@@ -930,58 +1277,97 @@
   "raised_at": "2026-09-12T07:00:00+07:00",
   "cause": "hk_standard",
   "state": "closed_with_photo",
-  "state_history": [],
+  "state_history": [
+   {
+    "state": "answered",
+    "at": "2026-09-12T07:04:00+07:00",
+    "source_message_id": "msg_r_54"
+   },
+   {
+    "state": "closed_with_photo",
+    "at": "2026-09-12T07:30:00+07:00",
+    "source_message_id": "msg_c_54"
+   }
+  ],
   "closing_photo_id": "ph_0",
   "blocked_reason_message_id": null
  },
  {
   "record_id": "cmp_55",
   "site_id": "lwas",
-  "source_message_id": "msg_2_630",
-  "sent_at": "2026-09-12T10:30:00+07:00",
+  "source_message_id": "msg_2_600",
+  "sent_at": "2026-09-12T10:00:00+07:00",
   "sender_raw": "Rachmad Adi",
   "sender_person_id": null,
   "confidence": 0.9,
   "area_id": "tangga_carpark_p1_p10",
   "raised_by": "p_client",
-  "raised_at": "2026-09-12T10:30:00+07:00",
+  "raised_at": "2026-09-12T10:00:00+07:00",
   "cause": "hk_standard",
   "state": "closed_with_photo",
-  "state_history": [],
+  "state_history": [
+   {
+    "state": "answered",
+    "at": "2026-09-12T10:04:00+07:00",
+    "source_message_id": "msg_r_55"
+   },
+   {
+    "state": "closed_with_photo",
+    "at": "2026-09-12T10:30:00+07:00",
+    "source_message_id": "msg_c_55"
+   }
+  ],
   "closing_photo_id": "ph_1",
   "blocked_reason_message_id": null
  },
  {
   "record_id": "cmp_56",
   "site_id": "lwas",
-  "source_message_id": "msg_2_840",
-  "sent_at": "2026-09-12T14:00:00+07:00",
+  "source_message_id": "msg_2_780",
+  "sent_at": "2026-09-12T13:00:00+07:00",
   "sender_raw": "Cristian B. Suryanto",
   "sender_person_id": null,
   "confidence": 0.9,
   "area_id": "once_44",
   "raised_by": "p_client",
-  "raised_at": "2026-09-12T14:00:00+07:00",
+  "raised_at": "2026-09-12T13:00:00+07:00",
   "cause": "hk_standard",
   "state": "closed_with_photo",
-  "state_history": [],
+  "state_history": [
+   {
+    "state": "answered",
+    "at": "2026-09-12T13:04:00+07:00",
+    "source_message_id": "msg_r_56"
+   },
+   {
+    "state": "closed_with_photo",
+    "at": "2026-09-12T13:30:00+07:00",
+    "source_message_id": "msg_c_56"
+   }
+  ],
   "closing_photo_id": "ph_2",
   "blocked_reason_message_id": null
  },
  {
   "record_id": "cmp_57",
   "site_id": "lwas",
-  "source_message_id": "msg_2_1050",
-  "sent_at": "2026-09-12T17:30:00+07:00",
+  "source_message_id": "msg_2_960",
+  "sent_at": "2026-09-12T16:00:00+07:00",
   "sender_raw": "Desak Made Meyasni",
   "sender_person_id": null,
   "confidence": 0.9,
   "area_id": "once_45",
   "raised_by": "p_client",
-  "raised_at": "2026-09-12T17:30:00+07:00",
+  "raised_at": "2026-09-12T16:00:00+07:00",
   "cause": "hk_standard",
   "state": "answered",
-  "state_history": [],
+  "state_history": [
+   {
+    "state": "answered",
+    "at": "2026-09-12T16:02:00+07:00",
+    "source_message_id": "msg_r_57"
+   }
+  ],
   "closing_photo_id": null,
   "blocked_reason_message_id": null
  },
@@ -998,276 +1384,407 @@
   "raised_at": "2026-09-13T07:00:00+07:00",
   "cause": "hk_standard",
   "state": "closed_with_photo",
-  "state_history": [],
+  "state_history": [
+   {
+    "state": "answered",
+    "at": "2026-09-13T07:04:00+07:00",
+    "source_message_id": "msg_r_58"
+   },
+   {
+    "state": "closed_with_photo",
+    "at": "2026-09-13T07:30:00+07:00",
+    "source_message_id": "msg_c_58"
+   }
+  ],
   "closing_photo_id": "ph_0",
   "blocked_reason_message_id": null
  },
  {
   "record_id": "cmp_59",
   "site_id": "lwas",
-  "source_message_id": "msg_3_469",
-  "sent_at": "2026-09-13T07:49:00+07:00",
+  "source_message_id": "msg_3_462",
+  "sent_at": "2026-09-13T07:42:00+07:00",
   "sender_raw": "Rachmad Adi",
   "sender_person_id": null,
   "confidence": 0.9,
   "area_id": "tempat_sampah_cmo",
   "raised_by": "p_client",
-  "raised_at": "2026-09-13T07:49:00+07:00",
+  "raised_at": "2026-09-13T07:42:00+07:00",
   "cause": "hk_standard",
   "state": "closed_with_photo",
-  "state_history": [],
+  "state_history": [
+   {
+    "state": "answered",
+    "at": "2026-09-13T07:46:00+07:00",
+    "source_message_id": "msg_r_59"
+   },
+   {
+    "state": "closed_with_photo",
+    "at": "2026-09-13T08:12:00+07:00",
+    "source_message_id": "msg_c_59"
+   }
+  ],
   "closing_photo_id": "ph_1",
   "blocked_reason_message_id": null
  },
  {
   "record_id": "cmp_60",
   "site_id": "lwas",
-  "source_message_id": "msg_3_518",
-  "sent_at": "2026-09-13T08:38:00+07:00",
+  "source_message_id": "msg_3_504",
+  "sent_at": "2026-09-13T08:24:00+07:00",
   "sender_raw": "Desak Made Meyasni",
   "sender_person_id": null,
   "confidence": 0.9,
   "area_id": "asbak_smoking_area",
   "raised_by": "p_client",
-  "raised_at": "2026-09-13T08:38:00+07:00",
+  "raised_at": "2026-09-13T08:24:00+07:00",
   "cause": "hk_standard",
   "state": "closed_with_photo",
-  "state_history": [],
+  "state_history": [
+   {
+    "state": "answered",
+    "at": "2026-09-13T08:28:00+07:00",
+    "source_message_id": "msg_r_60"
+   },
+   {
+    "state": "closed_with_photo",
+    "at": "2026-09-13T08:54:00+07:00",
+    "source_message_id": "msg_c_60"
+   }
+  ],
   "closing_photo_id": "ph_2",
   "blocked_reason_message_id": null
  },
  {
   "record_id": "cmp_61",
   "site_id": "lwas",
-  "source_message_id": "msg_3_568",
-  "sent_at": "2026-09-13T09:28:00+07:00",
+  "source_message_id": "msg_3_547",
+  "sent_at": "2026-09-13T09:07:00+07:00",
   "sender_raw": "Rachmad Adi",
   "sender_person_id": null,
   "confidence": 0.9,
   "area_id": "depan_skin_plus",
   "raised_by": "p_client",
-  "raised_at": "2026-09-13T09:28:00+07:00",
+  "raised_at": "2026-09-13T09:07:00+07:00",
   "cause": "hk_standard",
   "state": "closed_with_photo",
-  "state_history": [],
+  "state_history": [
+   {
+    "state": "answered",
+    "at": "2026-09-13T09:11:00+07:00",
+    "source_message_id": "msg_r_61"
+   },
+   {
+    "state": "closed_with_photo",
+    "at": "2026-09-13T09:37:00+07:00",
+    "source_message_id": "msg_c_61"
+   }
+  ],
   "closing_photo_id": "ph_3",
   "blocked_reason_message_id": null
  },
  {
   "record_id": "cmp_62",
   "site_id": "lwas",
-  "source_message_id": "msg_3_617",
-  "sent_at": "2026-09-13T10:17:00+07:00",
+  "source_message_id": "msg_3_589",
+  "sent_at": "2026-09-13T09:49:00+07:00",
   "sender_raw": "Cristian B. Suryanto",
   "sender_person_id": null,
   "confidence": 0.9,
   "area_id": "once_46",
   "raised_by": "p_client",
-  "raised_at": "2026-09-13T10:17:00+07:00",
+  "raised_at": "2026-09-13T09:49:00+07:00",
   "cause": "tenant_project_event",
   "state": "closed_with_photo",
-  "state_history": [],
+  "state_history": [
+   {
+    "state": "answered",
+    "at": "2026-09-13T09:53:00+07:00",
+    "source_message_id": "msg_r_62"
+   },
+   {
+    "state": "closed_with_photo",
+    "at": "2026-09-13T10:19:00+07:00",
+    "source_message_id": "msg_c_62"
+   }
+  ],
   "closing_photo_id": "ph_4",
   "blocked_reason_message_id": null
  },
  {
   "record_id": "cmp_63",
   "site_id": "lwas",
-  "source_message_id": "msg_3_667",
-  "sent_at": "2026-09-13T11:07:00+07:00",
+  "source_message_id": "msg_3_631",
+  "sent_at": "2026-09-13T10:31:00+07:00",
   "sender_raw": "Rachmad Adi",
   "sender_person_id": null,
   "confidence": 0.9,
   "area_id": "once_47",
   "raised_by": "p_client",
-  "raised_at": "2026-09-13T11:07:00+07:00",
+  "raised_at": "2026-09-13T10:31:00+07:00",
   "cause": "hk_standard",
   "state": "closed_with_photo",
-  "state_history": [],
+  "state_history": [
+   {
+    "state": "answered",
+    "at": "2026-09-13T10:35:00+07:00",
+    "source_message_id": "msg_r_63"
+   },
+   {
+    "state": "closed_with_photo",
+    "at": "2026-09-13T11:01:00+07:00",
+    "source_message_id": "msg_c_63"
+   }
+  ],
   "closing_photo_id": "ph_5",
   "blocked_reason_message_id": null
  },
  {
   "record_id": "cmp_64",
   "site_id": "lwas",
-  "source_message_id": "msg_3_716",
-  "sent_at": "2026-09-13T11:56:00+07:00",
+  "source_message_id": "msg_3_674",
+  "sent_at": "2026-09-13T11:14:00+07:00",
   "sender_raw": "Sofyan",
   "sender_person_id": null,
   "confidence": 0.9,
   "area_id": "once_48",
   "raised_by": "p_client",
-  "raised_at": "2026-09-13T11:56:00+07:00",
+  "raised_at": "2026-09-13T11:14:00+07:00",
   "cause": "hk_standard",
   "state": "closed_with_photo",
-  "state_history": [],
+  "state_history": [
+   {
+    "state": "answered",
+    "at": "2026-09-13T11:18:00+07:00",
+    "source_message_id": "msg_r_64"
+   },
+   {
+    "state": "closed_with_photo",
+    "at": "2026-09-13T11:20:00+07:00",
+    "source_message_id": "msg_c_64"
+   }
+  ],
   "closing_photo_id": "ph_6",
   "blocked_reason_message_id": null
  },
  {
   "record_id": "cmp_65",
   "site_id": "lwas",
-  "source_message_id": "msg_3_765",
-  "sent_at": "2026-09-13T12:45:00+07:00",
+  "source_message_id": "msg_3_716",
+  "sent_at": "2026-09-13T11:56:00+07:00",
   "sender_raw": "Rachmad Adi",
   "sender_person_id": null,
   "confidence": 0.9,
   "area_id": "once_49",
   "raised_by": "p_client",
-  "raised_at": "2026-09-13T12:45:00+07:00",
+  "raised_at": "2026-09-13T11:56:00+07:00",
   "cause": "hk_standard",
   "state": "answered",
-  "state_history": [],
+  "state_history": [
+   {
+    "state": "answered",
+    "at": "2026-09-13T11:58:00+07:00",
+    "source_message_id": "msg_r_65"
+   }
+  ],
   "closing_photo_id": null,
   "blocked_reason_message_id": null
  },
  {
   "record_id": "cmp_66",
   "site_id": "lwas",
-  "source_message_id": "msg_3_815",
-  "sent_at": "2026-09-13T13:35:00+07:00",
+  "source_message_id": "msg_3_758",
+  "sent_at": "2026-09-13T12:38:00+07:00",
   "sender_raw": "Cristian B. Suryanto",
   "sender_person_id": null,
   "confidence": 0.9,
   "area_id": "once_50",
   "raised_by": "p_client",
-  "raised_at": "2026-09-13T13:35:00+07:00",
+  "raised_at": "2026-09-13T12:38:00+07:00",
   "cause": "hk_standard",
   "state": "answered",
-  "state_history": [],
+  "state_history": [
+   {
+    "state": "answered",
+    "at": "2026-09-13T12:40:00+07:00",
+    "source_message_id": "msg_r_66"
+   }
+  ],
   "closing_photo_id": null,
   "blocked_reason_message_id": null
  },
  {
   "record_id": "cmp_67",
   "site_id": "lwas",
-  "source_message_id": "msg_3_864",
-  "sent_at": "2026-09-13T14:24:00+07:00",
+  "source_message_id": "msg_3_801",
+  "sent_at": "2026-09-13T13:21:00+07:00",
   "sender_raw": "Rachmad Adi",
   "sender_person_id": null,
   "confidence": 0.9,
   "area_id": "once_51",
   "raised_by": "p_client",
-  "raised_at": "2026-09-13T14:24:00+07:00",
+  "raised_at": "2026-09-13T13:21:00+07:00",
   "cause": "hk_standard",
   "state": "answered",
-  "state_history": [],
+  "state_history": [
+   {
+    "state": "answered",
+    "at": "2026-09-13T13:23:00+07:00",
+    "source_message_id": "msg_r_67"
+   }
+  ],
   "closing_photo_id": null,
   "blocked_reason_message_id": null
  },
  {
   "record_id": "cmp_68",
   "site_id": "lwas",
-  "source_message_id": "msg_3_914",
-  "sent_at": "2026-09-13T15:14:00+07:00",
+  "source_message_id": "msg_3_843",
+  "sent_at": "2026-09-13T14:03:00+07:00",
   "sender_raw": "Rachmad Adi",
   "sender_person_id": null,
   "confidence": 0.9,
   "area_id": "once_52",
   "raised_by": "p_client",
-  "raised_at": "2026-09-13T15:14:00+07:00",
+  "raised_at": "2026-09-13T14:03:00+07:00",
   "cause": "hk_standard",
   "state": "answered",
-  "state_history": [],
+  "state_history": [
+   {
+    "state": "answered",
+    "at": "2026-09-13T14:05:00+07:00",
+    "source_message_id": "msg_r_68"
+   }
+  ],
   "closing_photo_id": null,
   "blocked_reason_message_id": null
  },
  {
   "record_id": "cmp_69",
   "site_id": "lwas",
-  "source_message_id": "msg_3_963",
-  "sent_at": "2026-09-13T16:03:00+07:00",
+  "source_message_id": "msg_3_885",
+  "sent_at": "2026-09-13T14:45:00+07:00",
   "sender_raw": "Sofyan",
   "sender_person_id": null,
   "confidence": 0.9,
   "area_id": "once_53",
   "raised_by": "p_client",
-  "raised_at": "2026-09-13T16:03:00+07:00",
+  "raised_at": "2026-09-13T14:45:00+07:00",
   "cause": "hk_standard",
   "state": "answered",
-  "state_history": [],
+  "state_history": [
+   {
+    "state": "answered",
+    "at": "2026-09-13T14:47:00+07:00",
+    "source_message_id": "msg_r_69"
+   }
+  ],
   "closing_photo_id": null,
   "blocked_reason_message_id": null
  },
  {
   "record_id": "cmp_70",
   "site_id": "lwas",
-  "source_message_id": "msg_3_1012",
-  "sent_at": "2026-09-13T16:52:00+07:00",
+  "source_message_id": "msg_3_928",
+  "sent_at": "2026-09-13T15:28:00+07:00",
   "sender_raw": "Rachmad Adi",
   "sender_person_id": null,
   "confidence": 0.9,
   "area_id": "once_54",
   "raised_by": "p_client",
-  "raised_at": "2026-09-13T16:52:00+07:00",
+  "raised_at": "2026-09-13T15:28:00+07:00",
   "cause": "hk_standard",
   "state": "answered",
-  "state_history": [],
+  "state_history": [
+   {
+    "state": "answered",
+    "at": "2026-09-13T15:30:00+07:00",
+    "source_message_id": "msg_r_70"
+   }
+  ],
   "closing_photo_id": null,
   "blocked_reason_message_id": null
  },
  {
   "record_id": "cmp_71",
   "site_id": "lwas",
-  "source_message_id": "msg_3_1062",
-  "sent_at": "2026-09-13T17:42:00+07:00",
+  "source_message_id": "msg_3_970",
+  "sent_at": "2026-09-13T16:10:00+07:00",
   "sender_raw": "Cristian B. Suryanto",
   "sender_person_id": null,
   "confidence": 0.9,
   "area_id": "once_55",
   "raised_by": "p_client",
-  "raised_at": "2026-09-13T17:42:00+07:00",
+  "raised_at": "2026-09-13T16:10:00+07:00",
   "cause": "engineering_equipment",
   "state": "answered",
-  "state_history": [],
+  "state_history": [
+   {
+    "state": "answered",
+    "at": "2026-09-13T16:12:00+07:00",
+    "source_message_id": "msg_r_71"
+   }
+  ],
   "closing_photo_id": null,
   "blocked_reason_message_id": null
  },
  {
   "record_id": "cmp_72",
   "site_id": "lwas",
-  "source_message_id": "msg_3_1111",
-  "sent_at": "2026-09-13T18:31:00+07:00",
+  "source_message_id": "msg_3_1012",
+  "sent_at": "2026-09-13T16:52:00+07:00",
   "sender_raw": "Sofyan",
   "sender_person_id": null,
   "confidence": 0.9,
   "area_id": "once_56",
   "raised_by": "p_client",
-  "raised_at": "2026-09-13T18:31:00+07:00",
+  "raised_at": "2026-09-13T16:52:00+07:00",
   "cause": "hk_standard",
   "state": "answered",
-  "state_history": [],
+  "state_history": [
+   {
+    "state": "answered",
+    "at": "2026-09-13T16:56:00+07:00",
+    "source_message_id": "msg_r_72"
+   }
+  ],
   "closing_photo_id": null,
   "blocked_reason_message_id": null
  },
  {
   "record_id": "cmp_73",
   "site_id": "lwas",
-  "source_message_id": "msg_3_1161",
-  "sent_at": "2026-09-13T19:21:00+07:00",
+  "source_message_id": "msg_3_1055",
+  "sent_at": "2026-09-13T17:35:00+07:00",
   "sender_raw": "Sofyan",
   "sender_person_id": null,
   "confidence": 0.9,
   "area_id": "once_57",
   "raised_by": "p_client",
-  "raised_at": "2026-09-13T19:21:00+07:00",
+  "raised_at": "2026-09-13T17:35:00+07:00",
   "cause": "hk_standard",
   "state": "answered",
-  "state_history": [],
+  "state_history": [
+   {
+    "state": "answered",
+    "at": "2026-09-13T17:39:00+07:00",
+    "source_message_id": "msg_r_73"
+   }
+  ],
   "closing_photo_id": null,
   "blocked_reason_message_id": null
  },
  {
   "record_id": "cmp_74",
   "site_id": "lwas",
-  "source_message_id": "msg_3_1210",
-  "sent_at": "2026-09-13T20:10:00+07:00",
+  "source_message_id": "msg_3_1097",
+  "sent_at": "2026-09-13T18:17:00+07:00",
   "sender_raw": "Rachmad Adi",
   "sender_person_id": null,
   "confidence": 0.9,
   "area_id": "once_58",
   "raised_by": "p_client",
-  "raised_at": "2026-09-13T20:10:00+07:00",
+  "raised_at": "2026-09-13T18:17:00+07:00",
   "cause": "hk_standard",
   "state": "raised",
   "state_history": [],

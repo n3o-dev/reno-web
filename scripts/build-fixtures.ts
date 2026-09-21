@@ -37,6 +37,13 @@ const DEFECTS: Record<string, readonly number[]> = {
   photo_reused: [3, 0, 0, 0],
 }
 const LATE_OVER_3H = 25
+/**
+ * Reply and closure durations, in minutes, chosen so the period medians land
+ * on the published figures: reply median 3 (fastest under 1, slowest 25) and
+ * closure median 41 (fastest 6, slowest 16h50m = 1010).
+ */
+const REPLY_MINUTES: readonly number[] = [0, ...Array<number>(30).fill(2), ...Array<number>(30).fill(4), 25]
+const CLOSURE_MINUTES: readonly number[] = [6, ...Array<number>(13).fill(30), 41, ...Array<number>(13).fill(60), 1010]
 const DUPLICATE_PAIRS = 3
 
 /** Areas complained about on more than one day, with the days they recurred. */
@@ -177,28 +184,77 @@ DAYS.forEach((_, d) => {
 })
 
 let complaintN = 0
+
+/** Flatten every complaint first, so reply and closure durations can be
+ *  allocated across the whole period rather than per day. */
+interface Pending {
+  readonly day: number
+  readonly minute: number
+  readonly area: string
+  readonly index: number
+  state: 'raised' | 'answered' | 'closed_with_photo'
+}
+const pending: Pending[] = []
 DAYS.forEach((_, d) => {
   const list = complaintsByDay[d] as string[]
   const closed = CLOSED_WITH_PHOTO[d] as number
   const answered = ANSWERED[d] as number
   list.forEach((area, i) => {
-    const minute = 7 * 60 + Math.floor((i / list.length) * 14 * 60)
-    const state =
-      i < closed ? 'closed_with_photo' : i < answered ? 'answered' : ('raised' as const)
-    out.complaint.push({
-      ...envelope(`cmp_${complaintN}`, d, minute, pick(CLIENT_PICS)),
-      area_id: area,
-      raised_by: 'p_client',
-      raised_at: at(d, minute),
-      cause: i % 9 === 4 ? (CAUSES[1 + (i % 4)] as string) : 'hk_standard',
-      state,
-      state_history: [],
-      closing_photo_id: state === 'closed_with_photo' ? `ph_${i}` : null,
-      blocked_reason_message_id: null,
+    const minute = 7 * 60 + Math.floor((i / list.length) * 12 * 60)
+    pending.push({
+      day: d,
+      minute,
+      area,
+      index: i,
+      state: i < closed ? 'closed_with_photo' : i < answered ? 'answered' : 'raised',
     })
-    complaintN++
   })
 })
+
+// Longest closures go to the earliest complaints so none overflows its day.
+const closedOnes = pending
+  .filter((p) => p.state === 'closed_with_photo')
+  .sort((a, b) => a.day * 1440 + a.minute - (b.day * 1440 + b.minute))
+const closureFor = new Map<Pending, number>()
+;[...CLOSURE_MINUTES]
+  .sort((a, b) => b - a)
+  .forEach((mins, n) => {
+    const target = closedOnes[n]
+    if (target !== undefined) closureFor.set(target, mins)
+  })
+
+const answeredOnes = pending.filter((p) => p.state !== 'raised')
+const replyFor = new Map<Pending, number>()
+// The single fastest reply pairs with the fastest closure, keeping each
+// complaint internally consistent (a closure never precedes its reply).
+const replyPool = [...REPLY_MINUTES].sort((a, b) => a - b)
+answeredOnes
+  .sort((a, b) => (closureFor.get(a) ?? 0) - (closureFor.get(b) ?? 0))
+  .forEach((p, n) => replyFor.set(p, replyPool[n] as number))
+
+for (const p of pending) {
+  const reply = replyFor.get(p)
+  const closure = closureFor.get(p)
+  const history = []
+  if (reply !== undefined) {
+    history.push({ state: 'answered', at: at(p.day, p.minute + reply), source_message_id: `msg_r_${complaintN}` })
+  }
+  if (closure !== undefined) {
+    history.push({ state: 'closed_with_photo', at: at(p.day, p.minute + closure), source_message_id: `msg_c_${complaintN}` })
+  }
+  out.complaint.push({
+    ...envelope(`cmp_${complaintN}`, p.day, p.minute, pick(CLIENT_PICS)),
+    area_id: p.area,
+    raised_by: 'p_client',
+    raised_at: at(p.day, p.minute),
+    cause: p.index % 9 === 4 ? (CAUSES[1 + (p.index % 4)] as string) : 'hk_standard',
+    state: p.state,
+    state_history: history,
+    closing_photo_id: p.state === 'closed_with_photo' ? `ph_${p.index}` : null,
+    blocked_reason_message_id: null,
+  })
+  complaintN++
+}
 
 // ---- supporting records ---------------------------------------------------
 DAYS.forEach((_, d) => {
