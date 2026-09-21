@@ -69,10 +69,12 @@ appear in no report all shift, a name listed in two areas, a headcount that disa
 names listed, and alias candidates awaiting a human decision. Labelled as signals to check,
 never as proof.
 
-**6 · Report Quality** — validation pass rate and the defect breakdown: no area, no caption,
-marked done with no complaint, photo reused, photo sent over one hour and over three hours
-after capture, photo taken before the complaint existed. Per-reporter scorecard. Duplicate
-photos shown side by side, since that is the only way the accusation is safe to make.
+**6 · Report Quality** — group activity for the period (messages, photos, work reports per
+day); validation pass rate and the defect breakdown: no area, no caption, marked done with no
+complaint, photo reused, photo sent over one hour and over three hours after capture, photo
+taken before the complaint existed. Before-and-after coverage as a count and a share of
+reports. Per-reporter scorecard. Duplicate photos shown side by side, since that is the only
+way the accusation is safe to make.
 
 **7 · Pimpro Scorecard** — the SOP form with A.1, A.3, C.3 and D.3 filled from data and the
 other nine left blank and marked human input. Weighted total marked provisional until complete.
@@ -95,6 +97,7 @@ other nine left blank and marked human input. Weighted total marked provisional 
 - **AC-12**: The client view is usable at 390px wide. `pnpm test:e2e -- mobile` runs the client screens at that viewport and asserts no horizontal overflow and no tap target under 44px.
 - **AC-13**: Records with low `confidence` render visibly distinguished and are never dropped. A test injects a 0.4-confidence complaint and asserts it appears and carries a confidence marker.
 - **AC-14**: `pnpm build` succeeds, `pnpm typecheck` reports no errors, and `pnpm lint` is clean.
+- **AC-15**: Over 10–13 September 2026 the screens render the case-study deck's published figures exactly — per-day messages, photos, work reports, complaints, answered and closed-with-photo; reply and closure medians; before-after coverage; the defect breakdown; photos sent over three hours after capture; duplicate pairs; and the seven repeat areas. `pnpm test:e2e -- deck-parity` reads each figure off the rendered DOM and compares it to `scripts/fixtures/published-figures.ts`. The deck is the source of truth: a mismatch is a dashboard defect, never a reason to edit the figure.
 
 ## Verification
 ```
