@@ -52,9 +52,20 @@ describe('the rules layer cannot tell which source it is holding', () => {
     expect(viaDisk.raised).toBe(75)
   })
 
-  it('is stable across repeated reads, so a cache cannot drift', () => {
-    expect(paged.complaints).toEqual(paged.complaints)
-    expect(paged.all('photo')).toHaveLength(1052)
+  it('is stable across repeated reads, so a cold and a warm cache agree', () => {
+    // A fresh source reads cold; `paged` above has already materialised.
+    const cold = createPagedRecordSource({
+      message: paginate(fromDisk.messages, 37),
+      work_report: paginate(fromDisk.workReports, 11),
+      complaint: paginate(fromDisk.complaints, 3),
+      work_order: paginate(fromDisk.workOrders, 1),
+      lineup: paginate(fromDisk.lineups, 4),
+      rkb_match: paginate(fromDisk.rkbMatches, 1),
+      photo: paginate(fromDisk.photos, 13),
+      person: paginate(fromDisk.people, 2),
+    })
+    expect(cold.all('photo')).toHaveLength(1052)
+    expect(cold.complaints).toEqual(paged.complaints)
   })
 })
 

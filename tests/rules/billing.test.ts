@@ -38,6 +38,21 @@ describe('AC-5 · realisation always returns gross and net together', () => {
     expect(r.gross).toBe(0)
   })
 
+  /**
+   * Pinned while the spec decision on AC-12 is open: a planned cell that was
+   * never reported has no message to cite, so evidence is empty. This must not
+   * silently become "the nearest message id" — that would be a fabrication.
+   */
+  it('returns empty evidence rather than inventing a citation when nothing was reported', () => {
+    const r = computeRealisation([
+      { job_row_id: 'a', date: '2026-09-10', planned: true, done: false, blocked: false, source_message_id: null },
+      { job_row_id: 'b', date: '2026-09-11', planned: true, done: false, blocked: false, source_message_id: null },
+    ])
+    expect(r.evidence).toEqual([])
+    expect(r.planned).toBe(2)
+    expect(r.gross).toBe(0)
+  })
+
   it('carries message ids as evidence, never synthetic keys', () => {
     const r = computeRealisation(rows)
     expect(r.evidence).toEqual(['msg_a', 'msg_c'])
