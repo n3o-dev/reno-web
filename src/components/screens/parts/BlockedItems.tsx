@@ -59,7 +59,8 @@ export function BlockedItems({ complaints, citations }: BlockedItemsProps) {
               <details className="mt-1">
                 <summary
                   data-citation={complaint.record_id}
-                  className="cursor-pointer text-[13px] text-muted underline decoration-line"
+                  // 44px tall so a thumb can open it (AC-12).
+                  className="inline-flex min-h-11 cursor-pointer items-center text-[13px] text-muted underline decoration-line"
                 >
                   Why it is paused
                 </summary>

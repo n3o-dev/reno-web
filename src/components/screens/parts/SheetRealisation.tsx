@@ -37,7 +37,9 @@ export function SheetRealisation({ sheets, basePath }: SheetRealisationProps) {
         {sheets.map((sheet) => (
           <tr key={sheet.slug} className="border-t border-line text-[14px]">
             <th scope="row" className="px-0 py-2 font-normal">
-              <Link href={`${basePath}/${sheet.slug}`} className="underline decoration-line hover:decoration-ink">
+              <Link href={`${basePath}/${sheet.slug}`} // A row link a thumb can hit: the target is the height of the row, not
+                // the height of the text (AC-12).
+                className="inline-flex min-h-11 items-center underline decoration-line hover:decoration-ink">
                 {sheet.name.trim()}
               </Link>
               <span className="block text-[13px] text-faint">
@@ -52,7 +54,7 @@ export function SheetRealisation({ sheets, basePath }: SheetRealisationProps) {
                 name={`rkb.realisation.${sheet.slug}`}
                 kind="completion"
                 evidence={[sheet.evidence]}
-                total={1}
+                total={sheet.realisation.planned === 0 ? 0 : 1}
               >
                 {percent(sheet.realisation.net)}
               </Figure>

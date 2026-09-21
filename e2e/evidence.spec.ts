@@ -27,12 +27,23 @@ for (const path of SCREENS) {
       nodes.map((n) => ({
         name: n.getAttribute('data-figure') ?? '',
         evidence: n.getAttribute('data-evidence'),
+        value: (n.textContent ?? '').trim(),
       })),
     )
     expect(figures.length, `${path} carries no figures at all`).toBeGreaterThan(0)
 
-    const uncited = figures.filter((f) => f.evidence === null || Number(f.evidence) === 0)
-    expect(uncited.map((f) => f.name)).toEqual([])
+    /*
+     * A figure may legitimately count nothing — no work order was blocked
+     * this period — and then it cites nothing and says so. What must never
+     * happen is a figure with a non-zero value and no source behind it.
+     * Checking the pair is what makes this gate able to fail: it used to
+     * accept a stated absence as a source, so `data-evidence` was never 0.
+     */
+    const uncited = figures.filter((f) => f.value !== '0' && Number(f.evidence ?? 0) === 0)
+    expect(uncited.map((f) => `${f.name} = ${f.value}`)).toEqual([])
+
+    // And every figure must carry the attribute at all.
+    expect(figures.filter((f) => f.evidence === null).map((f) => f.name)).toEqual([])
   })
 }
 

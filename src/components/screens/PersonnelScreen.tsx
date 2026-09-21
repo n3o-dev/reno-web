@@ -42,7 +42,7 @@ export async function PersonnelScreen({ siteId }: ScreenProps) {
             <Figure
               name="personnel.aliases"
               evidence={cite(withAliases).items}
-              total={Math.max(1, cite(withAliases).total)}
+              total={cite(withAliases).total}
             >
               {withAliases.length}
             </Figure>

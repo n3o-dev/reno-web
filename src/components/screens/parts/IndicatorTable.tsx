@@ -58,7 +58,7 @@ export function IndicatorTable({ rapor, evidence }: IndicatorTableProps) {
                         { kind: 'absent', reason: 'scored by a person, not from the group' },
                       ]
                     }
-                    total={Math.max(1, (evidence[indicator] ?? []).length)}
+                    total={(evidence[indicator] ?? []).length}
                   >
                     {score}
                   </Figure>

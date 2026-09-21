@@ -16,14 +16,15 @@ interface CardProps {
 export function Card({ title, info, children }: CardProps) {
   return (
     <section className="rounded-[var(--radius-card)] border border-line bg-surface p-5">
-      <div className="mb-4 flex items-start justify-between gap-3">
+      <div className="mb-4 flex items-start justify-between gap-1">
         <h2 className="font-[family-name:var(--font-display)] text-[17px] leading-[1.3]">
           {title}
         </h2>
         <details className="group relative shrink-0">
           <summary
             aria-label={`What this shows: ${title}`}
-            className="grid size-9 cursor-pointer place-items-center rounded-full text-faint marker:content-none hover:bg-plane hover:text-muted"
+            // 44px hit area, small glyph (AC-12).
+            className="grid size-11 cursor-pointer place-items-center rounded-full text-faint marker:content-none hover:bg-plane hover:text-muted"
           >
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="size-4" aria-hidden="true">
               <circle cx="12" cy="12" r="10" />

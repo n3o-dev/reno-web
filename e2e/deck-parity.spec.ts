@@ -232,3 +232,17 @@ test.describe('AC-7 · completion percentages', () => {
     expect(count).toBeGreaterThan(0)
   })
 })
+
+test.describe('AC-11 · the screens read the database, not the fixtures', () => {
+  test('the personnel count includes someone only the database has', async ({ page }) => {
+    /*
+     * The seeded database is the fixture set plus one witness person. If the
+     * Postgres read path broke and the app fell back to the fixtures, every
+     * other figure would be unchanged and this one would drop by one — which
+     * is the only way to tell the two sources apart from the outside. A
+     * person rather than a message, so the deck's per-day counts do not move.
+     */
+    await page.goto('/personnel')
+    await expect(page.locator(figure('personnel.people'))).toHaveText('46')
+  })
+})

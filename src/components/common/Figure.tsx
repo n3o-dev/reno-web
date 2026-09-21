@@ -69,7 +69,9 @@ export function Figure({ name, children, evidence, total, className, kind }: Fig
       <details className="group relative inline-block">
         <summary
           aria-label={`Evidence for ${name}`}
-          className="grid size-6 cursor-pointer place-items-center rounded-full text-faint marker:content-none hover:bg-plane hover:text-muted"
+          // 44px: the smallest target a thumb reliably hits. The icon inside stays
+          // small; it is the hit area that has to be big (AC-12).
+          className="grid size-11 cursor-pointer place-items-center rounded-full text-faint marker:content-none hover:bg-plane hover:text-muted"
         >
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="size-3.5" aria-hidden="true">
             <path d="M7 11V7a5 5 0 0 1 10 0v4" strokeLinecap="round" />
@@ -79,7 +81,7 @@ export function Figure({ name, children, evidence, total, className, kind }: Fig
         <div className="absolute top-8 right-0 z-20 w-72 rounded-[var(--radius-control)] border border-line bg-surface p-3 text-left shadow-sm">
           <p className="mb-1 text-[11.5px] tracking-[0.10em] text-faint uppercase">
             {total === 0
-              ? 'No source'
+              ? 'Nothing to cite'
               : `${total} source${total === 1 ? '' : 's'}${shown < total ? `, showing ${shown}` : ''}`}
           </p>
           <ul>

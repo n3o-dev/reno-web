@@ -110,7 +110,7 @@ export async function RkbScreen({ basePath = '/rkb', siteId }: RkbScreenProps = 
                     'No record type can mark an RKB job row blocked, so this cannot yet be anything but zero. Raised with the agent team.',
                 },
               ]}
-              total={1}
+              total={0}
             >
               {whole.blocked}
             </Figure>

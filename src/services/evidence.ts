@@ -108,7 +108,16 @@ export function bundleEvidence(
   emptyReason: string,
 ): FigureEvidence {
   if (messageIds.length === 0) {
-    return { items: [{ kind: 'absent', reason: emptyReason }], total: 1 }
+    /*
+     * `total: 0`, not 1. Counting a stated absence as a source made the
+     * evidence gate unfailable — `data-evidence` was never 0, so the check
+     * that every figure cites something could never fire — and the panel
+     * read "1 SOURCE" above the words "no work order is blocked". A figure
+     * that stands on nothing should say nothing, and the gate has to be
+     * able to tell the difference between "nothing happened" and "nobody
+     * wired this up".
+     */
+    return { items: [{ kind: 'absent', reason: emptyReason }], total: 0 }
   }
   return { items: resolveEvidence(source, messageIds), total: countEvidence(messageIds) }
 }
