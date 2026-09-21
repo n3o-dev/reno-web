@@ -14,8 +14,7 @@
     "skipLibCheck": true,
     "noEmit": true,
     "types": ["vitest/globals"],
-    "baseUrl": ".",
-    "paths": { "@/*": ["src/*"] }
+    "paths": { "@/*": ["./src/*"] }
   },
   "include": ["src", "tests", "scripts"]
 }

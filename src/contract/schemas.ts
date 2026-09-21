@@ -49,15 +49,106 @@ export const messageRecord = z.strictObject({
   edited: z.boolean(),
 })
 
+/** Closed set. Anything outside it is rejected at ingest, never coerced. */
+export const CAUSES = [
+  'hk_standard',
+  'tenant_project_event',
+  'engineering_equipment',
+  'spill',
+  'external_other',
+] as const
+
+/** Closed set, shared by complaints and work orders. */
+export const LIFECYCLE_STATES = [
+  'raised',
+  'answered',
+  'in_progress',
+  'blocked',
+  'closed_with_photo',
+  'closed_without_photo',
+] as const
+
+/** Every state except `blocked`. Declared, not filtered, so it needs no assertion. */
+const UNBLOCKED_STATES = [
+  'raised',
+  'answered',
+  'in_progress',
+  'closed_with_photo',
+  'closed_without_photo',
+] as const satisfies readonly Exclude<(typeof LIFECYCLE_STATES)[number], 'blocked'>[]
+
+const stateHistoryEntry = z.strictObject({
+  state: z.enum(LIFECYCLE_STATES),
+  at: z.iso.datetime({ offset: true }),
+  source_message_id: z.string().min(1),
+})
+
+/**
+ * A trackable item is a union of two genuine shapes, not one shape with a
+ * refinement: a blocked record REQUIRES the message that justifies the block.
+ *
+ * Modelled as a union deliberately. Zod refinements do not survive
+ * `toJSONSchema`, so a refinement would enforce the rule for us and silently
+ * drop it from the artifact the agent team builds against. A union emits
+ * `anyOf` and keeps the rule enforceable on both sides.
+ */
+function trackable<T extends z.ZodRawShape>(fields: T) {
+  const common = {
+    ...envelope,
+    ...fields,
+    state_history: z.array(stateHistoryEntry),
+    closing_photo_id: z.string().min(1).nullable(),
+  }
+  return z.union([
+    z.strictObject({
+      ...common,
+      state: z.enum(UNBLOCKED_STATES),
+      blocked_reason_message_id: z.string().min(1).nullable(),
+    }),
+    z.strictObject({
+      ...common,
+      state: z.literal('blocked'),
+      blocked_reason_message_id: z.string().min(1),
+    }),
+  ])
+}
+
+/** A complaint runs a 24-hour clock from `raised_at`. */
+export const complaintRecord = trackable({
+  area_id: z.string().min(1).nullable(),
+  raised_by: z.string().min(1),
+  raised_at: z.iso.datetime({ offset: true }),
+  cause: z.enum(CAUSES),
+})
+
+/** A work order runs to a client-set `due_date`, never the 24-hour clock. */
+export const workOrderRecord = trackable({
+  title: z.string().min(1),
+  document_id: z.string().min(1).nullable(),
+  requested_by: z.string().min(1),
+  due_date: z.iso.date(),
+})
+
+export const RECORD_TYPES = ['message', 'complaint', 'work_order'] as const
+export type RecordType = (typeof RECORD_TYPES)[number]
+
 export const zodSchemas = {
   message: messageRecord,
-} as const
-
-export type RecordType = keyof typeof zodSchemas
-export const RECORD_TYPES = Object.keys(zodSchemas) as RecordType[]
+  complaint: complaintRecord,
+  work_order: workOrderRecord,
+} satisfies Record<RecordType, z.ZodType>
 
 export type MessageRecord = z.infer<typeof messageRecord>
+export type ComplaintRecord = z.infer<typeof complaintRecord>
+export type WorkOrderRecord = z.infer<typeof workOrderRecord>
+export type Cause = (typeof CAUSES)[number]
+export type LifecycleState = (typeof LIFECYCLE_STATES)[number]
 
-export const JSON_SCHEMAS: Record<RecordType, Record<string, unknown>> = Object.fromEntries(
-  RECORD_TYPES.map((name) => [name, z.toJSONSchema(zodSchemas[name], { target: 'draft-2020-12' })]),
-) as Record<RecordType, Record<string, unknown>>
+const TARGET = { target: 'draft-2020-12' } as const
+
+/** Emitted from the Zod definitions above — the artifact handed to the agent team. */
+export const JSON_SCHEMAS = {
+  message: z.toJSONSchema(messageRecord, TARGET),
+  complaint: z.toJSONSchema(complaintRecord, TARGET),
+  work_order: z.toJSONSchema(workOrderRecord, TARGET),
+}
