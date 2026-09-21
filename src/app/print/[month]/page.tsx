@@ -2,6 +2,9 @@ import { notFound } from 'next/navigation'
 import { monthReport } from '@/services/report'
 import { PrintableReport } from '@/components/report/PrintableReport'
 
+/** Same reason as the dashboard: it depends on the session and the database. */
+export const dynamic = 'force-dynamic'
+
 interface PrintPageProps {
   readonly params: Promise<{ readonly month: string }>
 }

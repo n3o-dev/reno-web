@@ -56,6 +56,7 @@ function Section({ title, children }: { title: string; children: React.ReactNode
  */
 export function PrintableReport({ report }: PrintableReportProps) {
   const { pack } = report
+  const open = report.gates.filter((gate) => !gate.passed).length
 
   return (
     <main className="report px-6 py-8">
@@ -70,8 +71,8 @@ export function PrintableReport({ report }: PrintableReportProps) {
 
       {!report.generatable && (
         <p className="no-print mt-4 rounded-[var(--radius-control)] border border-line bg-cream p-3 text-[13px]">
-          Draft. {report.gates.filter((g) => !g.passed).length} gate(s) still open — this is not
-          a final pack.
+          Draft — {open === 1 ? 'one check is' : `${open} checks are`} still outstanding. Not a
+          final pack.
         </p>
       )}
 

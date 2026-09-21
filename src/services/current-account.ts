@@ -13,10 +13,17 @@ import { getDatabase } from './database'
  * See docs/specs/reno-auth.md (AC-6).
  */
 export async function currentAccount(): Promise<Account | null> {
-  const db = getDatabase()
-  if (db === null) return null
+  /*
+   * The cookie is read first, before the database check, and the order
+   * matters. Reading cookies() is what tells Next this render depends on the
+   * request; returning early without it let the build prerender the
+   * signed-out redirect into a static page whenever DATABASE_URL happened to
+   * be unset at build time. `force-dynamic` on the layout says the same
+   * thing out loud, and this makes it true regardless.
+   */
   const sessionId = (await cookies()).get(SESSION_COOKIE)?.value
-  if (sessionId === undefined) return null
+  const db = getDatabase()
+  if (db === null || sessionId === undefined) return null
   return accountForSession(db.sql, sessionId)
 }
 

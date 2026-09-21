@@ -2,6 +2,13 @@ import { AppNav } from '@/components/common/AppNav'
 import { SignOutButton } from '@/components/common/SignOutButton'
 import { requireAccount } from '@/services/current-account'
 
+/*
+ * Never prerendered. These pages depend on who is asking, and a build has no
+ * cookie: prerendering baked the signed-out redirect into a static page, so
+ * every request bounced to /login however good its session was.
+ */
+export const dynamic = 'force-dynamic'
+
 interface DashboardLayoutProps {
   readonly children: React.ReactNode
 }
