@@ -12,7 +12,7 @@ back into a file they can open without noticing anything changed except the numb
 
 ## The workbook as it actually is
 
-`RKB_JULI_2026.xlsx`, six sheets, 145 job rows across 20 blocks:
+`RKB_JULI_2026.xlsx`, six sheets, **144 job rows across 21 blocks**:
 
 | Sheet | Job rows | Blocks |
 |---|---|---|
@@ -20,8 +20,12 @@ back into a file they can open without noticing anything changed except the numb
 | Toilet | 25 | 5 |
 | Car park | 36 | 6 |
 | Facade | 7 | 1 |
-| Ruang Utility | 30 | 1 |
+| Ruang Utility | 29 | 1 |
 | Food court | 8 | 1 |
+
+> **Counted, not inferred.** The Ruang Utility sheet numbers its `NO` column 1–30 but skips 5,
+> so it holds 29 rows, not 30. A reader that trusts the `NO` column rather than counting rows
+> gets this wrong — an earlier draft of this spec did exactly that and said 145 / 20.
 
 Every sheet carries 31 day-columns, each a paired R and A cell. Below each block sit three
 computed rows: `JUMLAH MCP`, `REALISASI MCP`, `PERSENTASI (%)`.
@@ -47,7 +51,7 @@ Weekend and national holiday columns are shaded, and the existing workbook alrea
 
 ## Acceptance criteria
 
-- **AC-1**: The reader parses all six sheets of `fixtures/rkb/RKB_JULI_2026.xlsx` and yields exactly 145 job rows across 20 blocks, with per-sheet counts 39 / 25 / 36 / 7 / 30 / 8. Asserted by `pnpm test:rkb`.
+- **AC-1**: The reader parses all six sheets of `fixtures/rkb/RKB_JULI_2026.xlsx` and yields exactly 144 job rows across 21 blocks, with per-sheet counts 39 / 25 / 36 / 7 / 29 / 8. The `NO` column is never used as a count. Asserted by `pnpm test:rkb`.
 - **AC-2**: The reader detects the layout per sheet rather than assuming one. A test asserts Facade resolves to layout B with a `PROGRES` column and Ruang Utility to layout C with a `ZONA` column, and that both have their day grid anchored one column right of layout A.
 - **AC-3**: Each job row exposes 31 day entries, each with an R value, an A value and a `is_non_working_day` flag taken from the sheet's shading. A test asserts 31 entries on a row from every layout.
 - **AC-4**: The Facade equipment date-bands and the rain-contingency list are parsed into structured values, not dropped as free text. A test asserts seven equipment bands with their date ranges and six contingency jobs.
