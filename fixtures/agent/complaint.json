@@ -355,16 +355,21 @@
   "raised_by": "p_client",
   "raised_at": "2026-09-10T15:12:00+07:00",
   "cause": "engineering_equipment",
-  "state": "answered",
+  "state": "blocked",
   "state_history": [
    {
     "state": "answered",
     "at": "2026-09-10T15:14:00+07:00",
     "source_message_id": "msg_0_184"
+   },
+   {
+    "state": "blocked",
+    "at": "2026-09-10T15:14:00+07:00",
+    "source_message_id": "msg_0_184"
    }
   ],
   "closing_photo_id": null,
-  "blocked_reason_message_id": null
+  "blocked_reason_message_id": "msg_0_184"
  },
  {
   "record_id": "cmp_14",

@@ -3,12 +3,13 @@ import { ScreenHeader } from '@/components/common/ScreenHeader'
 import type { ComplaintRecord } from '@/contract/schemas'
 import { closureStats } from '@/rules/clock'
 import { countByDay } from '@/rules/daily'
-import { bundleEvidence } from '@/services/evidence'
+import { bundleEvidence, resolveEvidence, type Evidence } from '@/services/evidence'
 import { getRecords } from '@/services/records'
 import { ComplaintFunnel, type FigureEvidence } from '@/components/screens/parts/ComplaintFunnel'
 import { ComplaintsByDay } from '@/components/screens/parts/ComplaintsByDay'
 import { ResponseTimes } from '@/components/screens/parts/ResponseTimes'
 import { LowConfidence } from '@/components/screens/parts/LowConfidence'
+import { BlockedItems } from '@/components/screens/parts/BlockedItems'
 import type { RecordSource } from '@/contract/source'
 
 /** A complaint's own message, plus the messages of the states it passed through. */
@@ -28,6 +29,13 @@ export async function ComplaintsScreen({ siteId }: ScreenProps) {
   const days = countByDay(complaints)
 
   const unsure = complaints.filter((c) => c.confidence < 0.6)
+  const blocked = complaints.filter((c) => c.state === 'blocked')
+  const citations: Record<string, Evidence | undefined> = {}
+  for (const complaint of blocked) {
+    // The union's blocked arm guarantees this is a string, never null.
+    const [cited] = resolveEvidence(records, [complaint.blocked_reason_message_id ?? ''])
+    citations[complaint.record_id] = cited
+  }
 
   const byDay: Record<string, FigureEvidence> = {}
   for (const day of days) {
@@ -66,6 +74,7 @@ export async function ComplaintsScreen({ siteId }: ScreenProps) {
             messagesBehind(reached(complaints, 'closed_with_photo')),
           )}
         />
+        <BlockedItems complaints={blocked} citations={citations} />
         <LowConfidence
           complaints={unsure}
           evidence={bundle(records, unsure.map((c) => c.source_message_id))}

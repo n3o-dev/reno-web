@@ -190,3 +190,39 @@ test.describe('low confidence (AC-13)', () => {
     await expect(marked.first()).toContainText('45%')
   })
 })
+
+test.describe('blocked work (AC-8)', () => {
+  test('shows the clock as paused and the citation one click away', async ({ page }) => {
+    await page.goto('/complaints')
+    const item = page.locator('[data-blocked]')
+    await expect(item).toHaveCount(1)
+    await expect(item).toContainText('Paused')
+    // One click, not a trail through another screen.
+    await item.locator('summary').click()
+    // The citation resolves: a sender, a timestamp, and the message itself.
+    await expect(item).not.toContainText('not in the loaded records')
+    await expect(item).toContainText(/\d{1,2} Sept, \d{2}:\d{2}/)
+    await expect(item).toContainText(/gondola/i)
+  })
+
+  test('a blocked complaint is still counted as raised', async ({ page }) => {
+    await page.goto('/complaints')
+    await expect(page.locator(figure('complaints.raised'))).toHaveText('75')
+    await expect(page.locator(figure('complaints.answered'))).toHaveText('62')
+  })
+})
+
+test.describe('AC-7 · completion percentages', () => {
+  for (const path of ['/', '/complaints', '/work-orders', '/manpower', '/report-quality', '/scorecard', '/report', '/personnel']) {
+    test(`${path} renders no completion figure`, async ({ page }) => {
+      await page.goto(path)
+      await expect(page.locator('[data-figure-kind="completion"]')).toHaveCount(0)
+    })
+  }
+
+  test('/rkb is where it lives', async ({ page }) => {
+    await page.goto('/rkb')
+    const count = await page.locator('[data-figure-kind="completion"]').count()
+    expect(count).toBeGreaterThan(0)
+  })
+})

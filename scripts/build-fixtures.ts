@@ -349,6 +349,45 @@ Object.entries(LINEUP_BY_AREA).forEach(([areaId, names]) => {
   })
 })
 
+/*
+ * One complaint is blocked.
+ *
+ * The real case from this period: work that could not proceed because the
+ * equipment never arrived — the car gondola, which is also the block the RKB
+ * writer tests cite. A blocked item keeps
+ * its 24-hour clock paused and must cite the message that justifies it —
+ * without a blocked record in the fixture set, none of that is ever
+ * exercised. Chosen from the already-answered complaints so the published
+ * answered count does not move.
+ */
+{
+  const target = out.complaint.find(
+    (c): c is Record<string, unknown> & { state: string; cause: string } =>
+      typeof c === 'object' &&
+      c !== null &&
+      (c as { state?: string }).state === 'answered' &&
+      (c as { cause?: string }).cause === 'engineering_equipment',
+  )
+  if (target === undefined) throw new Error('no answered equipment complaint to block')
+  const history = target['state_history'] as { state: string; at: string; source_message_id: string }[]
+  const last = history[history.length - 1]
+  if (last === undefined) throw new Error('blocked complaint must already have a history')
+  const citation = last.source_message_id
+  history.push({ state: 'blocked', at: last.at, source_message_id: citation })
+  target.state = 'blocked'
+  target['blocked_reason_message_id'] = citation
+
+  // The cited message has to read like the reason, or the citation proves
+  // nothing to whoever opens it. One of the day's messages becomes the one
+  // that reported the equipment problem.
+  const message = out.message.find(
+    (m) => (m as { source_message_id?: string }).source_message_id === citation,
+  ) as { text: string } | undefined
+  if (message === undefined) throw new Error(`blocked citation ${citation} has no message`)
+  message.text =
+    'Pak, untuk area gas tank belum bisa dikerjakan. Car gondola belum datang, masih ditahan vendor.'
+}
+
 WORK_ORDERS.forEach((wo, n) => {
   out.work_order.push({
     ...envelope(`wo_${n}`, wo.dayIndex, wo.minute, wo.requestedBy),
