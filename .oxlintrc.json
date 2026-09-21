@@ -37,7 +37,8 @@
     "node_modules",
     "prototype",
     "contract",
-    "fixtures"
+    "fixtures",
+    "scripts/vendor"
   ],
   "overrides": [
     {
@@ -46,6 +47,14 @@
       ],
       "rules": {
         "no-await-in-loop": "off"
+      }
+    },
+    {
+      "files": [
+        "scripts/**"
+      ],
+      "rules": {
+        "no-console": "off"
       }
     }
   ]
