@@ -46,14 +46,20 @@ access main lobby 18–22, roof access north lobby 23–27, scaffolding 28–29,
 30–31) and a rain-contingency substitution list of six fallback jobs. Both are parsed and
 surfaced, because they are the evidence behind a blocked Facade row.
 
-Weekend and national holiday columns are shaded, and the existing workbook already contains
-`#DIV/0!` in `PERSENTASI` where `JUMLAH MCP` is zero. Neither is an error to fix.
+**Non-working days are a red font, not a fill.** Weekend and national holiday columns are
+marked on the day-name header row (the row spelling RB / KM / JM / SB / MG) with the font
+colour `FFC00000`. The weekday and weekend styles share a `fillId` and differ only in their
+font, so a reader that looks for shading finds nothing — an earlier draft of this spec said
+"shaded" and was wrong about the mechanism.
+
+The existing workbook already contains `#DIV/0!` in `PERSENTASI` where `JUMLAH MCP` is zero.
+That is not an error to fix.
 
 ## Acceptance criteria
 
 - **AC-1**: The reader parses all six sheets of `fixtures/rkb/RKB_JULI_2026.xlsx` and yields exactly 144 job rows across 21 blocks, with per-sheet counts 39 / 25 / 36 / 7 / 29 / 8. The `NO` column is never used as a count. Asserted by `pnpm test:rkb`.
 - **AC-2**: The reader detects the layout per sheet rather than assuming one. A test asserts Facade resolves to layout B with a `PROGRES` column and Ruang Utility to layout C with a `ZONA` column, and that both have their day grid anchored one column right of layout A.
-- **AC-3**: Each job row exposes 31 day entries, each with an R value, an A value and a `is_non_working_day` flag taken from the sheet's shading. A test asserts 31 entries on a row from every layout.
+- **AC-3**: Each job row exposes 31 day entries, each with an R value, an A value and an `isNonWorkingDay` flag read from the red font on the day-name header row. A test asserts 31 entries on a row from every layout, and that the flag marks the July 2026 weekends.
 - **AC-4**: The Facade equipment date-bands and the rain-contingency list are parsed into structured values, not dropped as free text. A test asserts seven equipment bands with their date ranges and six contingency jobs.
 - **AC-5**: Writing A values back produces a file that opens in Excel with the original sheet names, block structure, column widths, shading and formulas intact. A round-trip test reads the output and asserts structural equality with the input on everything except A cells.
 - **AC-6**: The writer fills A cells for all three layouts at the correct column offset. A test writes a known A value into one row per layout and asserts it lands in the expected cell reference (for example Toilet row 12 day 3 → `I12`, Facade row 12 day 3 → `K12`).

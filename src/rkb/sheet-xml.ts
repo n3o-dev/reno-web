@@ -32,6 +32,12 @@ export interface RawWorkbook {
   readonly sheets: readonly RawSheet[]
   /** Every zip entry, kept so the writer can rebuild the file untouched. */
   readonly entries: ReadonlyMap<string, Uint8Array>
+  /**
+   * Style index → font colour, e.g. `FFC00000`. Reno marks weekends and
+   * national holidays with a red font on the day-name header row, so this is
+   * how a non-working day is recognised.
+   */
+  readonly fontColourByStyle: ReadonlyMap<number, string>
 }
 
 export function columnOf(ref: string): string {
@@ -73,7 +79,8 @@ const parser = new XMLParser({
   // Sheet names carry meaningful trailing spaces ("RKB TOILET ") and the
   // writer has to match them exactly, so nothing may be trimmed for us.
   trimValues: false,
-  isArray: (name) => name === 'row' || name === 'c' || name === 'sheet' || name === 'si',
+  isArray: (name) =>
+    name === 'row' || name === 'c' || name === 'sheet' || name === 'si' || name === 'font' || name === 'xf',
 })
 
 function asArray(value: unknown): unknown[] {
@@ -135,7 +142,33 @@ export function readRawWorkbook(bytes: Uint8Array): RawWorkbook {
     })
   }
 
-  return { sheets, entries: entryMap }
+  return { sheets, entries: entryMap, fontColourByStyle: readFontColours(entryMap) }
+}
+
+/** Resolves each cellXf to its font colour, when the font declares one. */
+function readFontColours(entries: Map<string, Uint8Array>): Map<number, string> {
+  const out = new Map<number, string>()
+  const stylesEntry = entries.get('xl/styles.xml')
+  if (stylesEntry === undefined) return out
+
+  const doc = parser.parse(strFromU8(stylesEntry)) as Record<string, unknown>
+  const styleSheet = (doc.styleSheet ?? {}) as Record<string, unknown>
+
+  const fontsNode = (styleSheet.fonts ?? {}) as Record<string, unknown>
+  const colours: (string | null)[] = asArray(fontsNode.font).map((font) => {
+    const f = font as Record<string, unknown>
+    const colour = f.color as Record<string, unknown> | undefined
+    const rgb = colour?.['@rgb']
+    return typeof rgb === 'string' ? rgb : null
+  })
+
+  const xfsNode = (styleSheet.cellXfs ?? {}) as Record<string, unknown>
+  asArray(xfsNode.xf).forEach((xf, index) => {
+    const fontId = Number((xf as Record<string, unknown>)['@fontId'] ?? -1)
+    const colour = colours[fontId]
+    if (colour !== null && colour !== undefined) out.set(index, colour)
+  })
+  return out
 }
 
 function mustRead(entries: Map<string, Uint8Array>, path: string): Uint8Array {

@@ -168,38 +168,41 @@ function readDays(
   return days
 }
 
+/** Dark red — how the workbook marks a weekend or national holiday. */
+const NON_WORKING_FONT = 'FFC00000'
+
 /**
- * Weekend and holiday columns are shaded, so their style index differs from the
- * working-day columns. The most common style across the grid is the working day.
+ * Reno marks non-working days with a red font on the day-name header row — the
+ * row spelling RB / KM / JM / SB / MG, immediately below the column header.
+ * Not a fill: the weekend and weekday styles share a fillId and differ only in
+ * their font, which is why reading the fill finds nothing.
  */
-function nonWorkingDays(sheet: RawSheet, layout: Layout): Set<number> {
-  const counts = new Map<number, number>()
-  const styleByDay = new Map<number, number>()
-  for (const cells of sheet.rows.values()) {
-    for (let day = 1; day <= DAYS_IN_GRID; day++) {
-      const style = cells.get(shiftColumn(layout.firstDayColumn, (day - 1) * 2))?.style
-      if (style === null || style === undefined) continue
-      if (!styleByDay.has(day)) styleByDay.set(day, style)
-      counts.set(style, (counts.get(style) ?? 0) + 1)
-    }
-    if (styleByDay.size === DAYS_IN_GRID) break
-  }
-  let common: number | null = null
-  let best = -1
-  for (const [style, n] of counts) {
-    if (n > best) {
-      best = n
-      common = style
-    }
-  }
+function nonWorkingDays(
+  sheet: RawSheet,
+  layout: Layout,
+  headerRow: number,
+  fontColourByStyle: ReadonlyMap<number, string>,
+): Set<number> {
   const out = new Set<number>()
-  for (const [day, style] of styleByDay) if (style !== common) out.add(day)
+  const dayNames = sheet.rows.get(headerRow + 1)
+  if (dayNames === undefined) return out
+
+  for (let day = 1; day <= DAYS_IN_GRID; day++) {
+    const style = dayNames.get(shiftColumn(layout.firstDayColumn, (day - 1) * 2))?.style
+    if (style === null || style === undefined) continue
+    if (fontColourByStyle.get(style) === NON_WORKING_FONT) out.add(day)
+  }
   return out
 }
 
-function readBlocks(sheet: RawSheet, layout: Layout, headerRow: number): Block[] {
+function readBlocks(
+  sheet: RawSheet,
+  layout: Layout,
+  headerRow: number,
+  fontColourByStyle: ReadonlyMap<number, string>,
+): Block[] {
   const blocks: Block[] = []
-  const nonWorking = nonWorkingDays(sheet, layout)
+  const nonWorking = nonWorkingDays(sheet, layout, headerRow, fontColourByStyle)
   const ordered = [...sheet.rows.keys()].sort((a, b) => a - b).filter((n) => n >= headerRow)
 
   let name: string | null = null
@@ -272,7 +275,7 @@ export function parseWorkbook(bytes: Uint8Array): Workbook {
       name: sheet.name,
       path: sheet.path,
       layout,
-      blocks: readBlocks(sheet, layout, headerRow),
+      blocks: readBlocks(sheet, layout, headerRow, raw.fontColourByStyle),
     }
   })
   return { sheets, raw }
