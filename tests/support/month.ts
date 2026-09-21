@@ -88,3 +88,12 @@ export function noisyComplaint(n: number): ComplaintRecord {
     blocked_reason_message_id: null,
   })
 }
+
+/** Freezes an object graph, so a rule that mutates its input throws in strict mode. */
+export function deepFreeze<T>(value: T): T {
+  if (value === null || typeof value !== 'object') return value
+  for (const key of Object.getOwnPropertyNames(value)) {
+    deepFreeze((value as Record<string, unknown>)[key])
+  }
+  return Object.freeze(value)
+}

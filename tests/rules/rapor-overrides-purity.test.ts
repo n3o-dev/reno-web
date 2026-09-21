@@ -5,9 +5,9 @@ import { closureStats, elapsedExcludingBlocked } from '@/rules/clock'
 import { computeRealisation } from '@/rules/realisation'
 import { computeBilling } from '@/rules/billing'
 import { computeMonth } from '@/rules/month'
-import { sampleMonth } from '../support/month'
+import { sampleMonth, deepFreeze } from '../support/month'
 
-const inputs = Object.freeze(sampleMonth())
+const inputs = deepFreeze(sampleMonth())
 
 describe('AC-9 · the agent fills only what it can evidence', () => {
   const rapor = computeRapor(inputs.rapor)
@@ -133,6 +133,24 @@ describe('AC-1 · every exported rule is pure', () => {
 })
 
 describe('AC-12 · every figure carries its evidence', () => {
+  it('returns the full set of figures — a deleted figure is not a passing figure', () => {
+    const month = computeMonth(inputs)
+    expect(Object.keys(month.figures).sort()).toEqual([
+      'blockedRows',
+      'complaintsAnswered',
+      'complaintsClosedWithPhoto',
+      'complaintsRaised',
+      'contractedSlotDays',
+      'medianClosureMinutes',
+      'medianReplyMinutes',
+      'payable',
+      'raporTotal',
+      'realisationGross',
+      'realisationNet',
+      'unfilledSlotDays',
+    ])
+  })
+
   it('fails on any figure with an empty evidence array', () => {
     const month = computeMonth(inputs)
     const bare = Object.entries(month.figures)

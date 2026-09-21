@@ -1,33 +1,60 @@
 import { describe, expect, it } from 'vitest'
-import { createRecordSource, loadFixtureSource, type RecordSource } from '@/contract/source'
+import { loadFixtureSource } from '@/contract/source'
 import { closureStats } from '@/rules/clock'
 import { RECORD_TYPES } from '@/contract/schemas'
+import { createPagedRecordSource, paginate } from '../support/paged-source'
 
 /**
- * AC-6: downstream code must not be able to tell which implementation it
- * holds. Proved by running the same computation through two different
- * RecordSource implementations and requiring identical output.
+ * AC-6: downstream code must not be able to tell which implementation it holds.
+ *
+ * The second source is a paged implementation that shares no code with the
+ * fixture loader — comparing a factory against itself would prove nothing.
+ * Record counts are asserted explicitly so an implementation that silently
+ * drops records cannot pass by agreeing with itself.
  */
 const fromDisk = await loadFixtureSource()
 
-const inMemory: RecordSource = createRecordSource({
-  message: [...fromDisk.messages],
-  work_report: [...fromDisk.workReports],
-  complaint: [...fromDisk.complaints],
-  work_order: [...fromDisk.workOrders],
-  lineup: [...fromDisk.lineups],
-  rkb_match: [...fromDisk.rkbMatches],
-  photo: [...fromDisk.photos],
-  person: [...fromDisk.people],
+const paged = createPagedRecordSource({
+  message: paginate(fromDisk.messages, 100),
+  work_report: paginate(fromDisk.workReports, 64),
+  complaint: paginate(fromDisk.complaints, 7),
+  work_order: paginate(fromDisk.workOrders, 2),
+  lineup: paginate(fromDisk.lineups, 5),
+  rkb_match: paginate(fromDisk.rkbMatches, 1),
+  photo: paginate(fromDisk.photos, 250),
+  person: paginate(fromDisk.people, 3),
 })
 
+/** The published totals. Pinned so neither source can quietly lose records. */
+const EXPECTED: Record<string, number> = {
+  message: 1378,
+  work_report: 639,
+  complaint: 75,
+  work_order: 3,
+  lineup: 12,
+  rkb_match: 1,
+  photo: 1052,
+  person: 7,
+}
+
 describe('the rules layer cannot tell which source it is holding', () => {
-  it('produces identical complaint statistics through both', () => {
-    expect(closureStats(inMemory.complaints)).toEqual(closureStats(fromDisk.complaints))
+  it.each(RECORD_TYPES)('serves the full set of %s records from both', (type) => {
+    expect(fromDisk.all(type)).toHaveLength(EXPECTED[type] as number)
+    expect(paged.all(type)).toHaveLength(EXPECTED[type] as number)
+    expect(paged.all(type)).toEqual(fromDisk.all(type))
   })
 
-  it.each(RECORD_TYPES)('exposes the same %s records through all()', (type) => {
-    expect(inMemory.all(type)).toEqual(fromDisk.all(type))
+  it('produces identical complaint statistics through both', () => {
+    const viaDisk = closureStats(fromDisk.complaints)
+    const viaPaged = closureStats(paged.complaints)
+    expect(viaPaged).toEqual(viaDisk)
+    // Guard against both sides being trivially empty.
+    expect(viaDisk.raised).toBe(75)
+  })
+
+  it('is stable across repeated reads, so a cache cannot drift', () => {
+    expect(paged.complaints).toEqual(paged.complaints)
+    expect(paged.all('photo')).toHaveLength(1052)
   })
 })
 
