@@ -1,7 +1,14 @@
 import { describe, expect, it } from 'vitest'
 import { readFileSync, existsSync } from 'node:fs'
 import { RECORD_TYPES, JSON_SCHEMAS } from '@/contract/schemas'
-import { renderFieldTables, FIELDS_START, FIELDS_END } from '@/contract/document'
+import {
+  renderFieldTables,
+  renderExamples,
+  FIELDS_START,
+  FIELDS_END,
+  EXAMPLES_START,
+  EXAMPLES_END,
+} from '@/contract/document'
 
 const SPEC = 'docs/specs/agent-data-contract.md'
 
@@ -62,3 +69,36 @@ function fieldNamesOf(schema: Record<string, unknown>): string[] {
   walk(schema)
   return [...names]
 }
+
+describe('the handover document sent to the agent team', () => {
+  const doc = readFileSync('docs/agent-contract.md', 'utf8')
+  const between = (start: string, end: string): string =>
+    doc.slice(doc.indexOf(start) + start.length, doc.indexOf(end)).trim()
+
+  it('carries generated field tables that are in sync', () => {
+    expect(between(FIELDS_START, FIELDS_END)).toBe(renderFieldTables().trim())
+  })
+
+  it('carries generated examples that are in sync', () => {
+    expect(between(EXAMPLES_START, EXAMPLES_END)).toBe(renderExamples().trim())
+  })
+
+  it('states every binding rule the dashboard depends on', () => {
+    for (const rule of [
+      'blocked record must cite',
+      'closed sets',
+      'separate instants',
+      'perceptual hash',
+      'different clocks',
+      'state_history',
+      'guess an area',
+    ]) {
+      expect(doc.toLowerCase()).toContain(rule.toLowerCase())
+    }
+  })
+
+  it('tells the agent team how to validate their own output', () => {
+    expect(doc).toContain('contract/')
+    expect(doc).toContain('ajv')
+  })
+})
