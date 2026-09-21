@@ -75,10 +75,20 @@ Darkest is shift 1, the largest; lightest is shift 3, the smallest.
 Single-series bars use the mid step `#8a7354` — dark enough to read, distinct from body text.
 
 ### Data — sequential (heatmaps)
-`#faf5ef` `#f4e3d0` `#e7d2b8` `#d7bd9c` `#c4a67f` `#ac8b62` `#8f7049` `#6b5436` `#4b3d2e`
+`#c4b39c` `#af9e88` `#9a8975` `#857562` `#716250` `#5e4f3f` `#4b3d2e`
 
-> Verified: lightness monotone light→dark PASS, hue spread 5° PASS (single hue).
-> Brand cream is step 2 and brand accent is step 9, so the whole ramp is on-brand.
+A zero or absent cell is `--plane`, not a ramp step: it is the absence of a
+measurement, not the smallest one.
+
+> Validated `--ordinal --mode light --surface #ffffff`: monotone PASS, adjacent ΔL PASS,
+> light-end contrast 2.04:1 PASS, single hue (7° spread) PASS. Brand accent is the dark end.
+
+**Why not nine steps from near-white.** The first version of this ramp ran
+`#faf5ef → #4b3d2e` in nine steps and failed the validator twice: adjacent ΔL of
+0.048 and 0.050 against a 0.06 floor, and a light end at 1.08:1 against white —
+a step that is not a mark but the page. Seven steps from `#c4b39c` clear both.
+The earlier note claimed the ramp was verified; it had only been checked for
+monotonicity and hue, which is why `pnpm test:viz` now runs on every change.
 
 ### Data — categorical (unordered: complaint causes, report defects)
 `#2a78d6` `#eb6834` `#1baf7a` `#eda100` `#e87ba4` — fixed order, never cycled. A sixth

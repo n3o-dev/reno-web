@@ -24,16 +24,21 @@
   --color-ordinal-2: #8a7354;
   --color-ordinal-3: #4b3d2e;
 
-  /* Sequential: heatmaps. Cream is step 2, accent is step 9. */
-  --color-seq-1: #faf5ef;
-  --color-seq-2: #f4e3d0;
-  --color-seq-3: #e7d2b8;
-  --color-seq-4: #d7bd9c;
-  --color-seq-5: #c4a67f;
-  --color-seq-6: #ac8b62;
-  --color-seq-7: #8f7049;
-  --color-seq-8: #6b5436;
-  --color-seq-9: #4b3d2e;
+  /*
+   * Sequential: heatmaps. Seven steps, not nine, and starting at #c4b39c
+   * rather than near-white — the validator failed the old ramp on two
+   * counts: the pale steps were 0.048 apart (floor 0.06) and the lightest
+   * was 1.08:1 against white, which is not a mark, it is the page. A zero
+   * or absent cell takes --color-plane and is not a ramp step at all.
+   * Accent is the dark end, so the ramp stays on-brand.
+   */
+  --color-seq-1: #c4b39c;
+  --color-seq-2: #af9e88;
+  --color-seq-3: #9a8975;
+  --color-seq-4: #857562;
+  --color-seq-5: #716250;
+  --color-seq-6: #5e4f3f;
+  --color-seq-7: #4b3d2e;
 
   /*
    * Categorical: fixed order, never cycled, a sixth category folds into

@@ -18,7 +18,9 @@
     "build": "next build",
     "start": "next start",
     "lint": "oxlint",
-    "test:e2e": "playwright test"
+    "test:e2e": "playwright test",
+    "test:viz": "tsx scripts/check-palette.ts",
+    "lint:i18n": "tsx scripts/lint-i18n.ts"
   },
   "devDependencies": {
     "@playwright/test": "^1.63.0",
