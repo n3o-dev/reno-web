@@ -39,5 +39,15 @@
     "prototype",
     "contract",
     "fixtures"
+  ],
+  "overrides": [
+    {
+      "files": [
+        "e2e/**"
+      ],
+      "rules": {
+        "no-await-in-loop": "off"
+      }
+    }
   ]
 }
