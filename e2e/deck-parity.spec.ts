@@ -178,3 +178,15 @@ test.describe('RKB Realisation', () => {
     await expect(page.getByRole('table')).toHaveCount(1)
   })
 })
+
+test.describe('low confidence (AC-13)', () => {
+  test('is shown and counted, never dropped', async ({ page }) => {
+    await page.goto('/complaints')
+    const marked = page.locator('[data-marker="low-confidence"]')
+    await expect(marked).toHaveCount(2)
+    await expect(page.locator(figure('complaints.low_confidence'))).toHaveText('2')
+    // Still inside the headline: 75 includes them.
+    await expect(page.locator(figure('complaints.raised'))).toHaveText('75')
+    await expect(marked.first()).toContainText('45%')
+  })
+})

@@ -254,13 +254,29 @@ for (const p of pending) {
   const closure = closureFor.get(p)
   const history = []
   if (reply !== undefined) {
-    history.push({ state: 'answered', at: at(p.day, p.minute + reply), source_message_id: `msg_r_${complaintN}` })
+    history.push({
+      state: 'answered',
+      at: at(p.day, p.minute + reply),
+      source_message_id: messageIdAt(p.day, p.minute + reply),
+    })
   }
   if (closure !== undefined) {
-    history.push({ state: 'closed_with_photo', at: at(p.day, p.minute + closure), source_message_id: `msg_c_${complaintN}` })
+    history.push({
+      state: 'closed_with_photo',
+      at: at(p.day, p.minute + closure),
+      source_message_id: messageIdAt(p.day, p.minute + closure),
+    })
   }
+  /*
+   * A complaint whose area the agent could not read is a complaint it is
+   * less sure about. Confidence is the agent's own uncertainty, and a flat
+   * 0.9 on every record would be a claim of uniform certainty that no reader
+   * of a WhatsApp group could honestly make.
+   */
+  const confidence = p.area === null ? 0.45 : 0.9
   out.complaint.push({
     ...envelope(`cmp_${complaintN}`, p.day, p.minute, pick(CLIENT_PICS)),
+    confidence,
     area_id: p.area,
     raised_by: 'p_client',
     raised_at: at(p.day, p.minute),
@@ -342,13 +358,13 @@ WORK_ORDERS.forEach((wo, n) => {
     due_date: wo.due,
     state: wo.state,
     state_history: [
-      { state: 'raised' as const, at: at(wo.dayIndex, wo.minute), source_message_id: `msg_${wo.dayIndex}_${750 + n}` },
+      { state: 'raised' as const, at: at(wo.dayIndex, wo.minute), source_message_id: messageIdAt(wo.dayIndex, wo.minute) },
       ...('closed' in wo && wo.closed !== undefined
         ? [
             {
               state: 'closed_with_photo' as const,
               at: at(wo.closed.dayIndex, wo.closed.minute),
-              source_message_id: `msg_${wo.closed.dayIndex}_${760 + n}`,
+              source_message_id: messageIdAt(wo.closed.dayIndex, wo.closed.minute),
             },
           ]
         : []),

@@ -8,6 +8,7 @@ import { getRecords } from '@/services/records'
 import { ComplaintFunnel, type FigureEvidence } from '@/components/screens/parts/ComplaintFunnel'
 import { ComplaintsByDay } from '@/components/screens/parts/ComplaintsByDay'
 import { ResponseTimes } from '@/components/screens/parts/ResponseTimes'
+import { LowConfidence } from '@/components/screens/parts/LowConfidence'
 import type { RecordSource } from '@/contract/source'
 
 /** A complaint's own message, plus the messages of the states it passed through. */
@@ -25,6 +26,8 @@ export async function ComplaintsScreen({ siteId }: ScreenProps) {
   const complaints = records.complaints
   const stats = closureStats(complaints)
   const days = countByDay(complaints)
+
+  const unsure = complaints.filter((c) => c.confidence < 0.6)
 
   const byDay: Record<string, FigureEvidence> = {}
   for (const day of days) {
@@ -62,6 +65,10 @@ export async function ComplaintsScreen({ siteId }: ScreenProps) {
             records,
             messagesBehind(reached(complaints, 'closed_with_photo')),
           )}
+        />
+        <LowConfidence
+          complaints={unsure}
+          evidence={bundle(records, unsure.map((c) => c.source_message_id))}
         />
         <div className="md:col-span-2">
           <ComplaintsByDay days={days} evidence={byDay} />

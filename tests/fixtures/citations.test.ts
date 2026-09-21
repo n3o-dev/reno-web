@@ -26,6 +26,17 @@ describe('every record cites a message that exists', () => {
   })
 })
 
+describe('every state change cites a message that exists', () => {
+  it.each(['complaint', 'work_order'] as const)('%s', (type) => {
+    const records = type === 'complaint' ? source.complaints : source.workOrders
+    const dangling = records
+      .flatMap((r) => r.state_history.map((h) => ({ id: r.record_id, cite: h.source_message_id })))
+      .filter((h) => !known.has(h.cite))
+      .map((h) => `${h.id} → ${h.cite}`)
+    expect(dangling.slice(0, 5)).toEqual([])
+  })
+})
+
 describe('resolving evidence', () => {
   it('returns a sender and a timestamp for a real citation', () => {
     const complaint = source.complaints[0]

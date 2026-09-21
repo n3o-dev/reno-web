@@ -16,12 +16,12 @@
    {
     "state": "answered",
     "at": "2026-09-10T07:25:00+07:00",
-    "source_message_id": "msg_r_0"
+    "source_message_id": "msg_0_28"
    },
    {
     "state": "closed_with_photo",
     "at": "2026-09-10T23:50:00+07:00",
-    "source_message_id": "msg_c_0"
+    "source_message_id": "msg_0_338"
    }
   ],
   "closing_photo_id": "ph_0",
@@ -44,12 +44,12 @@
    {
     "state": "answered",
     "at": "2026-09-10T07:41:00+07:00",
-    "source_message_id": "msg_r_1"
+    "source_message_id": "msg_0_34"
    },
    {
     "state": "closed_with_photo",
     "at": "2026-09-10T08:37:00+07:00",
-    "source_message_id": "msg_c_1"
+    "source_message_id": "msg_0_52"
    }
   ],
   "closing_photo_id": "ph_1",
@@ -72,12 +72,12 @@
    {
     "state": "answered",
     "at": "2026-09-10T08:19:00+07:00",
-    "source_message_id": "msg_r_2"
+    "source_message_id": "msg_0_46"
    },
    {
     "state": "closed_with_photo",
     "at": "2026-09-10T09:15:00+07:00",
-    "source_message_id": "msg_c_2"
+    "source_message_id": "msg_0_65"
    }
   ],
   "closing_photo_id": "ph_2",
@@ -100,12 +100,12 @@
    {
     "state": "answered",
     "at": "2026-09-10T08:57:00+07:00",
-    "source_message_id": "msg_r_3"
+    "source_message_id": "msg_0_59"
    },
    {
     "state": "closed_with_photo",
     "at": "2026-09-10T09:53:00+07:00",
-    "source_message_id": "msg_c_3"
+    "source_message_id": "msg_0_77"
    }
   ],
   "closing_photo_id": "ph_3",
@@ -128,12 +128,12 @@
    {
     "state": "answered",
     "at": "2026-09-10T09:35:00+07:00",
-    "source_message_id": "msg_r_4"
+    "source_message_id": "msg_0_71"
    },
    {
     "state": "closed_with_photo",
     "at": "2026-09-10T10:31:00+07:00",
-    "source_message_id": "msg_c_4"
+    "source_message_id": "msg_0_90"
    }
   ],
   "closing_photo_id": "ph_4",
@@ -156,12 +156,12 @@
    {
     "state": "answered",
     "at": "2026-09-10T10:13:00+07:00",
-    "source_message_id": "msg_r_5"
+    "source_message_id": "msg_0_84"
    },
    {
     "state": "closed_with_photo",
     "at": "2026-09-10T11:09:00+07:00",
-    "source_message_id": "msg_c_5"
+    "source_message_id": "msg_0_103"
    }
   ],
   "closing_photo_id": "ph_5",
@@ -184,12 +184,12 @@
    {
     "state": "answered",
     "at": "2026-09-10T10:51:00+07:00",
-    "source_message_id": "msg_r_6"
+    "source_message_id": "msg_0_97"
    },
    {
     "state": "closed_with_photo",
     "at": "2026-09-10T11:47:00+07:00",
-    "source_message_id": "msg_c_6"
+    "source_message_id": "msg_0_115"
    }
   ],
   "closing_photo_id": "ph_6",
@@ -212,12 +212,12 @@
    {
     "state": "answered",
     "at": "2026-09-10T11:29:00+07:00",
-    "source_message_id": "msg_r_7"
+    "source_message_id": "msg_0_109"
    },
    {
     "state": "closed_with_photo",
     "at": "2026-09-10T12:25:00+07:00",
-    "source_message_id": "msg_c_7"
+    "source_message_id": "msg_0_128"
    }
   ],
   "closing_photo_id": "ph_7",
@@ -240,12 +240,12 @@
    {
     "state": "answered",
     "at": "2026-09-10T12:07:00+07:00",
-    "source_message_id": "msg_r_8"
+    "source_message_id": "msg_0_122"
    },
    {
     "state": "closed_with_photo",
     "at": "2026-09-10T13:03:00+07:00",
-    "source_message_id": "msg_c_8"
+    "source_message_id": "msg_0_141"
    }
   ],
   "closing_photo_id": "ph_8",
@@ -268,7 +268,7 @@
    {
     "state": "answered",
     "at": "2026-09-10T12:41:00+07:00",
-    "source_message_id": "msg_r_9"
+    "source_message_id": "msg_0_133"
    }
   ],
   "closing_photo_id": null,
@@ -291,7 +291,7 @@
    {
     "state": "answered",
     "at": "2026-09-10T13:20:00+07:00",
-    "source_message_id": "msg_r_10"
+    "source_message_id": "msg_0_146"
    }
   ],
   "closing_photo_id": null,
@@ -314,7 +314,7 @@
    {
     "state": "answered",
     "at": "2026-09-10T13:58:00+07:00",
-    "source_message_id": "msg_r_11"
+    "source_message_id": "msg_0_159"
    }
   ],
   "closing_photo_id": null,
@@ -337,7 +337,7 @@
    {
     "state": "answered",
     "at": "2026-09-10T14:36:00+07:00",
-    "source_message_id": "msg_r_12"
+    "source_message_id": "msg_0_171"
    }
   ],
   "closing_photo_id": null,
@@ -360,7 +360,7 @@
    {
     "state": "answered",
     "at": "2026-09-10T15:14:00+07:00",
-    "source_message_id": "msg_r_13"
+    "source_message_id": "msg_0_184"
    }
   ],
   "closing_photo_id": null,
@@ -383,7 +383,7 @@
    {
     "state": "answered",
     "at": "2026-09-10T15:52:00+07:00",
-    "source_message_id": "msg_r_14"
+    "source_message_id": "msg_0_197"
    }
   ],
   "closing_photo_id": null,
@@ -406,7 +406,7 @@
    {
     "state": "answered",
     "at": "2026-09-10T16:30:00+07:00",
-    "source_message_id": "msg_r_15"
+    "source_message_id": "msg_0_209"
    }
   ],
   "closing_photo_id": null,
@@ -429,7 +429,7 @@
    {
     "state": "answered",
     "at": "2026-09-10T17:08:00+07:00",
-    "source_message_id": "msg_r_16"
+    "source_message_id": "msg_0_222"
    }
   ],
   "closing_photo_id": null,
@@ -486,12 +486,12 @@
    {
     "state": "answered",
     "at": "2026-09-11T07:04:00+07:00",
-    "source_message_id": "msg_r_19"
+    "source_message_id": "msg_1_26"
    },
    {
     "state": "closed_with_photo",
     "at": "2026-09-11T08:00:00+07:00",
-    "source_message_id": "msg_c_19"
+    "source_message_id": "msg_1_49"
    }
   ],
   "closing_photo_id": "ph_0",
@@ -514,12 +514,12 @@
    {
     "state": "answered",
     "at": "2026-09-11T07:24:00+07:00",
-    "source_message_id": "msg_r_20"
+    "source_message_id": "msg_1_34"
    },
    {
     "state": "closed_with_photo",
     "at": "2026-09-11T08:20:00+07:00",
-    "source_message_id": "msg_c_20"
+    "source_message_id": "msg_1_57"
    }
   ],
   "closing_photo_id": "ph_1",
@@ -542,12 +542,12 @@
    {
     "state": "answered",
     "at": "2026-09-11T07:45:00+07:00",
-    "source_message_id": "msg_r_21"
+    "source_message_id": "msg_1_43"
    },
    {
     "state": "closed_with_photo",
     "at": "2026-09-11T08:41:00+07:00",
-    "source_message_id": "msg_c_21"
+    "source_message_id": "msg_1_65"
    }
   ],
   "closing_photo_id": "ph_2",
@@ -570,12 +570,12 @@
    {
     "state": "answered",
     "at": "2026-09-11T08:05:00+07:00",
-    "source_message_id": "msg_r_22"
+    "source_message_id": "msg_1_51"
    },
    {
     "state": "closed_with_photo",
     "at": "2026-09-11T09:01:00+07:00",
-    "source_message_id": "msg_c_22"
+    "source_message_id": "msg_1_73"
    }
   ],
   "closing_photo_id": "ph_3",
@@ -598,12 +598,12 @@
    {
     "state": "answered",
     "at": "2026-09-11T08:26:00+07:00",
-    "source_message_id": "msg_r_23"
+    "source_message_id": "msg_1_59"
    },
    {
     "state": "closed_with_photo",
     "at": "2026-09-11T09:22:00+07:00",
-    "source_message_id": "msg_c_23"
+    "source_message_id": "msg_1_82"
    }
   ],
   "closing_photo_id": "ph_4",
@@ -626,12 +626,12 @@
    {
     "state": "answered",
     "at": "2026-09-11T08:46:00+07:00",
-    "source_message_id": "msg_r_24"
+    "source_message_id": "msg_1_67"
    },
    {
     "state": "closed_with_photo",
     "at": "2026-09-11T09:23:00+07:00",
-    "source_message_id": "msg_c_24"
+    "source_message_id": "msg_1_82"
    }
   ],
   "closing_photo_id": "ph_5",
@@ -654,12 +654,12 @@
    {
     "state": "answered",
     "at": "2026-09-11T09:07:00+07:00",
-    "source_message_id": "msg_r_25"
+    "source_message_id": "msg_1_76"
    },
    {
     "state": "closed_with_photo",
     "at": "2026-09-11T09:33:00+07:00",
-    "source_message_id": "msg_c_25"
+    "source_message_id": "msg_1_86"
    }
   ],
   "closing_photo_id": "ph_6",
@@ -682,12 +682,12 @@
    {
     "state": "answered",
     "at": "2026-09-11T09:28:00+07:00",
-    "source_message_id": "msg_r_26"
+    "source_message_id": "msg_1_84"
    },
    {
     "state": "closed_with_photo",
     "at": "2026-09-11T09:54:00+07:00",
-    "source_message_id": "msg_c_26"
+    "source_message_id": "msg_1_95"
    }
   ],
   "closing_photo_id": "ph_7",
@@ -710,12 +710,12 @@
    {
     "state": "answered",
     "at": "2026-09-11T09:48:00+07:00",
-    "source_message_id": "msg_r_27"
+    "source_message_id": "msg_1_93"
    },
    {
     "state": "closed_with_photo",
     "at": "2026-09-11T10:14:00+07:00",
-    "source_message_id": "msg_c_27"
+    "source_message_id": "msg_1_103"
    }
   ],
   "closing_photo_id": "ph_8",
@@ -738,12 +738,12 @@
    {
     "state": "answered",
     "at": "2026-09-11T10:09:00+07:00",
-    "source_message_id": "msg_r_28"
+    "source_message_id": "msg_1_101"
    },
    {
     "state": "closed_with_photo",
     "at": "2026-09-11T10:35:00+07:00",
-    "source_message_id": "msg_c_28"
+    "source_message_id": "msg_1_112"
    }
   ],
   "closing_photo_id": "ph_9",
@@ -766,7 +766,7 @@
    {
     "state": "answered",
     "at": "2026-09-11T10:27:00+07:00",
-    "source_message_id": "msg_r_29"
+    "source_message_id": "msg_1_108"
    }
   ],
   "closing_photo_id": null,
@@ -789,7 +789,7 @@
    {
     "state": "answered",
     "at": "2026-09-11T10:48:00+07:00",
-    "source_message_id": "msg_r_30"
+    "source_message_id": "msg_1_117"
    }
   ],
   "closing_photo_id": null,
@@ -812,7 +812,7 @@
    {
     "state": "answered",
     "at": "2026-09-11T11:08:00+07:00",
-    "source_message_id": "msg_r_31"
+    "source_message_id": "msg_1_125"
    }
   ],
   "closing_photo_id": null,
@@ -835,7 +835,7 @@
    {
     "state": "answered",
     "at": "2026-09-11T11:29:00+07:00",
-    "source_message_id": "msg_r_32"
+    "source_message_id": "msg_1_134"
    }
   ],
   "closing_photo_id": null,
@@ -858,7 +858,7 @@
    {
     "state": "answered",
     "at": "2026-09-11T11:50:00+07:00",
-    "source_message_id": "msg_r_33"
+    "source_message_id": "msg_1_142"
    }
   ],
   "closing_photo_id": null,
@@ -881,7 +881,7 @@
    {
     "state": "answered",
     "at": "2026-09-11T12:10:00+07:00",
-    "source_message_id": "msg_r_34"
+    "source_message_id": "msg_1_150"
    }
   ],
   "closing_photo_id": null,
@@ -904,7 +904,7 @@
    {
     "state": "answered",
     "at": "2026-09-11T12:31:00+07:00",
-    "source_message_id": "msg_r_35"
+    "source_message_id": "msg_1_159"
    }
   ],
   "closing_photo_id": null,
@@ -927,7 +927,7 @@
    {
     "state": "answered",
     "at": "2026-09-11T12:51:00+07:00",
-    "source_message_id": "msg_r_36"
+    "source_message_id": "msg_1_167"
    }
   ],
   "closing_photo_id": null,
@@ -950,7 +950,7 @@
    {
     "state": "answered",
     "at": "2026-09-11T13:12:00+07:00",
-    "source_message_id": "msg_r_37"
+    "source_message_id": "msg_1_175"
    }
   ],
   "closing_photo_id": null,
@@ -973,7 +973,7 @@
    {
     "state": "answered",
     "at": "2026-09-11T13:32:00+07:00",
-    "source_message_id": "msg_r_38"
+    "source_message_id": "msg_1_183"
    }
   ],
   "closing_photo_id": null,
@@ -996,7 +996,7 @@
    {
     "state": "answered",
     "at": "2026-09-11T13:53:00+07:00",
-    "source_message_id": "msg_r_39"
+    "source_message_id": "msg_1_192"
    }
   ],
   "closing_photo_id": null,
@@ -1019,7 +1019,7 @@
    {
     "state": "answered",
     "at": "2026-09-11T14:13:00+07:00",
-    "source_message_id": "msg_r_40"
+    "source_message_id": "msg_1_200"
    }
   ],
   "closing_photo_id": null,
@@ -1042,7 +1042,7 @@
    {
     "state": "answered",
     "at": "2026-09-11T14:34:00+07:00",
-    "source_message_id": "msg_r_41"
+    "source_message_id": "msg_1_209"
    }
   ],
   "closing_photo_id": null,
@@ -1065,7 +1065,7 @@
    {
     "state": "answered",
     "at": "2026-09-11T14:55:00+07:00",
-    "source_message_id": "msg_r_42"
+    "source_message_id": "msg_1_217"
    }
   ],
   "closing_photo_id": null,
@@ -1088,7 +1088,7 @@
    {
     "state": "answered",
     "at": "2026-09-11T15:15:00+07:00",
-    "source_message_id": "msg_r_43"
+    "source_message_id": "msg_1_225"
    }
   ],
   "closing_photo_id": null,
@@ -1237,7 +1237,7 @@
   "sent_at": "2026-09-11T18:18:00+07:00",
   "sender_raw": "Cristian B. Suryanto",
   "sender_person_id": null,
-  "confidence": 0.9,
+  "confidence": 0.45,
   "area_id": null,
   "raised_by": "p_client",
   "raised_at": "2026-09-11T18:18:00+07:00",
@@ -1254,7 +1254,7 @@
   "sent_at": "2026-09-11T18:39:00+07:00",
   "sender_raw": "Cristian B. Suryanto",
   "sender_person_id": null,
-  "confidence": 0.9,
+  "confidence": 0.45,
   "area_id": null,
   "raised_by": "p_client",
   "raised_at": "2026-09-11T18:39:00+07:00",
@@ -1281,12 +1281,12 @@
    {
     "state": "answered",
     "at": "2026-09-12T07:04:00+07:00",
-    "source_message_id": "msg_r_54"
+    "source_message_id": "msg_2_20"
    },
    {
     "state": "closed_with_photo",
     "at": "2026-09-12T07:30:00+07:00",
-    "source_message_id": "msg_c_54"
+    "source_message_id": "msg_2_29"
    }
   ],
   "closing_photo_id": "ph_0",
@@ -1309,12 +1309,12 @@
    {
     "state": "answered",
     "at": "2026-09-12T10:04:00+07:00",
-    "source_message_id": "msg_r_55"
+    "source_message_id": "msg_2_78"
    },
    {
     "state": "closed_with_photo",
     "at": "2026-09-12T10:30:00+07:00",
-    "source_message_id": "msg_c_55"
+    "source_message_id": "msg_2_86"
    }
   ],
   "closing_photo_id": "ph_1",
@@ -1337,12 +1337,12 @@
    {
     "state": "answered",
     "at": "2026-09-12T13:04:00+07:00",
-    "source_message_id": "msg_r_56"
+    "source_message_id": "msg_2_136"
    },
    {
     "state": "closed_with_photo",
     "at": "2026-09-12T13:30:00+07:00",
-    "source_message_id": "msg_c_56"
+    "source_message_id": "msg_2_144"
    }
   ],
   "closing_photo_id": "ph_2",
@@ -1365,7 +1365,7 @@
    {
     "state": "answered",
     "at": "2026-09-12T16:02:00+07:00",
-    "source_message_id": "msg_r_57"
+    "source_message_id": "msg_2_192"
    }
   ],
   "closing_photo_id": null,
@@ -1388,12 +1388,12 @@
    {
     "state": "answered",
     "at": "2026-09-13T07:04:00+07:00",
-    "source_message_id": "msg_r_58"
+    "source_message_id": "msg_3_19"
    },
    {
     "state": "closed_with_photo",
     "at": "2026-09-13T07:30:00+07:00",
-    "source_message_id": "msg_c_58"
+    "source_message_id": "msg_3_26"
    }
   ],
   "closing_photo_id": "ph_0",
@@ -1416,12 +1416,12 @@
    {
     "state": "answered",
     "at": "2026-09-13T07:46:00+07:00",
-    "source_message_id": "msg_r_59"
+    "source_message_id": "msg_3_31"
    },
    {
     "state": "closed_with_photo",
     "at": "2026-09-13T08:12:00+07:00",
-    "source_message_id": "msg_c_59"
+    "source_message_id": "msg_3_39"
    }
   ],
   "closing_photo_id": "ph_1",
@@ -1444,12 +1444,12 @@
    {
     "state": "answered",
     "at": "2026-09-13T08:28:00+07:00",
-    "source_message_id": "msg_r_60"
+    "source_message_id": "msg_3_43"
    },
    {
     "state": "closed_with_photo",
     "at": "2026-09-13T08:54:00+07:00",
-    "source_message_id": "msg_c_60"
+    "source_message_id": "msg_3_51"
    }
   ],
   "closing_photo_id": "ph_2",
@@ -1472,12 +1472,12 @@
    {
     "state": "answered",
     "at": "2026-09-13T09:11:00+07:00",
-    "source_message_id": "msg_r_61"
+    "source_message_id": "msg_3_56"
    },
    {
     "state": "closed_with_photo",
     "at": "2026-09-13T09:37:00+07:00",
-    "source_message_id": "msg_c_61"
+    "source_message_id": "msg_3_64"
    }
   ],
   "closing_photo_id": "ph_3",
@@ -1500,12 +1500,12 @@
    {
     "state": "answered",
     "at": "2026-09-13T09:53:00+07:00",
-    "source_message_id": "msg_r_62"
+    "source_message_id": "msg_3_68"
    },
    {
     "state": "closed_with_photo",
     "at": "2026-09-13T10:19:00+07:00",
-    "source_message_id": "msg_c_62"
+    "source_message_id": "msg_3_76"
    }
   ],
   "closing_photo_id": "ph_4",
@@ -1528,12 +1528,12 @@
    {
     "state": "answered",
     "at": "2026-09-13T10:35:00+07:00",
-    "source_message_id": "msg_r_63"
+    "source_message_id": "msg_3_81"
    },
    {
     "state": "closed_with_photo",
     "at": "2026-09-13T11:01:00+07:00",
-    "source_message_id": "msg_c_63"
+    "source_message_id": "msg_3_88"
    }
   ],
   "closing_photo_id": "ph_5",
@@ -1556,12 +1556,12 @@
    {
     "state": "answered",
     "at": "2026-09-13T11:18:00+07:00",
-    "source_message_id": "msg_r_64"
+    "source_message_id": "msg_3_93"
    },
    {
     "state": "closed_with_photo",
     "at": "2026-09-13T11:20:00+07:00",
-    "source_message_id": "msg_c_64"
+    "source_message_id": "msg_3_94"
    }
   ],
   "closing_photo_id": "ph_6",
@@ -1584,7 +1584,7 @@
    {
     "state": "answered",
     "at": "2026-09-13T11:58:00+07:00",
-    "source_message_id": "msg_r_65"
+    "source_message_id": "msg_3_105"
    }
   ],
   "closing_photo_id": null,
@@ -1607,7 +1607,7 @@
    {
     "state": "answered",
     "at": "2026-09-13T12:40:00+07:00",
-    "source_message_id": "msg_r_66"
+    "source_message_id": "msg_3_117"
    }
   ],
   "closing_photo_id": null,
@@ -1630,7 +1630,7 @@
    {
     "state": "answered",
     "at": "2026-09-13T13:23:00+07:00",
-    "source_message_id": "msg_r_67"
+    "source_message_id": "msg_3_130"
    }
   ],
   "closing_photo_id": null,
@@ -1653,7 +1653,7 @@
    {
     "state": "answered",
     "at": "2026-09-13T14:05:00+07:00",
-    "source_message_id": "msg_r_68"
+    "source_message_id": "msg_3_142"
    }
   ],
   "closing_photo_id": null,
@@ -1676,7 +1676,7 @@
    {
     "state": "answered",
     "at": "2026-09-13T14:47:00+07:00",
-    "source_message_id": "msg_r_69"
+    "source_message_id": "msg_3_154"
    }
   ],
   "closing_photo_id": null,
@@ -1699,7 +1699,7 @@
    {
     "state": "answered",
     "at": "2026-09-13T15:30:00+07:00",
-    "source_message_id": "msg_r_70"
+    "source_message_id": "msg_3_167"
    }
   ],
   "closing_photo_id": null,
@@ -1722,7 +1722,7 @@
    {
     "state": "answered",
     "at": "2026-09-13T16:12:00+07:00",
-    "source_message_id": "msg_r_71"
+    "source_message_id": "msg_3_179"
    }
   ],
   "closing_photo_id": null,
@@ -1745,7 +1745,7 @@
    {
     "state": "answered",
     "at": "2026-09-13T16:56:00+07:00",
-    "source_message_id": "msg_r_72"
+    "source_message_id": "msg_3_192"
    }
   ],
   "closing_photo_id": null,
@@ -1768,7 +1768,7 @@
    {
     "state": "answered",
     "at": "2026-09-13T17:39:00+07:00",
-    "source_message_id": "msg_r_73"
+    "source_message_id": "msg_3_205"
    }
   ],
   "closing_photo_id": null,
