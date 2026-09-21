@@ -54,3 +54,69 @@ test.describe('Complaints', () => {
     }
   })
 })
+
+const MESSAGES_PER_DAY = [339, 414, 326, 299]
+const PHOTOS_PER_DAY = [264, 314, 251, 223]
+const REPORTS_PER_DAY = [166, 149, 170, 154]
+const DEFECTS = {
+  no_area: 36,
+  done_without_complaint: 12,
+  no_caption: 10,
+  photo_reused: 3,
+}
+const BEFORE_AFTER = 61
+const LATE_PHOTOS = 25
+const DUPLICATE_PAIRS = 3
+
+const sum = (values: readonly number[]): number => values.reduce((a, b) => a + b, 0)
+
+test.describe('Report Quality', () => {
+  test.beforeEach(async ({ page }) => {
+    await page.goto('/report-quality')
+  })
+
+  test('group activity totals match the deck', async ({ page }) => {
+    await expect(page.locator(figure('quality.activity.messages'))).toHaveText(
+      String(sum(MESSAGES_PER_DAY)),
+    )
+    await expect(page.locator(figure('quality.activity.photos'))).toHaveText(
+      String(sum(PHOTOS_PER_DAY)),
+    )
+    await expect(page.locator(figure('quality.activity.reports'))).toHaveText(
+      String(sum(REPORTS_PER_DAY)),
+    )
+  })
+
+  test('each activity series is drawn day by day, in order', async ({ page }) => {
+    for (const [key, expected] of [
+      ['messages', MESSAGES_PER_DAY],
+      ['photos', PHOTOS_PER_DAY],
+      ['reports', REPORTS_PER_DAY],
+    ] as const) {
+      const counts = await page
+        .locator(`[data-figure="quality.activity.${key}.day"]`)
+        .evaluateAll((nodes) => nodes.map((n) => Number(n.getAttribute('data-count'))))
+      expect(counts, key).toEqual(expected)
+    }
+  })
+
+  test('the defect breakdown matches the deck', async ({ page }) => {
+    for (const [defect, expected] of Object.entries(DEFECTS)) {
+      await expect(page.locator(figure(`quality.defect.${defect}`)), defect).toHaveText(
+        String(expected),
+      )
+    }
+  })
+
+  test('evidence coverage matches the deck', async ({ page }) => {
+    await expect(page.locator(figure('quality.before_after'))).toHaveText(String(BEFORE_AFTER))
+    await expect(page.locator(figure('quality.late_photos'))).toHaveText(String(LATE_PHOTOS))
+    await expect(page.locator(figure('quality.duplicate_pairs'))).toHaveText(
+      String(DUPLICATE_PAIRS),
+    )
+  })
+
+  test('the only completion percentage lives on the RKB screen (AC-7)', async ({ page }) => {
+    await expect(page.locator('[data-figure-kind="completion"]')).toHaveCount(0)
+  })
+})
