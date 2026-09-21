@@ -162,6 +162,27 @@ svg .bl{stroke:var(--faint);stroke-width:1}
 
 .dot{display:inline-block;width:9px;height:9px;border-radius:50%}
 
+/* info control */
+.card>h3,.cardhead{display:flex;align-items:center;gap:8px}
+.card>h3>.i,.cardhead>.i{margin-left:auto}
+button.i{width:19px;height:19px;flex:0 0 auto;border-radius:50%;padding:0;cursor:pointer;
+  background:var(--muted);opacity:.45;transition:opacity .12s,background .12s;
+  -webkit-mask:var(--icInfo) center/contain no-repeat;mask:var(--icInfo) center/contain no-repeat;
+  --icInfo:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Ccircle cx='12' cy='12' r='10'/%3E%3Cline x1='12' y1='16' x2='12' y2='12'/%3E%3Cline x1='12' y1='8' x2='12.01' y2='8'/%3E%3C/svg%3E")}
+button.i:hover,button.i[aria-expanded="true"]{opacity:1;background:var(--primary)}
+
+.pop{position:fixed;z-index:85;width:min(340px,calc(100vw - 24px));display:none;
+  background:var(--surface);border:1px solid var(--line);border-radius:12px;
+  box-shadow:0 12px 32px rgba(64,0,0,.16);padding:15px 16px}
+.pop.on{display:block}
+.pop h4{margin:0 0 7px;font-family:var(--head);font-weight:700;font-size:15px;letter-spacing:-.005em}
+.pop p{margin:0 0 9px;font-size:14px;line-height:1.55;color:var(--ink)}
+.pop p:last-child{margin-bottom:0}
+.pop dl{margin:10px 0 0;padding-top:10px;border-top:1px solid var(--line);
+  display:grid;grid-template-columns:auto 1fr;gap:4px 12px;font-size:13px}
+.pop dt{color:var(--muted)}
+.pop dd{margin:0;color:var(--ink)}
+
 /* phone — the client opens this from inside WhatsApp */
 @media(max-width:760px){
   main{padding:16px 12px 48px;min-width:0}
@@ -191,6 +212,7 @@ svg .bl{stroke:var(--faint);stroke-width:1}
 <main id="main"></main>
 
 <div class="tt" id="tt"></div>
+<div class="pop" id="pop"></div>
 <div class="dw" id="dw"><div class="sc" data-x></div><div class="pn"><button class="x" data-x>&times;</button><div id="dwb"></div></div></div>
 
 <script>
@@ -356,6 +378,7 @@ function heat(el,{rows,get,fmt,ttl}){
   el.querySelectorAll('[data-tip]').forEach(c=>{c.addEventListener('mousemove',e=>tip(e,`<b>${c.dataset.tip}</b>`));c.addEventListener('mouseleave',untip);});
 }
 const leg=a=>`<div class="legend">${a.map(i=>`<span><i class="sw" style="background:${i.f}"></i>${i.k}</span>`).join('')}</div>`;
+const I=k=>`<button class="i" data-i="${k}" aria-label="About this chart" aria-expanded="false"></button>`;
 const stat=(k,v,n,c)=>`<div class="stat"><div class="k">${k}</div><div class="v">${v}</div>${n?`<div class="n ${c||''}">${n}</div>`:''}</div>`;
 const statD=(k,v,n)=>`<div class="stat dark"><div class="k">${k}</div><div class="v">${v}</div>${n?`<div class="n">${n}</div>`:''}</div>`;
 
@@ -376,7 +399,7 @@ SC.today=()=>`
  ${stat('RKB due today','5','3 done · 1 blocked')}
 </div>
 <div class="row r21">
- <div class="card"><h3>Open</h3>
+ <div class="card"><h3>Open${I('open')}</h3>
   <table><thead><tr><th>Time</th><th>Area</th><th>Raised by</th><th>Status</th><th class="num">Left</th></tr></thead><tbody>
   <tr class="hv"><td><button class="ev" data-ev="c1">19:55</button></td><td>Toilet LT2 dekat Rockstar</td><td>Cristian B. Suryanto</td><td><span class="pill crit"><b>●</b>3rd day</span></td><td class="num" style="color:var(--critical);font-weight:600">19h 48m</td></tr>
   <tr class="hv"><td><button class="ev" data-ev="c2">16:15</button></td><td>Driveway depan pintu kaca</td><td>Alexander Tarigan</td><td><span class="pill blk"><b>◐</b>Blocked</span></td><td class="num" style="color:var(--muted)">paused</td></tr>
@@ -384,9 +407,9 @@ SC.today=()=>`
   <tr class="hv"><td><button class="ev" data-ev="c2">11:04</button></td><td>Lantai depan Skin+</td><td>Sofyan</td><td><span class="pill warn"><b>●</b>No photo</span></td><td class="num">11h 04m</td></tr>
   <tr class="hv"><td><button class="ev" data-ev="c2">09:45</button></td><td>Asbak smoking area</td><td>Rachmad Adi</td><td><span class="pill warn"><b>●</b>No photo</span></td><td class="num">9h 45m</td></tr>
   </tbody></table></div>
- <div class="card"><h3>Slots</h3><div id="k-today"></div></div>
+ <div class="card"><h3>Slots${I('slots')}</h3><div id="k-today"></div></div>
 </div>
-<div class="card"><h3>RKB due today</h3>
+<div class="card"><h3>RKB due today${I('rkbtoday')}</h3>
  <table><thead><tr><th>Job</th><th>Sheet</th><th>Reported by</th><th>Status</th></tr></thead><tbody>
  <tr><td>General cleaning toilet LT2</td><td>Toilet</td><td>N, yeyenriani</td><td><span class="pill good"><b>●</b>Done</span></td></tr>
  <tr><td>Spider web cleaning koridor</td><td>Koridor dalam</td><td>Amartha, Faisal</td><td><span class="pill good"><b>●</b>Done</span></td></tr>
@@ -404,15 +427,15 @@ SC.comp=()=>`
  ${stat('Median close','41<s> min</s>','Slowest 16h 50m','bad')}
 </div>
 <div class="row r21">
- <div class="card"><h3>Funnel</h3><div id="k-fun"></div></div>
- <div class="card pad0"><h3>Cause</h3><div id="k-causeL"></div><div id="k-cause" style="padding:0 16px"></div>
+ <div class="card"><h3>Funnel${I('funnel')}</h3><div id="k-fun"></div></div>
+ <div class="card pad0"><h3>Cause${I('cause')}</h3><div id="k-causeL"></div><div id="k-cause" style="padding:0 16px"></div>
    <div style="padding:0 20px 8px"><button class="tbtn" data-tv="tv-cause">Table</button><div class="tv" id="tv-cause"></div></div></div>
 </div>
 <div class="row r2">
- <div class="card"><h3>By area</h3><div id="k-h1"></div></div>
- <div class="card"><h3>Closed with photo</h3><div id="k-h2"></div></div>
+ <div class="card"><h3>By area${I('byarea')}</h3><div id="k-h1"></div></div>
+ <div class="card"><h3>Closed with photo${I('closedarea')}</h3><div id="k-h2"></div></div>
 </div>
-<div class="card"><h3>Repeat areas</h3>
+<div class="card"><h3>Repeat areas${I('repeats')}</h3>
  <table><thead><tr><th>Area</th>${DD.map(d=>`<th class="ctr">${d}</th>`).join('')}<th>Escalation</th><th>Note</th></tr></thead><tbody>
  ${D.repeats.map(r=>`<tr><td style="font-weight:500">${r.a}</td>
   ${r.s.map(s=>`<td class="ctr">${s===0?'<span style="color:var(--faint)">–</span>':
@@ -422,8 +445,8 @@ SC.comp=()=>`
   <td style="color:var(--muted);font-size:12.5px">${r.n}</td></tr>`).join('')}
  </tbody></table></div>
 <div class="row r2">
- <div class="card pad0"><h3>By shift</h3><div id="k-csL"></div><div id="k-cs" style="padding:0 16px"></div></div>
- <div class="card pad0"><h3>Raised, answered, closed</h3><div id="k-cdL"></div><div id="k-cd" style="padding:0 16px"></div></div>
+ <div class="card pad0"><h3>By shift${I('byshift')}</h3><div id="k-csL"></div><div id="k-cs" style="padding:0 16px"></div></div>
+ <div class="card pad0"><h3>Raised, answered, closed${I('rac')}</h3><div id="k-cdL"></div><div id="k-cd" style="padding:0 16px"></div></div>
 </div>`;
 
 SC.wo=()=>`
@@ -434,7 +457,7 @@ SC.wo=()=>`
  ${stat('Open','1','Pioneer DJ, due 12–13 Sep','bad')}
  ${stat('Median turnaround','4<s> h</s>','From request to photo')}
 </div>
-<div class="card"><h3>Requests</h3>
+<div class="card"><h3>Requests${I('wo')}</h3>
  <table><thead><tr><th>Request</th><th>From</th><th>Received</th><th>Due</th><th>Evidence</th><th>Status</th></tr></thead><tbody>
  ${D.wo.map(w=>`<tr class="hv"><td style="font-weight:500">${w.t}<div style="font-size:11.5px;color:var(--muted);margin-top:2px">PDF</div></td>
   <td>${w.by}</td><td>${w.rq}</td><td>${w.due}</td>
@@ -453,7 +476,7 @@ SC.rkb=()=>{
  ${stat('Scores A.1','3','5 at 100%, 3 below, 1 under 60%','bad')}
 </div>
 <div class="row r21">
- <div class="card"><h3>By sheet</h3>
+ <div class="card"><h3>By sheet${I('bysheet')}</h3>
   <table><thead><tr><th>Sheet</th><th class="num">Rows</th><th class="num">Planned</th><th class="num">Done</th><th class="num">Blocked</th><th style="width:160px">Realisation</th></tr></thead><tbody>
   ${D.rkb.map(r=>{const pc=Math.round(r.d/r.p*100);return `<tr><td style="font-weight:500">${r.s}</td>
    <td class="num">${r.r}</td><td class="num">${r.p}</td><td class="num">${r.d}</td>
@@ -461,14 +484,14 @@ SC.rkb=()=>{
    <td><div style="display:flex;align-items:center;gap:9px"><div class="track" style="flex:1"><div class="fill" style="width:${pc}%;background:${pc>=90?'var(--good)':pc>=60?'var(--warn)':'var(--critical)'}"></div></div>
    <b class="num" style="min-width:36px">${pc}%</b></div></td></tr>`;}).join('')}
   </tbody></table></div>
- <div class="card"><h3>Sheet layouts</h3>
+ <div class="card"><h3>Sheet layouts${I('layouts')}</h3>
   <table><thead><tr><th>Layout</th><th>Sheets</th><th>Extra</th></tr></thead><tbody>
   <tr><td><b>A</b></td><td>Koridor, Toilet, Car park, Food court</td><td style="color:var(--faint)">—</td></tr>
   <tr><td><b>B</b></td><td>Facade</td><td>PROGRES</td></tr>
   <tr><td><b>C</b></td><td>Ruang Utility</td><td>ZONA</td></tr>
   </tbody></table></div>
 </div>
-${D.rkbRows.map(b=>`<div class="card"><h3>${b.bl}</h3><div class="scroll">
+${D.rkbRows.map(b=>`<div class="card"><h3>${b.bl}${I('rkbgrid')}</h3><div class="scroll">
  <table><thead><tr><th style="min-width:180px">Area / Lokasi</th><th style="min-width:150px">Jenis Pekerjaan</th>
  ${DD.map(d=>`<th class="ctr" colspan="2" style="border-left:1px solid var(--line)">${d}</th>`).join('')}</tr>
  <tr><th></th><th></th>${DD.map(()=>'<th class="ctr" style="border-left:1px solid var(--line);font-size:10px">R</th><th class="ctr" style="font-size:10px">A</th>').join('')}</tr></thead><tbody>
@@ -499,7 +522,7 @@ SC.mp=()=>{
  ${stat('Unfilled','3','Deducts pro-rata','bad')}
  ${stat('Payable','<s>Rp </s>144.075.000',`Gross ${f(gross)}`)}
 </div>
-<div class="card"><h3>Coverage</h3><div class="scroll">
+<div class="card"><h3>Coverage${I('coverage')}</h3><div class="scroll">
  <table><thead><tr><th>Slot</th><th class="num">Contracted</th>${DD.map(d=>`<th class="ctr">${d}</th>`).join('')}
  <th class="num">Complaints</th><th class="num">Open</th><th>Named</th></tr></thead><tbody>
  ${D.slots.map(s=>`<tr><td style="font-weight:500">${s.s}</td><td class="num">${s.c}</td>
@@ -508,7 +531,7 @@ SC.mp=()=>{
   <td style="color:var(--muted);font-size:12.5px">${s.ppl}</td></tr>`).join('')}
  </tbody></table></div></div>
 <div class="row r2">
- <div class="card"><h3>Absence</h3>
+ <div class="card"><h3>Absence${I('absence')}</h3>
   <table><thead><tr><th>Reason</th><th class="num">Days</th><th class="num">Replaced</th><th class="num">Deducts</th></tr></thead><tbody>
   <tr><td>Off Day</td><td class="num">12</td><td class="num">12</td><td class="num" style="color:var(--faint)">never</td></tr>
   <tr><td>Sakit</td><td class="num">2</td><td class="num">1</td><td class="num" style="font-weight:600">1</td></tr>
@@ -516,7 +539,7 @@ SC.mp=()=>{
   <tr><td>Alfa</td><td class="num">0</td><td class="num">0</td><td class="num">0</td></tr>
   </tbody></table>
   <div style="margin-top:14px"><span class="pill info"><b>●</b>Claimed — from the line-up</span></div></div>
- <div class="card renoonly"><h3>Check queue <span class="pill">Reno only</span></h3>
+ <div class="card renoonly"><h3>Check queue <span class="pill">Reno only</span>${I('fraud')}</h3>
   <table><thead><tr><th>Signal</th><th class="num">Count</th><th>Names</th></tr></thead><tbody>
   <tr><td>In line-up, in no report</td><td class="num" style="font-weight:700">6</td><td style="color:var(--muted);font-size:12.5px">Okta, Marhadi, Tahta, Inez, Amsar, Septian</td></tr>
   <tr><td>Listed in two areas</td><td class="num" style="font-weight:700">1</td><td style="color:var(--muted);font-size:12.5px">Ani — GF and Lantai 1, 10 Sep</td></tr>
@@ -534,15 +557,15 @@ SC.qa=()=>`
  ${stat('Sent 3h+ late','25','Median gap 3 min','bad')}
 </div>
 <div class="row r2">
- <div class="card pad0"><h3>Defects</h3><div id="k-defL"></div><div id="k-def" style="padding:0 16px"></div>
+ <div class="card pad0"><h3>Defects${I('defects')}</h3><div id="k-defL"></div><div id="k-def" style="padding:0 16px"></div>
   <div style="padding:0 20px 8px"><button class="tbtn" data-tv="tv-def">Table</button><div class="tv" id="tv-def"></div></div></div>
- <div class="card pad0"><h3>Late photos</h3><div id="k-lateL"></div><div id="k-late" style="padding:0 16px"></div></div>
+ <div class="card pad0"><h3>Late photos${I('late')}</h3><div id="k-lateL"></div><div id="k-late" style="padding:0 16px"></div></div>
 </div>
 <div class="row r2">
- <div class="card"><h3>Before &amp; after by reporter</h3><div id="k-ba"></div></div>
- <div class="card"><h3>Late by reporter</h3><div id="k-lw"></div></div>
+ <div class="card"><h3>Before &amp; after by reporter${I('ba')}</h3><div id="k-ba"></div></div>
+ <div class="card"><h3>Late by reporter${I('lateby')}</h3><div id="k-lw"></div></div>
 </div>
-<div class="card"><h3>Duplicates</h3>
+<div class="card"><h3>Duplicates${I('dupes')}</h3>
  <div class="row r3" style="margin:0">
  ${D.dupes.map(d=>`<div style="border:1px solid var(--line);border-radius:12px;padding:12px">
   <div style="display:flex;gap:9px;align-items:center">
@@ -568,7 +591,7 @@ SC.rapor=()=>{
 </div>
 ${sec.map(s=>`<div class="card">
  <div style="display:flex;align-items:baseline;gap:12px;margin-bottom:14px">
-  <h3 style="margin:0">${s.k}. ${s.t}</h3><span class="pill">${s.w}%</span><div style="flex:1"></div>
+  <h3 style="margin:0">${s.k}. ${s.t}${I('rapor')}</h3><span class="pill">${s.w}%</span><div style="flex:1"></div>
   <div style="font-size:13px;color:var(--muted)">Average <b style="font-family:var(--head);font-size:18px;color:var(--ink);margin-left:6px">${s.av!=null?s.av.toFixed(2):'—'}</b>
   <span style="color:var(--faint)">→ ${s.av!=null?(s.av*s.w/100).toFixed(2):'—'}</span></div></div>
  <table><thead><tr><th style="width:30%">Indicator</th><th style="width:96px">Score</th><th style="width:130px">Source</th><th>Basis</th></tr></thead><tbody>
@@ -594,7 +617,7 @@ SC.month=()=>`
  ${stat('Payable','<s>Rp </s>144.075.000','Gross less deductions')}
  ${stat('BAPP window','25 Sep – 5 Oct','Zero delay invoice')}
 </div>
-<div class="card"><h3>Pack</h3>
+<div class="card"><h3>Pack${I('pack')}</h3>
  <table><thead><tr><th style="width:26%">Section</th><th style="width:150px">Source</th><th>Contents</th><th style="width:26%">Output</th></tr></thead><tbody>
  <tr><td style="font-weight:500">RKB realisation</td><td><span class="pill good"><b>●</b>Data</span></td><td style="color:var(--muted);font-size:12.5px">145 job rows, R against A</td><td style="color:var(--muted);font-size:12.5px">xlsx, Reno's template</td></tr>
  <tr><td style="font-weight:500">Complaints</td><td><span class="pill good"><b>●</b>Data</span></td><td style="color:var(--muted);font-size:12.5px">75, cause split, closure proof</td><td style="color:var(--muted);font-size:12.5px">PDF + evidence appendix</td></tr>
@@ -611,8 +634,8 @@ SC.month=()=>`
   <button class="renoonly" style="border:1px solid var(--line);border-radius:9px;padding:10px 18px;font-size:13.5px">QBR material</button>
  </div></div>
 <div class="row r2">
- <div class="card pad0"><h3>Volume</h3><div id="k-volL"></div><div id="k-vol" style="padding:0 16px"></div></div>
- <div class="card pad0"><h3>Reports by shift</h3><div id="k-rsL"></div><div id="k-rs" style="padding:0 16px"></div></div>
+ <div class="card pad0"><h3>Volume${I('volume')}</h3><div id="k-volL"></div><div id="k-vol" style="padding:0 16px"></div></div>
+ <div class="card pad0"><h3>Reports by shift${I('repshift')}</h3><div id="k-rsL"></div><div id="k-rs" style="padding:0 16px"></div></div>
 </div>`;
 
 SC.ppl=()=>`
@@ -623,14 +646,14 @@ SC.ppl=()=>`
  ${stat('No report all period','2','Okta, Marhadi','bad')}
  ${stat('Roster','Unconfirmed','Confirm to enable BAPP','bad')}
 </div>
-<div class="card"><h3>Master</h3>
+<div class="card"><h3>Master${I('master')}</h3>
  <table><thead><tr><th>Name</th><th>Role</th><th>Area</th><th>Alias</th><th>Status</th><th></th></tr></thead><tbody>
  ${D.people.map(p=>`<tr class="hv"><td style="font-weight:500">${p.n}</td><td>${p.r}</td><td style="color:var(--muted)">${p.a}</td>
   <td>${p.al==='—'?'<span style="color:var(--faint)">—</span>':`<span class="pill ask"><b>?</b>${p.al}</span>`}</td>
   <td>${p.st==='ok'?'<span class="pill good"><b>●</b>Active</span>':p.st==='alias'?'<span class="pill warn"><b>●</b>Merge?</span>':'<span class="pill crit"><b>●</b>No reports</span>'}</td>
   <td class="num">${p.st==='alias'?'<button class="tbtn">Merge</button>':''}</td></tr>`).join('')}
  </tbody></table></div>
-<div class="card"><h3>Contracted slots</h3>
+<div class="card"><h3>Contracted slots${I('slotmaster')}</h3>
  <table><thead><tr><th>Area</th><th class="ctr">Shift 1</th><th class="ctr">Shift 2</th><th class="ctr">Shift 3</th></tr></thead><tbody>
  <tr><td>External</td><td class="ctr">6</td><td class="ctr">5</td><td class="ctr">2</td></tr>
  <tr><td>Ground floor</td><td class="ctr">8</td><td class="ctr">4</td><td class="ctr">—</td></tr>
@@ -716,14 +739,99 @@ const EV={
   <div class="msg"><div class="w">Acenk (Bontot)</div><div class="b">Done pak, kursi sudah di take out</div>
    <div class="ph">photo</div><div class="m"><span>10 Sep 16:40</span><span class="pill good"><b>●</b>On time</span></div></div>`};
 
+
+const INFO={
+ open:{t:'Open complaints',b:`<p>Complaints raised by the client or a Reno superior that are not yet closed with a photo, ranked by time left on the 24-hour clock.</p>
+  <p>A blocked complaint reads <b>paused</b>. Its clock stops while the blocker stands, and the block is invalid unless it cites the message that justifies it.</p>
+  <dl><dt>Rule</dt><dd>SOP/OPS/001 A.3 — closed under 24h</dd><dt>Source</dt><dd>Agent complaint records</dd></dl>`},
+ slots:{t:'Slot coverage',b:`<p>Contracted headcount per area and shift against the names in this shift's line-up message.</p>
+  <p>A slot is filled when the names meet the contracted count — whoever fills it. Red means short.</p>
+  <dl><dt>Unit</dt><dd>Slot = area × shift × day</dd><dt>Source</dt><dd>Line-up message</dd></dl>`},
+ rkbtoday:{t:'RKB due today',b:`<p>Job rows whose R column plans them for today, and whether a matching work report has landed.</p>
+  <dl><dt>Source</dt><dd>RKB workbook + matched reports</dd></dl>`},
+ funnel:{t:'Complaint funnel',b:`<p>The four states a complaint passes through. Each bar is a count, not a rate; the right column is the share surviving from the step above.</p>
+  <p>Shaded on the sequential ramp, so darker means a larger number.</p>
+  <dl><dt>Closed</dt><dd>Requires a photo taken after the complaint</dd></dl>`},
+ cause:{t:'Cause',b:`<p>Every complaint classified into one of five causes. <b>Cleaning standard</b> is within Reno's control; the other four are not.</p>
+  <p>Reno's own KPI always uses the gross total including every cause. Only the client view leans on the split, and a reclassification is visible with its reason.</p>
+  <dl><dt>Colour</dt><dd>Unordered, so hues not a ramp</dd></dl>`},
+ byarea:{t:'Complaints by area',b:`<p>Complaints per area per day. Darker means more.</p>
+  <p>Sequential scale — the lightest cell is nearest zero, a dash means none raised.</p>`},
+ closedarea:{t:'Closed with photo, by area',b:`<p>Closed with a photo over total raised, per area per day.</p>
+  <p>Indoor areas close out; carpark and outdoor do not. A dash means no complaints that day.</p>`},
+ repeats:{t:'Repeat areas',b:`<p>Areas complained about on more than one day. Green is closed with a photo, red is no proof.</p>
+  <p>The escalation column shows how far it travelled. Toilet LT2 is the ladder the SOP exists to prevent.</p>
+  <dl><dt>Scoring</dt><dd>A repeat complaint caps A.3 at 3</dd></dl>`},
+ byshift:{t:'Complaints by shift',b:`<p>Complaints by the shift on duty when they were raised.</p>
+  <dl><dt>Shift 1</dt><dd>06:00–15:00</dd><dt>Shift 2</dt><dd>15:00–23:00</dd><dt>Shift 3</dt><dd>23:00–06:00</dd></dl>`},
+ rac:{t:'Raised, answered, closed',b:`<p>Per day. The gap between the middle and right bars is work that was acknowledged but never evidenced.</p>
+  <p>Reno replies in a median of 3 minutes and closes in 41 — the two are reported apart because they say different things.</p>`},
+ wo:{t:'Work orders',b:`<p>Job requests the client sends into the group as PDFs.</p>
+  <p>Each runs to a client-set due date, not the 24-hour complaint clock. This replaces the recap the site admin types by hand.</p>
+  <dl><dt>Source</dt><dd>PDF attachments in the group</dd></dl>`},
+ bysheet:{t:'Realisation by sheet',b:`<p>Planned is the sum of R, done the sum of A.</p>
+  <p>Blocked rows are excluded from the bar, so this is the <b>net</b> figure — the one the Pimpro is scored on. The gross figure is in the tile above.</p>
+  <dl><dt>Scoring</dt><dd>5 at 100%, 3 below, 1 under 60%</dd></dl>`},
+ layouts:{t:'Sheet layouts',b:`<p>The workbook does not share one schema.</p>
+  <p>Facade and Ruang Utility carry a fourth descriptive column and shift the day grid one column right. The export writes all three correctly.</p>`},
+ rkbgrid:{t:'R against A',b:`<p>A mirror of the workbook. <b>R</b> is the plan and is read-only — it stays authored in Excel.</p>
+  <p><b>A</b> is what the agent matched from the group; click any A to see the report behind it. Blocked cells cite the message that justifies them and are left out of the percentage.</p>`},
+ coverage:{t:'Coverage and billing',b:`<p>Contracted slots against filled slots per day.</p>
+  <p>A covered slot bills in full whoever fills it. An unfilled, unreplaced slot-day deducts pro-rata. Complaints never touch the invoice — billing is manpower.</p>
+  <dl><dt>Unit</dt><dd>Slot = area × shift × day</dd></dl>`},
+ absence:{t:'Absence',b:`<p>From the line-up's KETERANGAN block.</p>
+  <p>Off Day never deducts. Sakit, Izin and Alfa deduct only where the slot went unfilled.</p>
+  <dl><dt>Status</dt><dd>Claimed — never verified</dd></dl>`},
+ fraud:{t:'Check queue',b:`<p>The Operational Manager's morning check from SOP/OPS/002 III.A.</p>
+  <p>These are signals to verify, <b>not proof</b>. Nothing in a WhatsApp group can confirm that a person was physically present.</p>
+  <dl><dt>Visibility</dt><dd>Reno only, never the client</dd></dl>`},
+ defects:{t:'Report defects',b:`<p>Work reports needing correction. One report can carry more than one defect, so the stack exceeds the number of failing reports.</p>
+  <dl><dt>Photo reused</dt><dd>Matched on a perceptual hash</dd><dt>Scoring</dt><dd>Feeds Rapor Pimpro D.3</dd></dl>`},
+ late:{t:'Late photos',b:`<p>Gap between the Timemark capture stamp on a photo and the moment it reached the group.</p>
+  <p>The median gap is 3 minutes, so these are the tail, not the norm.</p>`},
+ ba:{t:'Before and after',b:`<p>Reports carrying both a before and an after shot, over that person's total reports.</p>
+  <p>The quarterly business review runs on these, and two people are producing almost all of them.</p>`},
+ lateby:{t:'Late photos by reporter',b:`<p>Photos sent more than an hour after they were taken, by sender.</p>`},
+ dupes:{t:'Duplicate photos',b:`<p>The same image used to close two different reports, matched on a perceptual hash.</p>
+  <p>Shown side by side, because that is the only way this accusation is safe to make. The SOP scores fabricated data at 1.</p>`},
+ rapor:{t:'Rapor Pimpro',b:`<p>The SOP's weighted performance form. Sections weigh A 30%, B 20%, C 25%, D 25%.</p>
+  <p>Only four of thirteen indicators can be evidenced from the group. The rest stay blank and are marked as needing a person — a score is never invented to complete the form.</p>
+  <dl><dt>Bands</dt><dd>A 4.5–5.0 · B 3.0–4.4 · C 1.0–2.9</dd></dl>`},
+ pack:{t:'Monthly pack',b:`<p>Assembled from the screens above. Nothing is retyped and every figure traces to a message.</p>
+  <p>Three sections need a person and say so. Generation is blocked until the roster is confirmed and every alias is decided.</p>`},
+ volume:{t:'Volume',b:`<p>Messages, photos and work reports per day.</p>
+  <p>Not every message is a report — most of the group is chatter, acknowledgements and photos without captions.</p>`},
+ repshift:{t:'Reports by shift',b:`<p>Work reports by the shift that filed them. Shift 3 runs at a fraction of the others and raises no complaints at all.</p>`},
+ master:{t:'Personnel master',b:`<p>The agent proposes aliases; a person confirms them.</p>
+  <p>An undecided alias blocks BAPP, because an unmerged name double-counts in the roster export.</p>`},
+ slotmaster:{t:'Contracted slots',b:`<p>Contracted headcount per area per shift.</p>
+  <p>Typed in by the site admin — there is no contract or BoQ document to import, and billing cannot work without this number.</p>`}
+};
+
 const dw=$('dw');
 document.addEventListener('click',e=>{
  const n=e.target.closest('#nav button'); if(n){go(n.dataset.v);return;}
  const t=e.target.closest('[data-tv]'); if(t){const x=$(t.dataset.tv);x.classList.toggle('on');t.textContent=x.classList.contains('on')?'Hide':'Table';return;}
  const v=e.target.closest('[data-ev]'); if(v){$('dwb').innerHTML=EV[v.dataset.ev]||'';dw.classList.add('on');return;}
+ const ib=e.target.closest('button.i');
+ if(ib){const k=ib.dataset.i,d=INFO[k],pop=$('pop');
+  const wasOpen=pop.classList.contains('on')&&pop.dataset.k===k;
+  document.querySelectorAll('button.i[aria-expanded="true"]').forEach(x=>x.setAttribute('aria-expanded','false'));
+  if(wasOpen||!d){pop.classList.remove('on');return;}
+  pop.dataset.k=k; pop.innerHTML=`<h4>${d.t}</h4>${d.b}`; pop.classList.add('on');
+  ib.setAttribute('aria-expanded','true');
+  const r=ib.getBoundingClientRect(),pw=pop.offsetWidth,ph=pop.offsetHeight;
+  let x=Math.min(r.right-pw,innerWidth-pw-12); x=Math.max(12,x);
+  let y=r.bottom+9; if(y+ph>innerHeight-12) y=Math.max(12,r.top-ph-9);
+  pop.style.left=x+'px'; pop.style.top=y+'px'; return;}
+ if(!e.target.closest('#pop')){$('pop').classList.remove('on');
+  document.querySelectorAll('button.i[aria-expanded="true"]').forEach(x=>x.setAttribute('aria-expanded','false'));}
  if(e.target.dataset.x!==undefined){dw.classList.remove('on');}
 });
-addEventListener('keydown',e=>{if(e.key==='Escape')dw.classList.remove('on');});
+addEventListener('keydown',e=>{if(e.key==='Escape'){dw.classList.remove('on');$('pop').classList.remove('on');
+  document.querySelectorAll('button.i[aria-expanded="true"]').forEach(x=>x.setAttribute('aria-expanded','false'));}});
+addEventListener('scroll',()=>{$('pop').classList.remove('on');
+  document.querySelectorAll('button.i[aria-expanded="true"]').forEach(x=>x.setAttribute('aria-expanded','false'));},true);
 const setRole=r=>{document.body.dataset.role=r;rReno.setAttribute('aria-pressed',r==='reno');rClient.setAttribute('aria-pressed',r==='client');go(cur);};
 rReno.onclick=()=>setRole('reno'); rClient.onclick=()=>setRole('client');
 let rz;addEventListener('resize',()=>{clearTimeout(rz);rz=setTimeout(()=>draw(cur),140);});
