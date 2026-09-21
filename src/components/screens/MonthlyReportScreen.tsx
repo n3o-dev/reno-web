@@ -1,5 +1,7 @@
 import type { ScreenProps } from '@/components/screens/props'
 import { ScreenHeader } from '@/components/common/ScreenHeader'
+import { Figure } from '@/components/common/Figure'
+import { bundleEvidence } from '@/services/evidence'
 import { getRecords } from '@/services/records'
 import { WORKBOOK_LABEL } from '@/services/rkb'
 import { doubleListings, headcountMismatches } from '@/rules/manpower'
@@ -54,9 +56,56 @@ export async function MonthlyReportScreen({ siteId }: ScreenProps) {
     { title: 'Client sign-off', source: 'WhatsApp confirmation', state: 'human' },
   ]
 
+  const counts = [
+    {
+      name: 'report.complaints',
+      label: 'Complaints in the pack',
+      value: records.complaints.length,
+      ids: records.complaints.map((c) => c.source_message_id),
+      empty: 'No complaint was raised in this period.',
+    },
+    {
+      name: 'report.work_orders',
+      label: 'Work orders in the pack',
+      value: records.workOrders.length,
+      ids: records.workOrders.map((w) => w.source_message_id),
+      empty: 'The client raised no work order in this period.',
+    },
+    {
+      name: 'report.before_after',
+      label: 'Before-after pairs',
+      value: records.workReports.filter((r) => r.is_before_after).length,
+      ids: records.workReports
+        .filter((r) => r.is_before_after)
+        .map((r) => r.source_message_id),
+      empty: 'No report in this period carried before and after.',
+    },
+  ]
+
   return (
     <>
       <ScreenHeader title="Monthly Report" question="The pack, assembled" />
+      <div className="mb-4 grid gap-4 sm:grid-cols-3">
+        {counts.map((count) => {
+          const cited = bundleEvidence(records, count.ids, count.empty)
+          return (
+            <div
+              key={count.name}
+              className="rounded-[var(--radius-card)] border border-line bg-surface p-5"
+            >
+              <p className="text-[11.5px] tracking-[0.10em] text-faint uppercase">{count.label}</p>
+              <Figure
+                name={count.name}
+                evidence={cited.items}
+                total={cited.total}
+                className="font-[family-name:var(--font-display)] text-[32px] leading-[1.05] tabular-nums"
+              >
+                {count.value}
+              </Figure>
+            </div>
+          )
+        })}
+      </div>
       <div className="grid gap-4 lg:grid-cols-[1fr_1fr]">
         <section className="rounded-[var(--radius-card)] border border-line bg-surface p-5">
           <h2 className="mb-2 font-[family-name:var(--font-display)] text-[17px]">
@@ -85,7 +134,7 @@ export async function MonthlyReportScreen({ siteId }: ScreenProps) {
                   <span className="block text-[13px] text-muted">{gate.note}</span>
                 </span>
                 <span
-                  data-figure={`report.gate.${gate.label.toLowerCase().replaceAll(' ', '_')}`}
+                  data-status={`report.gate.${gate.label.toLowerCase().replaceAll(' ', '_')}`}
                   className="shrink-0 whitespace-nowrap text-muted"
                   style={{ color: gate.met ? 'var(--color-good)' : 'var(--color-warning)' }}
                 >

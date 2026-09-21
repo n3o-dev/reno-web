@@ -94,7 +94,7 @@ test.describe('Report Quality', () => {
       ['reports', REPORTS_PER_DAY],
     ] as const) {
       const counts = await page
-        .locator(`[data-figure="quality.activity.${key}.day"]`)
+        .locator(`[data-day-count="quality.activity.${key}"]`)
         .evaluateAll((nodes) => nodes.map((n) => Number(n.getAttribute('data-count'))))
       expect(counts, key).toEqual(expected)
     }
@@ -155,7 +155,8 @@ test.describe('Manpower & Billing', () => {
   })
 
   test('states no money while the contract rate is unloaded', async ({ page }) => {
-    await expect(page.locator(figure('manpower.payable'))).toHaveText('Rate not loaded')
+    // A status, not a figure: it states no number, so it cites no evidence.
+    await expect(page.locator('[data-status="manpower.payable"]')).toHaveText('Rate not loaded')
   })
 })
 

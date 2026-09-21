@@ -1,8 +1,16 @@
 import { Card } from '@/components/styled/Card'
+import { Figure } from '@/components/common/Figure'
 import type { ClosureStats } from '@/rules/clock'
+import type { Evidence } from '@/services/evidence'
+
+export interface FigureEvidence {
+  readonly items: readonly Evidence[]
+  readonly total: number
+}
 
 interface ComplaintFunnelProps {
   readonly stats: ClosureStats
+  readonly evidence: Readonly<Record<'raised' | 'answered' | 'closed_with_photo', FigureEvidence>>
 }
 
 /*
@@ -15,8 +23,8 @@ const STEPS = [
   { key: 'closed_with_photo', label: 'Closed with photo', colour: 'var(--color-ordinal-1)' },
 ] as const
 
-export function ComplaintFunnel({ stats }: ComplaintFunnelProps) {
-  const values: Record<(typeof STEPS)[number]['key'], number> = {
+export function ComplaintFunnel({ stats, evidence }: ComplaintFunnelProps) {
+  const values = {
     raised: stats.raised,
     answered: stats.answered,
     closed_with_photo: stats.closedWithPhoto,
@@ -31,16 +39,19 @@ export function ComplaintFunnel({ stats }: ComplaintFunnelProps) {
         {STEPS.map((step) => {
           const value = values[step.key]
           const share = stats.raised === 0 ? 0 : value / stats.raised
+          const cited = evidence[step.key]
           return (
             <li key={step.key}>
               <div className="flex items-baseline justify-between gap-3">
                 <span className="text-[14px]">{step.label}</span>
-                <span
-                  data-figure={`complaints.${step.key}`}
+                <Figure
+                  name={`complaints.${step.key}`}
+                  evidence={cited.items}
+                  total={cited.total}
                   className="font-[family-name:var(--font-display)] text-[20px] tabular-nums"
                 >
                   {value}
-                </span>
+                </Figure>
               </div>
               <div className="mt-1 h-2 rounded-[var(--radius-bar)] bg-plane">
                 <div

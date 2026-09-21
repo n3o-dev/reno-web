@@ -1,7 +1,10 @@
+import { Figure } from '@/components/common/Figure'
 import type { Coverage } from '@/rules/manpower'
+import type { FigureEvidence } from './ComplaintFunnel'
 
 interface CoverageTableProps {
   readonly rows: readonly Coverage[]
+  readonly evidence: FigureEvidence
 }
 
 const AREA_LABEL: Record<string, string> = {
@@ -15,7 +18,7 @@ const AREA_LABEL: Record<string, string> = {
   gondola: 'Gondola',
 }
 
-export function CoverageTable({ rows }: CoverageTableProps) {
+export function CoverageTable({ rows, evidence }: CoverageTableProps) {
   return (
     <table className="w-full border-collapse text-left">
       <caption className="sr-only">Contracted against filled slot-days, by area and shift</caption>
@@ -38,12 +41,15 @@ export function CoverageTable({ rows }: CoverageTableProps) {
             </th>
             <td className="px-3 py-2 text-right tabular-nums">{row.shift}</td>
             <td className="px-3 py-2 text-right tabular-nums">{row.contracted}</td>
-            <td
-              data-figure={`manpower.filled.${row.area_id}.${row.shift}`}
-              className="px-0 py-2 text-right tabular-nums"
-            >
-              {row.filled}
-              <span className="text-faint"> / {row.contractedSlotDays}</span>
+            <td className="px-0 py-2 text-right tabular-nums">
+              <Figure
+                name={`manpower.filled.${row.area_id}.${row.shift}`}
+                evidence={evidence.items}
+                total={evidence.total}
+              >
+                {row.filled}
+                <span className="text-faint"> / {row.contractedSlotDays}</span>
+              </Figure>
             </td>
           </tr>
         ))}

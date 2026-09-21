@@ -20,7 +20,8 @@
     "lint": "oxlint",
     "test:e2e": "playwright test",
     "test:viz": "tsx scripts/check-palette.ts",
-    "lint:i18n": "tsx scripts/lint-i18n.ts"
+    "lint:i18n": "tsx scripts/lint-i18n.ts",
+    "test:evidence": "playwright test e2e/evidence.spec.ts --project=desktop"
   },
   "devDependencies": {
     "@playwright/test": "^1.63.0",

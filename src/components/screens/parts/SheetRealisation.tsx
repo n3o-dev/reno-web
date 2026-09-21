@@ -1,5 +1,7 @@
 import Link from 'next/link'
+import { Figure } from '@/components/common/Figure'
 import type { Realisation } from '@/rules/realisation'
+import type { Evidence } from '@/services/evidence'
 
 export interface SheetSummary {
   readonly name: string
@@ -7,6 +9,7 @@ export interface SheetSummary {
   readonly sections: number
   readonly rows: number
   readonly realisation: Realisation
+  readonly evidence: Evidence
 }
 
 interface SheetRealisationProps {
@@ -44,12 +47,15 @@ export function SheetRealisation({ sheets, basePath }: SheetRealisationProps) {
             </th>
             <td className="px-3 py-2 text-right tabular-nums">{sheet.realisation.planned}</td>
             <td className="px-3 py-2 text-right tabular-nums">{sheet.realisation.done}</td>
-            <td
-              data-figure={`rkb.realisation.${sheet.slug}`}
-              data-figure-kind="completion"
-              className="px-0 py-2 text-right tabular-nums"
-            >
-              {percent(sheet.realisation.net)}
+            <td className="px-0 py-2 text-right tabular-nums">
+              <Figure
+                name={`rkb.realisation.${sheet.slug}`}
+                kind="completion"
+                evidence={[sheet.evidence]}
+                total={1}
+              >
+                {percent(sheet.realisation.net)}
+              </Figure>
             </td>
           </tr>
         ))}

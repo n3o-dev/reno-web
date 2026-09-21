@@ -1,7 +1,10 @@
+import { Figure } from '@/components/common/Figure'
 import { AUTO_FILLED, RAPOR_INDICATORS, type Indicator, type Rapor } from '@/rules/rapor'
+import type { Evidence } from '@/services/evidence'
 
 interface IndicatorTableProps {
   readonly rapor: Rapor
+  readonly evidence: Readonly<Record<string, readonly Evidence[]>>
 }
 
 const LABEL: Record<Indicator, string> = {
@@ -20,7 +23,7 @@ const LABEL: Record<Indicator, string> = {
   'D.3': 'Report quality',
 }
 
-export function IndicatorTable({ rapor }: IndicatorTableProps) {
+export function IndicatorTable({ rapor, evidence }: IndicatorTableProps) {
   return (
     <table className="w-full border-collapse text-left">
       <caption className="sr-only">Rapor Pimpro indicators</caption>
@@ -42,11 +45,24 @@ export function IndicatorTable({ rapor }: IndicatorTableProps) {
                 {LABEL[indicator]}
               </th>
               <td className="px-3 py-2 text-muted">{auto ? 'From data' : 'Human input'}</td>
-              <td
-                data-figure={`rapor.score.${indicator}`}
-                className="px-0 py-2 text-right tabular-nums"
-              >
-                {score ?? <span className="text-faint">not scored</span>}
+              <td className="px-0 py-2 text-right tabular-nums">
+                {score === null ? (
+                  <span data-status={`rapor.score.${indicator}`} className="text-faint">
+                    not scored
+                  </span>
+                ) : (
+                  <Figure
+                    name={`rapor.score.${indicator}`}
+                    evidence={
+                      evidence[indicator] ?? [
+                        { kind: 'absent', reason: 'scored by a person, not from the group' },
+                      ]
+                    }
+                    total={Math.max(1, (evidence[indicator] ?? []).length)}
+                  >
+                    {score}
+                  </Figure>
+                )}
               </td>
             </tr>
           )

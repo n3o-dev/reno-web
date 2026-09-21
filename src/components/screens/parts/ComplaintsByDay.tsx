@@ -1,13 +1,17 @@
 import { Card } from '@/components/styled/Card'
+import { Figure } from '@/components/common/Figure'
 import type { DayCount } from '@/rules/daily'
+import type { FigureEvidence } from './ComplaintFunnel'
 
 interface ComplaintsByDayProps {
   readonly days: readonly DayCount[]
+  /** Keyed by ISO date: the complaints raised that day. */
+  readonly evidence: Readonly<Record<string, FigureEvidence>>
 }
 
 const WEEKDAY = new Intl.DateTimeFormat('en-GB', { weekday: 'short', day: 'numeric' })
 
-export function ComplaintsByDay({ days }: ComplaintsByDayProps) {
+export function ComplaintsByDay({ days, evidence }: ComplaintsByDayProps) {
   const peak = Math.max(1, ...days.map((d) => d.count))
   return (
     <Card
@@ -17,12 +21,14 @@ export function ComplaintsByDay({ days }: ComplaintsByDayProps) {
       <ol className="flex items-end gap-2">
         {days.map((day) => (
           <li key={day.date} className="flex min-w-0 flex-1 flex-col items-center gap-2">
-            <span
-              data-figure="complaints.raised_on_day"
+            <Figure
+              name="complaints.raised_on_day"
+              evidence={evidence[day.date]?.items ?? []}
+              total={evidence[day.date]?.total ?? 0}
               className="text-[13px] tabular-nums"
             >
               {day.count}
-            </span>
+            </Figure>
             <div
               className="w-full rounded-t-[var(--radius-bar)] bg-[var(--color-ordinal-2)]"
               style={{ height: `${Math.max(4, (day.count / peak) * 120)}px` }}

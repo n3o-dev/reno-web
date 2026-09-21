@@ -1,10 +1,17 @@
 import type { ScreenProps } from '@/components/screens/props'
 import { ScreenHeader } from '@/components/common/ScreenHeader'
 import { Card } from '@/components/styled/Card'
+import { Figure } from '@/components/common/Figure'
+import { bundleEvidence } from '@/services/evidence'
+import type { FigureEvidence } from '@/components/screens/parts/ComplaintFunnel'
+import type { RecordSource } from '@/contract/source'
 import { countByDay } from '@/rules/daily'
 import { deliveryOf } from '@/rules/work-orders'
 import { getRecords } from '@/services/records'
 import { OpenItems } from '@/components/screens/parts/OpenItems'
+
+const bundle = (source: RecordSource, ids: readonly string[]): FigureEvidence =>
+  bundleEvidence(source, ids, 'Nothing on the latest reported day matched.')
 
 const LONG_DATE = new Intl.DateTimeFormat('en-GB', {
   weekday: 'long',
@@ -40,7 +47,13 @@ export async function TodayScreen({ siteId }: ScreenProps) {
           info="Names in the day's line-ups across every area and shift. Claimed attendance: the project leader typed it into the group, and it stays claimed until an admin confirms it."
         >
           <p className="font-[family-name:var(--font-display)] text-[38px] leading-[1.15] tabular-nums">
-            <span data-figure="today.on_site">{onSite}</span>
+            <Figure
+              name="today.on_site"
+              evidence={bundle(records, lineups.map((l) => l.source_message_id)).items}
+              total={bundle(records, lineups.map((l) => l.source_message_id)).total}
+            >
+              {onSite}
+            </Figure>
           </p>
           <p className="text-[13px] text-muted">Claimed across {lineups.length} line-ups</p>
         </Card>
@@ -49,7 +62,13 @@ export async function TodayScreen({ siteId }: ScreenProps) {
           info="Raised on the latest reported day and not yet closed with a photo. A blocked complaint is counted here too, but its clock is paused."
         >
           <p className="font-[family-name:var(--font-display)] text-[38px] leading-[1.15] tabular-nums">
-            <span data-figure="today.open_complaints">{open.length}</span>
+            <Figure
+              name="today.open_complaints"
+              evidence={bundle(records, open.map((c) => c.source_message_id)).items}
+              total={bundle(records, open.map((c) => c.source_message_id)).total}
+            >
+              {open.length}
+            </Figure>
             <span className="text-faint"> / {complaints.length}</span>
           </p>
         </Card>
@@ -58,7 +77,13 @@ export async function TodayScreen({ siteId }: ScreenProps) {
           info="Held up by something outside Reno's control, each citing the message that says so. The 24-hour clock does not run while an item is blocked."
         >
           <p className="font-[family-name:var(--font-display)] text-[38px] leading-[1.15] tabular-nums">
-            <span data-figure="today.blocked">{blocked.length}</span>
+            <Figure
+              name="today.blocked"
+              evidence={bundle(records, blocked.map((c) => c.source_message_id)).items}
+              total={bundle(records, blocked.map((c) => c.source_message_id)).total}
+            >
+              {blocked.length}
+            </Figure>
           </p>
         </Card>
         <Card
@@ -66,7 +91,13 @@ export async function TodayScreen({ siteId }: ScreenProps) {
           info="Client requests raised and not yet closed with a photo, across the whole period rather than one day: a work order runs to the date the client set, not to a 24-hour clock."
         >
           <p className="font-[family-name:var(--font-display)] text-[38px] leading-[1.15] tabular-nums">
-            <span data-figure="today.open_work_orders">{orders.length}</span>
+            <Figure
+              name="today.open_work_orders"
+              evidence={bundle(records, orders.map((d) => d.order.source_message_id)).items}
+              total={bundle(records, orders.map((d) => d.order.source_message_id)).total}
+            >
+              {orders.length}
+            </Figure>
           </p>
         </Card>
       </div>

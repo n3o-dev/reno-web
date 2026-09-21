@@ -50,7 +50,7 @@ export function DeliveryTable({ deliveries, nameOf }: DeliveryTableProps) {
               {nameOf(order.requested_by)}
             </td>
             <td className="px-3 py-3 whitespace-nowrap tabular-nums">{format(order.due_date)}</td>
-            <td data-figure={`work_orders.state.${order.record_id}`} className="px-0 py-3">
+            <td data-status={`work_orders.${order.record_id}`} className="px-0 py-3">
               <span className="flex items-center gap-2 whitespace-nowrap">
                 <span
                   aria-hidden="true"

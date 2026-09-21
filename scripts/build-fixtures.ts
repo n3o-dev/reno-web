@@ -67,10 +67,31 @@ function at(dayIndex: number, minuteOfDay: number): string {
   return `${day}T${h}:${m}:00+07:00`
 }
 
+/**
+ * The id of a message that actually exists on that day, nearest the given
+ * minute.
+ *
+ * Messages are laid out evenly across the reporting window, so the index is
+ * recoverable from the minute. This used to be `msg_<day>_<minute>`, which
+ * looked right and resolved to nothing: message ids are indexed, not
+ * timestamped, so every complaint, report and photo in the fixture set cited
+ * a message that was not there. Nothing noticed until a figure tried to open
+ * its own evidence.
+ */
+const DAY_START_MINUTE = 6 * 60
+const DAY_SPAN_MINUTES = 17 * 60
+
+function messageIdAt(dayIndex: number, minute: number): string {
+  const total = MESSAGES[dayIndex] as number
+  const fraction = (minute - DAY_START_MINUTE) / DAY_SPAN_MINUTES
+  const index = Math.min(total - 1, Math.max(0, Math.round(fraction * total)))
+  return `msg_${dayIndex}_${index}`
+}
+
 const envelope = (id: string, dayIndex: number, minute: number, sender: string) => ({
   record_id: id,
   site_id: SITE,
-  source_message_id: `msg_${dayIndex}_${minute}`,
+  source_message_id: messageIdAt(dayIndex, minute),
   sent_at: at(dayIndex, minute),
   sender_raw: sender,
   sender_person_id: null,

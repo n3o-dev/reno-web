@@ -1,6 +1,8 @@
 import type { ScreenProps } from '@/components/screens/props'
 import { ScreenHeader } from '@/components/common/ScreenHeader'
 import { Card } from '@/components/styled/Card'
+import { Figure } from '@/components/common/Figure'
+import { countEvidence, resolveEvidence } from '@/services/evidence'
 import {
   absenceTotals,
   coverage,
@@ -34,6 +36,12 @@ export async function ManpowerScreen({ siteId, showSignals = true }: ManpowerScr
   const absences = absenceTotals(lineups)
   const totalFilled = rows.reduce((n, r) => n + r.filled, 0)
   const totalContracted = rows.reduce((n, r) => n + r.contractedSlotDays, 0)
+  // Every manpower figure stands on the line-up messages behind it.
+  const lineupIds = lineups.map((l) => l.source_message_id)
+  const lineupEvidence = {
+    items: resolveEvidence(records, lineupIds),
+    total: countEvidence(lineupIds),
+  }
 
   return (
     <>
@@ -47,7 +55,13 @@ export async function ManpowerScreen({ siteId, showSignals = true }: ManpowerScr
           info="A slot is one area, one shift, one day, and it is the unit the contract bills in. A slot bills in full whoever fills it. Attendance here is claimed — read from the line-up the project leader posts — and stays claimed until an admin confirms it."
         >
           <p className="font-[family-name:var(--font-display)] text-[38px] leading-[1.15] tabular-nums">
-            <span data-figure="manpower.filled_slot_days">{totalFilled}</span>
+            <Figure
+              name="manpower.filled_slot_days"
+              evidence={lineupEvidence.items}
+              total={lineupEvidence.total}
+            >
+              {totalFilled}
+            </Figure>
             <span className="text-faint"> / {totalContracted}</span>
           </p>
           <p className="text-[13px] text-muted">Claimed, not yet admin-confirmed</p>
@@ -60,11 +74,15 @@ export async function ManpowerScreen({ siteId, showSignals = true }: ManpowerScr
             {Object.entries(ABSENCE_LABEL).map(([key, label]) => (
               <div key={key} className="flex justify-between gap-2">
                 <dt className="text-muted">{label}</dt>
-                <dd
-                  data-figure={`manpower.absence.${key}`}
-                  className="tabular-nums"
-                >
-                  {absences[key as keyof typeof ABSENCE_LABEL]}
+                <dd>
+                  <Figure
+                    name={`manpower.absence.${key}`}
+                    evidence={lineupEvidence.items}
+                    total={lineupEvidence.total}
+                    className="tabular-nums"
+                  >
+                    {absences[key as keyof typeof ABSENCE_LABEL]}
+                  </Figure>
                 </dd>
               </div>
             ))}
@@ -78,7 +96,7 @@ export async function ManpowerScreen({ siteId, showSignals = true }: ManpowerScr
           info="Gross less any unfilled, unreplaced slot-days. The arithmetic is shown in full on the BAPP pack. Complaints never touch this figure: a filthy toilet costs the Pimpro his score, not the invoice."
         >
           <p
-            data-figure="manpower.payable"
+            data-status="manpower.payable"
             className="font-[family-name:var(--font-display)] text-[20px] leading-[1.2] text-muted"
           >
             Rate not loaded
@@ -99,7 +117,7 @@ export async function ManpowerScreen({ siteId, showSignals = true }: ManpowerScr
             Contracted figures are provisional — taken from the fullest roster the period shows,
             not from the service contract.
           </p>
-          <CoverageTable rows={rows} />
+          <CoverageTable rows={rows} evidence={lineupEvidence} />
         </section>
         {showSignals && (
           <SignalsPanel

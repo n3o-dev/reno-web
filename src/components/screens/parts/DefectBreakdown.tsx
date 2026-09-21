@@ -1,10 +1,14 @@
 import { Card } from '@/components/styled/Card'
+import { Figure } from '@/components/common/Figure'
+import type { FigureEvidence } from './ComplaintFunnel'
 import type { DefectCount } from '@/rules/quality'
 import type { Defect } from '@/contract/schemas'
 
 interface DefectBreakdownProps {
   readonly defects: readonly DefectCount[]
   readonly reportCount: number
+  /** Keyed by defect: the reports carrying it. */
+  readonly evidence: Readonly<Record<string, FigureEvidence>>
 }
 
 const LABELS: Record<Defect, string> = {
@@ -22,7 +26,7 @@ const LABELS: Record<Defect, string> = {
  * did not occur are left out rather than drawn as a zero: an empty bar reads
  * as a measurement, and these were not measured here.
  */
-export function DefectBreakdown({ defects, reportCount }: DefectBreakdownProps) {
+export function DefectBreakdown({ defects, reportCount, evidence }: DefectBreakdownProps) {
   const present = defects.filter((d) => d.count > 0)
   const peak = Math.max(1, ...present.map((d) => d.count))
 
@@ -35,12 +39,14 @@ export function DefectBreakdown({ defects, reportCount }: DefectBreakdownProps) 
         {present.map((entry) => (
           <li key={entry.defect} className="grid grid-cols-[1fr_auto] items-center gap-x-3">
             <span className="text-[14px]">{LABELS[entry.defect]}</span>
-            <span
-              data-figure={`quality.defect.${entry.defect}`}
+            <Figure
+              name={`quality.defect.${entry.defect}`}
+              evidence={evidence[entry.defect]?.items ?? []}
+              total={evidence[entry.defect]?.total ?? 0}
               className="text-[14px] tabular-nums"
             >
               {entry.count}
-            </span>
+            </Figure>
             <div className="col-span-2 h-2 rounded-[var(--radius-bar)] bg-plane">
               <div
                 className="h-2 rounded-[var(--radius-bar)] bg-[var(--color-ordinal-2)]"

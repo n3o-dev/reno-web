@@ -1,10 +1,13 @@
 import { Card } from '@/components/styled/Card'
+import { Figure } from '@/components/common/Figure'
+import type { FigureEvidence } from './ComplaintFunnel'
 import type { DayCount } from '@/rules/daily'
 
 export interface ActivitySeries {
   readonly key: string
   readonly label: string
   readonly days: readonly DayCount[]
+  readonly evidence: FigureEvidence
 }
 
 interface GroupActivityProps {
@@ -37,18 +40,20 @@ export function GroupActivity({ series }: GroupActivityProps) {
                 <span className="text-[11.5px] tracking-[0.10em] text-faint uppercase">
                   {row.label}
                 </span>
-                <span
-                  data-figure={`quality.activity.${row.key}`}
+                <Figure
+                  name={`quality.activity.${row.key}`}
+                  evidence={row.evidence.items}
+                  total={row.evidence.total}
                   className="font-[family-name:var(--font-display)] text-[20px] tabular-nums"
                 >
                   {total(row.days)}
-                </span>
+                </Figure>
               </div>
               <ol className="mt-2 flex h-14 items-end gap-2">
                 {row.days.map((day) => (
                   <li key={day.date} className="flex-1">
                     <div
-                      data-figure={`quality.activity.${row.key}.day`}
+                      data-day-count={`quality.activity.${row.key}`}
                       data-count={day.count}
                       title={`${day.date}: ${day.count}`}
                       className="rounded-t-[var(--radius-bar)] bg-[var(--color-ordinal-2)]"

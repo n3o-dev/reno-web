@@ -1,5 +1,6 @@
 import { ScreenHeader } from '@/components/common/ScreenHeader'
 import { Card } from '@/components/styled/Card'
+import { Figure } from '@/components/common/Figure'
 import { computeRealisation } from '@/rules/realisation'
 import {
   WORKBOOK_LABEL,
@@ -7,6 +8,7 @@ import {
   getWorkbook,
   planCells,
   sheetSlug,
+  workbookEvidence,
 } from '@/services/rkb'
 import { SheetRealisation, type SheetSummary } from '@/components/screens/parts/SheetRealisation'
 
@@ -26,7 +28,17 @@ export async function RkbScreen({ basePath = '/rkb' }: RkbScreenProps = {}) {
     sections: sheet.sections.length,
     rows: sheet.sections.reduce((n, s) => n + s.rows.length, 0),
     realisation: computeRealisation(planCells(sheet, WORKBOOK_MONTH)),
+    evidence: workbookEvidence(
+      sheet.name,
+      sheet.sections.flatMap((s) => s.rows.map((r) => r.rowNumber)),
+    ),
   }))
+  const evidence = book.sheets.map((sheet) =>
+    workbookEvidence(
+      sheet.name,
+      sheet.sections.flatMap((s) => s.rows.map((r) => r.rowNumber)),
+    ),
+  )
   const whole = computeRealisation(
     book.sheets.flatMap((sheet) => planCells(sheet, WORKBOOK_MONTH)),
   )
@@ -43,15 +55,15 @@ export async function RkbScreen({ basePath = '/rkb' }: RkbScreenProps = {}) {
           info="Job-row days marked done in column A, over the job-row days planned in column R. Net excludes rows that were blocked by something outside Reno's control; gross counts them against Reno. The client sees both. This is the only completion percentage in the dashboard."
         >
           <p className="font-[family-name:var(--font-display)] text-[38px] leading-[1.15] tabular-nums">
-            <span data-figure="rkb.net" data-figure-kind="completion">
+            <Figure name="rkb.net" kind="completion" evidence={evidence} total={evidence.length}>
               {percent(whole.net)}
-            </span>
+            </Figure>
           </p>
           <p className="text-[13px] text-muted">
             Gross{' '}
-            <span data-figure="rkb.gross" data-figure-kind="completion" className="tabular-nums">
+            <Figure name="rkb.gross" kind="completion" evidence={evidence} total={evidence.length} className="tabular-nums">
               {percent(whole.gross)}
-            </span>{' '}
+            </Figure>{' '}
             · {WORKBOOK_LABEL}
           </p>
         </Card>
@@ -60,7 +72,9 @@ export async function RkbScreen({ basePath = '/rkb' }: RkbScreenProps = {}) {
           info="One job row on one day with a number in column R. The workbook's own JUMLAH row counts the same thing per section; this is the whole file."
         >
           <p className="font-[family-name:var(--font-display)] text-[38px] leading-[1.15] tabular-nums">
-            <span data-figure="rkb.planned">{whole.planned}</span>
+            <Figure name="rkb.planned" evidence={evidence} total={evidence.length}>
+              {whole.planned}
+            </Figure>
           </p>
         </Card>
         <Card
@@ -68,7 +82,19 @@ export async function RkbScreen({ basePath = '/rkb' }: RkbScreenProps = {}) {
           info="A job row that could not proceed for a reason outside Reno's control, each citing the message that says so. The workbook itself has no way to record this — Reno never agreed to a marker for it — so blocks come from the group and are shown here, never written into the file."
         >
           <p className="font-[family-name:var(--font-display)] text-[38px] leading-[1.15] tabular-nums">
-            <span data-figure="rkb.blocked">{whole.blocked}</span>
+            <Figure
+              name="rkb.blocked"
+              evidence={[
+                {
+                  kind: 'absent',
+                  reason:
+                    'The workbook cannot record a block. Blocks arrive from the group and none was matched to this plan.',
+                },
+              ]}
+              total={1}
+            >
+              {whole.blocked}
+            </Figure>
           </p>
         </Card>
       </div>

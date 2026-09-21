@@ -2,6 +2,7 @@ import { readFile } from 'node:fs/promises'
 import { cache } from 'react'
 import { parseWorkbook, type Sheet, type Workbook } from '@/rkb/read'
 import type { PlanCell } from '@/rules/realisation'
+import type { Evidence } from '@/services/evidence'
 
 /**
  * The RKB workbook behind the realisation screen.
@@ -62,3 +63,24 @@ export function planCells(sheet: Sheet, month: string): readonly PlanCell[] {
 /** The month the loaded workbook covers. Named in the file, not inferred. */
 export const WORKBOOK_MONTH = '2026-07'
 export const WORKBOOK_LABEL = 'RKB Juli 2026'
+
+/**
+ * What an RKB figure points at.
+ *
+ * Not a message: these numbers are read out of Reno's own workbook, and the
+ * thing to check is the sheet and the rows. A planned row nobody reported has
+ * no message behind it at all — that is the point of the figure.
+ */
+export function workbookEvidence(sheetName: string, rows: readonly number[]): Evidence {
+  const first = rows.at(0)
+  const last = rows.at(-1)
+  return {
+    kind: 'workbook',
+    file: 'RKB_JULI_2026.xlsx',
+    sheet: sheetName.trim(),
+    ref:
+      first === undefined || last === undefined
+        ? 'no job rows'
+        : `R and A columns, rows ${first}–${last}`,
+  }
+}

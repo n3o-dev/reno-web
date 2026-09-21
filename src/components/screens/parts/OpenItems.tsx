@@ -38,7 +38,7 @@ export function OpenItems({ complaints }: OpenItemsProps) {
             {areaLabel(complaint.area_id) ?? <span className="text-faint">No area named</span>}
             {complaint.confidence < 0.6 && (
               <span
-                data-figure="today.low_confidence"
+                data-marker="low-confidence"
                 className="ml-2 rounded-[var(--radius-pill,999px)] border border-line px-2 py-0.5 text-[11.5px] text-muted"
               >
                 low confidence

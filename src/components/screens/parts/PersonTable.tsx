@@ -36,7 +36,7 @@ export function PersonTable({ people }: PersonTableProps) {
             <td className="hidden px-3 py-2 text-muted sm:table-cell">
               {person.area_default ?? '—'}
             </td>
-            <td data-figure={`personnel.aliases.${person.person_id}`} className="px-0 py-2">
+            <td data-value={`personnel.aliases.${person.person_id}`} className="px-0 py-2">
               {person.aliases.length === 0 ? (
                 <span className="text-faint">—</span>
               ) : (
