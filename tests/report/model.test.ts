@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest'
 import { readFile } from 'node:fs/promises'
-import { loadFixtureSource } from '@/contract/source'
+import { createRecordSource, loadFixtureSource } from '@/contract/source'
 import { parseWorkbook } from '@/rkb/read'
 import { buildReportPack, type ReportPack } from '@/report/model'
 
@@ -69,11 +69,16 @@ describe('the figures match the rest of the system', () => {
 describe('AC-3 · complaints never touch the billing figure', () => {
   it('produces the same manpower numbers with the complaints removed', () => {
     const withoutComplaints = buildReportPack({
-      source: {
-        ...source,
-        complaints: [],
-        all: <T extends 'complaint'>(type: T) => (type === 'complaint' ? [] : source.all(type)),
-      },
+      source: createRecordSource({
+        message: [...source.messages],
+        work_report: [...source.workReports],
+        complaint: [],
+        work_order: [...source.workOrders],
+        lineup: [...source.lineups],
+        rkb_match: [...source.rkbMatches],
+        photo: [...source.photos],
+        person: [...source.people],
+      }),
       workbook,
       month: '2026-07',
       workbookLabel: 'RKB Juli 2026',
