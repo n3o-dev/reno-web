@@ -1,4 +1,5 @@
 import type { ComplaintRecord } from '@/contract/schemas'
+import { areaLabel } from '@/rules/area'
 
 interface OpenItemsProps {
   readonly complaints: readonly ComplaintRecord[]
@@ -34,7 +35,7 @@ export function OpenItems({ complaints }: OpenItemsProps) {
           className="flex items-baseline justify-between gap-4 border-b border-line py-3 text-[14px] last:border-0"
         >
           <span className="min-w-0">
-            {complaint.area_id ?? <span className="text-faint">No area named</span>}
+            {areaLabel(complaint.area_id) ?? <span className="text-faint">No area named</span>}
             {complaint.confidence < 0.6 && (
               <span
                 data-figure="today.low_confidence"

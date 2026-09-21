@@ -36,7 +36,8 @@ export function SheetRealisation({ sheets }: SheetRealisationProps) {
                 {sheet.name.trim()}
               </Link>
               <span className="block text-[13px] text-faint">
-                {sheet.rows} job rows in {sheet.sections} sections
+                {sheet.rows} job rows in {sheet.sections}{' '}
+                {sheet.sections === 1 ? 'section' : 'sections'}
               </span>
             </th>
             <td className="px-3 py-2 text-right tabular-nums">{sheet.realisation.planned}</td>

@@ -21,6 +21,9 @@ export default defineConfig({
   fullyParallel: true,
   forbidOnly: Boolean(process.env['CI']),
   reporter: process.env['CI'] === undefined ? [['list']] : [['github'], ['list']],
+  // The first navigations after a cold `next start` can take several seconds
+  // to paint; 5s was enough to make the suite flake on the run that builds.
+  expect: { timeout: 10_000 },
   use: { baseURL: BASE_URL, trace: 'on-first-retry' },
   projects: [
     { name: 'desktop', use: { ...devices['Desktop Chrome'], launchOptions } },
