@@ -1,0 +1,20 @@
+# macOS
+.DS_Store
+
+# dependencies
+node_modules/
+.pnpm-store/
+
+# next.js
+.next/
+out/
+build/
+
+# env
+.env
+.env.*
+!.env.example
+
+# misc
+*.log
+coverage/
