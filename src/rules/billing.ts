@@ -36,6 +36,8 @@ export interface SlotDay {
   /** Names appearing in that shift's line-up for this slot. */
   readonly names: readonly string[]
   readonly absences: readonly Absence[]
+  /** The line-up message this slot-day was read from. */
+  readonly source_message_id: string
 }
 
 export interface BillingInput {
@@ -51,6 +53,7 @@ export interface Billing {
   readonly gross: number
   readonly deduction: number
   readonly payable: number
+  /** `source_message_id`s of the line-ups behind the figure. */
   readonly evidence: readonly string[]
 }
 
@@ -78,10 +81,15 @@ export function computeBilling({ contracts, days, monthlyRatePerMp }: BillingInp
 
     filled += contract.contracted - chargeable
     unfilled += chargeable
-    evidence.push(`${day.slot_id}@${day.date}`)
+    evidence.push(day.source_message_id)
   }
 
   const contracted = filled + unfilled
+  /**
+   * A month is invoiced on the full contracted manpower and then deducted, so
+   * `gross` deliberately does not scale with how many slot-days were supplied.
+   * Pass a whole month of `days`, not a slice, or the deduction will be wrong.
+   */
   const gross = contracts.reduce((n, c) => n + c.contracted, 0) * monthlyRatePerMp
   const deduction = Math.round(unfilled * dailyRate)
 

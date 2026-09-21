@@ -14,6 +14,12 @@ export interface PlanCell {
   readonly done: boolean
   /** Could not proceed for a reason outside Reno's control, with a cited message. */
   readonly blocked: boolean
+  /**
+   * The message that evidences this cell: the matched report for a done cell,
+   * the citation for a blocked one. Null for a cell that was planned and
+   * simply never reported — there is no message to point at.
+   */
+  readonly source_message_id: string | null
 }
 
 export interface Realisation {
@@ -24,6 +30,7 @@ export interface Realisation {
   readonly gross: number
   /** done / (planned - blocked). Null when every planned row was blocked. */
   readonly net: number | null
+  /** `source_message_id`s. Never synthetic keys — every figure must click through. */
   readonly evidence: readonly string[]
 }
 
@@ -44,6 +51,8 @@ export function computeRealisation(cells: readonly PlanCell[]): Realisation {
     blocked: blocked.length,
     gross: planned.length === 0 ? 0 : done.length / planned.length,
     net: netDenominator <= 0 ? null : done.length / netDenominator,
-    evidence: planned.map((c) => `${c.job_row_id}@${c.date}`),
+    evidence: planned
+      .map((c) => c.source_message_id)
+      .filter((id): id is string => id !== null),
   }
 }

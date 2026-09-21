@@ -10,7 +10,7 @@ import type {
   WorkOrderRecord,
   WorkReportRecord,
 } from './schemas'
-import { RECORD_TYPES } from './schemas'
+import { RECORD_TYPES, zodSchemas } from './schemas'
 
 /**
  * One interface over the agent's records, whatever is behind it.
@@ -65,8 +65,10 @@ const FIXTURE_DIR = 'fixtures/agent'
 
 /**
  * Reads the committed fixture set. Node-only: the browser never touches this.
- * Records are trusted here because `pnpm test:contract` has already validated
- * every fixture against the emitted schema.
+ *
+ * Every record is parsed through its schema on the way in. This is an I/O
+ * boundary, so it is defensive: a malformed fixture fails loudly here rather
+ * than becoming a typed value that lies to everything downstream.
  */
 export async function loadFixtureSource(dir: string = FIXTURE_DIR): Promise<RecordSource> {
   const entries = await Promise.all(
@@ -74,7 +76,16 @@ export async function loadFixtureSource(dir: string = FIXTURE_DIR): Promise<Reco
       const raw = await readFile(`${dir}/${type}.json`, 'utf8')
       const parsed: unknown = JSON.parse(raw)
       if (!Array.isArray(parsed)) throw new Error(`${dir}/${type}.json must hold an array`)
-      return [type, parsed] as const
+      const records = parsed.map((record, index) => {
+        const result = zodSchemas[type].safeParse(record)
+        if (!result.success) {
+          throw new Error(
+            `${dir}/${type}.json[${index}] does not match the ${type} schema: ${result.error.message}`,
+          )
+        }
+        return result.data
+      })
+      return [type, records] as const
     }),
   )
   const store = Object.fromEntries(entries) as Store

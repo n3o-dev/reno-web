@@ -18,7 +18,7 @@ in `contract/*.schema.json`.
 
 The dashboard turns the group's traffic into the four things Reno has to produce anyway: the
 RKB realisation, the monthly client report, the manpower figure that reaches the invoice, and
-the Pimpro scorecard. Every number it shows must click through to the WhatsApp message that
+the Rapor Pimpro. Every number it shows must click through to the WhatsApp message that
 produced it.
 
 That last sentence is the whole reason this contract is shaped the way it is. **The dashboard
@@ -35,7 +35,7 @@ is a null or an omitted record — never a guess.
 | `work_report` | reported job | A cleaner or team leader reporting work done. |
 | `complaint` | complaint | Raised by a client PIC or a Reno superior. Runs a 24-hour clock. |
 | `work_order` | client request | Usually a PDF. Runs to a client-set due date. |
-| `lineup` | shift | The roster message. The only attendance record that exists. |
+| `lineup` | shift | The line-up. The only source of claimed attendance that exists. |
 | `rkb_match` | matched job | Links a work report to one RKB job row on one date. |
 | `photo` | photo | Capture time, receive time, and a perceptual hash. |
 | `person` | person | The personnel master, including confirmed aliases. |
@@ -381,7 +381,7 @@ A client work order that arrived as a PDF. It runs to `due_date`, never the 24-h
 
 ### `lineup`
 
-The shift-1 roster message. This is the only attendance record in the group, so the absence counts matter as much as the names.
+The shift-1 line-up. This is the only source of claimed attendance in the group, so the absence counts matter as much as the names.
 
 ```json
 {

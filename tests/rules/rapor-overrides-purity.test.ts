@@ -1,20 +1,23 @@
 import { describe, expect, it } from 'vitest'
 import { computeRapor, AUTO_FILLED, RAPOR_INDICATORS } from '@/rules/rapor'
-import { applyOverride, effectiveValue, type Override } from '@/rules/override'
+import { applyOverride, effectiveValue } from '@/rules/override'
 import { closureStats, elapsedExcludingBlocked } from '@/rules/clock'
 import { computeRealisation } from '@/rules/realisation'
 import { computeBilling } from '@/rules/billing'
 import { computeMonth } from '@/rules/month'
 import { sampleMonth } from '../support/month'
 
-const inputs = sampleMonth()
+const inputs = Object.freeze(sampleMonth())
 
 describe('AC-9 · the agent fills only what it can evidence', () => {
   const rapor = computeRapor(inputs.rapor)
 
   it('scores exactly A.1, A.3, C.3 and D.3', () => {
     const scored = RAPOR_INDICATORS.filter((i) => rapor.scores[i] !== null)
-    expect(scored.sort()).toEqual([...AUTO_FILLED].sort())
+    // Compared to the literal the criterion names, not to the module's own
+    // AUTO_FILLED constant — otherwise this is source checked against source.
+    expect(scored.sort()).toEqual(['A.1', 'A.3', 'C.3', 'D.3'])
+    expect([...AUTO_FILLED].sort()).toEqual(['A.1', 'A.3', 'C.3', 'D.3'])
   })
 
   it('leaves the other nine unscored rather than inventing a number', () => {
@@ -102,6 +105,15 @@ describe('AC-1 · every exported rule is pure', () => {
     ['computeBilling', () => computeBilling(inputs.billing)],
     ['computeRapor', () => computeRapor(inputs.rapor)],
     ['computeMonth', () => computeMonth(inputs)],
+    [
+      'applyOverride',
+      () =>
+        applyOverride(
+          { value: 3, evidence: ['msg_1'] },
+          { value: 4, reason: 'because', by: 'p_x', at: '2026-09-30T10:00:00+07:00' },
+        ),
+    ],
+    ['effectiveValue', () => effectiveValue({ value: 3, evidence: ['msg_1'] })],
   ]
 
   it.each(calls)('%s returns an identical result on a second call', (_name, call) => {
@@ -129,10 +141,16 @@ describe('AC-12 · every figure carries its evidence', () => {
     expect(bare).toEqual([])
   })
 
-  it('cites real source message ids, not placeholders', () => {
+  it('cites message ids that resolve to a real message, not placeholders', () => {
     const month = computeMonth(inputs)
+    const known = new Set([
+      ...inputs.complaints.map((c) => c.source_message_id),
+      ...inputs.cells.map((c) => c.source_message_id),
+      ...inputs.billing.days.map((d) => d.source_message_id),
+    ])
     for (const [name, figure] of Object.entries(month.figures)) {
-      expect(figure.evidence.every((e) => e.length > 0), name).toBe(true)
+      const unresolved = figure.evidence.filter((e) => !known.has(e))
+      expect(unresolved, `${name} cites ids that match no message`).toEqual([])
     }
   })
 })

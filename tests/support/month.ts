@@ -29,9 +29,9 @@ export function sampleMonth(): MonthInput {
   )
 
   const cells = [
-    { job_row_id: 'toilet:1', date: '2026-09-10', planned: true, done: true, blocked: false },
-    { job_row_id: 'toilet:2', date: '2026-09-11', planned: true, done: false, blocked: true },
-    { job_row_id: 'carpark:1', date: '2026-09-11', planned: true, done: true, blocked: false },
+    { job_row_id: 'toilet:1', date: '2026-09-10', planned: true, done: true, blocked: false, source_message_id: 'msg_0' },
+    { job_row_id: 'toilet:2', date: '2026-09-11', planned: true, done: false, blocked: true, source_message_id: 'msg_1' },
+    { job_row_id: 'carpark:1', date: '2026-09-11', planned: true, done: true, blocked: false, source_message_id: 'msg_2' },
   ]
 
   const billing = {
@@ -41,6 +41,7 @@ export function sampleMonth(): MonthInput {
       date,
       names: ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h'],
       absences: [],
+      source_message_id: `msg_lineup_${date}`,
     })),
     monthlyRatePerMp: 4_250_000,
   }
@@ -65,4 +66,25 @@ export function sampleMonth(): MonthInput {
       reports: { total: 639, passed: 578, beforeAfter: 61, duplicatePhotos: 3 },
     },
   }
+}
+
+/** An extra complaint, for proving that complaint volume does not move the invoice. */
+export function noisyComplaint(n: number): ComplaintRecord {
+  return complaintRecord.parse({
+    record_id: `cmp_noise_${n}`,
+    site_id: 'lwas',
+    source_message_id: `msg_noise_${n}`,
+    sent_at: '2026-09-11T10:00:00+07:00',
+    sender_raw: 'Rachmad Adi',
+    sender_person_id: null,
+    confidence: 0.8,
+    area_id: `area_noise_${n}`,
+    raised_by: 'p_client',
+    raised_at: '2026-09-11T10:00:00+07:00',
+    cause: 'hk_standard',
+    state: 'raised',
+    state_history: [],
+    closing_photo_id: null,
+    blocked_reason_message_id: null,
+  })
 }

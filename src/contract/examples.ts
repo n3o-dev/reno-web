@@ -19,7 +19,7 @@ export const EXAMPLE_NOTES: Record<RecordType, string> = {
   work_order:
     'A client work order that arrived as a PDF. It runs to `due_date`, never the 24-hour complaint clock.',
   lineup:
-    'The shift-1 roster message. This is the only attendance record in the group, so the absence counts matter as much as the names.',
+    'The shift-1 line-up. This is the only source of claimed attendance in the group, so the absence counts matter as much as the names.',
   rkb_match:
     'Links a work report to one RKB job row on one date. `matched_by` records whether the agent or a human made the link.',
   photo:

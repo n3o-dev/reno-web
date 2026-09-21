@@ -164,7 +164,7 @@ export const workReportRecord = z.strictObject({
   defects: z.array(z.enum(DEFECTS)),
 })
 
-/** The per-shift roster message. The only attendance record in the group. */
+/** The per-shift line-up. The only source of claimed attendance in the group. */
 export const lineupRecord = z.strictObject({
   ...envelope,
   shift,
