@@ -1,4 +1,5 @@
 import { RkbWriteError } from './write-error'
+import { findCell, setCellValue, columnToIndex, indexToColumn } from './cell'
 
 /**
  * Refreshing the JUMLAH / REALISASI / PERSENTASI rows.
@@ -15,6 +16,12 @@ export interface TotalsRows {
   readonly jumlah: number | null
   readonly realisasi: number | null
   readonly persentasi: number | null
+}
+
+export interface StaleTotal {
+  readonly column: string
+  readonly row: number
+  readonly reason: string
 }
 
 export interface TotalsTarget {
@@ -43,20 +50,6 @@ export function valueMap(xml: string): Map<string, number> {
   return out
 }
 
-const colIndex = (column: string): number =>
-  [...column].reduce((n, ch) => n * 26 + (ch.charCodeAt(0) - 64), 0)
-
-const colName = (index: number): string => {
-  let n = index
-  let out = ''
-  while (n > 0) {
-    const rem = (n - 1) % 26
-    out = String.fromCharCode(65 + rem) + out
-    n = Math.floor((n - 1) / 26)
-  }
-  return out
-}
-
 /**
  * Evaluates `SUM(E11:E16)`, including the multi-column form. Throws rather
  * than guessing: the spec says fail loudly on a workbook we do not understand,
@@ -78,54 +71,29 @@ export function evaluateSum(
     throw new RkbWriteError(`cannot refresh ${where}: malformed range in "${formula}"`)
   }
   let total = 0
-  for (let c = colIndex(fromCol); c <= colIndex(toCol); c++) {
+  for (let c = columnToIndex(fromCol); c <= columnToIndex(toCol); c++) {
     for (let r = Number(fromRow); r <= Number(toRow); r++) {
-      total += values.get(`${colName(c)}${r}`) ?? 0
+      total += values.get(`${indexToColumn(c)}${r}`) ?? 0
     }
   }
   return total
 }
 
-interface Found {
-  readonly start: number
-  readonly end: number
-  readonly text: string
-}
-
-export function findCell(xml: string, ref: string): Found | null {
-  const open = new RegExp(`<c [^>]*r=["']${ref}["'][^>]*?(/?)>`)
-  const match = open.exec(xml)
-  if (match === null) return null
-  if (match[1] === '/') {
-    return { start: match.index, end: match.index + match[0].length, text: match[0] }
-  }
-  const closeAt = xml.indexOf('</c>', match.index)
-  if (closeAt === -1) return null
-  return { start: match.index, end: closeAt + 4, text: xml.slice(match.index, closeAt + 4) }
-}
-
-/** Replaces a cell's cached `<v>` and its error flag, leaving `<f>` untouched. */
-export function setCached(xml: string, ref: string, value: string, isError: boolean): string {
-  const found = findCell(xml, ref)
-  if (found === null) {
-    throw new RkbWriteError(`cannot refresh ${ref}: the cell is not in the sheet`)
-  }
-  // Replace any existing type rather than prepending one: a cell already
-  // carrying t="str" would otherwise end up with two t attributes, which is
-  // malformed XML and unopenable.
-  let text = found.text.replace(/\st="[^"]*"/, '')
-  if (isError) text = text.replace(/^<c/, '<c t="e"')
-  text = /<v>.*?<\/v>/.test(text)
-    ? text.replace(/<v>.*?<\/v>/, `<v>${value}</v>`)
-    : text.replace(/\/>$/, `><v>${value}</v></c>`).replace(/<\/c>$/, `<v>${value}</v></c>`)
-  return xml.slice(0, found.start) + text + xml.slice(found.end)
-}
-
 const formulaOf = (xml: string, ref: string): string | null =>
   /<f>(.*?)<\/f>/.exec(findCell(xml, ref)?.text ?? '')?.[1] ?? null
 
-export function refreshTotals(xml: string, targets: readonly TotalsTarget[]): string {
+export interface RefreshResult {
+  readonly xml: string
+  /** Totals left untouched because the workbook states them as literals. */
+  readonly stale: readonly StaleTotal[]
+}
+
+export function refreshTotals(
+  xml: string,
+  targets: readonly TotalsTarget[],
+): RefreshResult {
   let out = xml
+  const stale: StaleTotal[] = []
   const seen = new Set<string>()
 
   for (const target of targets) {
@@ -142,8 +110,20 @@ export function refreshTotals(xml: string, targets: readonly TotalsTarget[]): st
 
     const jFormula = formulaOf(out, jRef)
     const rFormula = formulaOf(out, rRef)
+    /**
+     * Reno states some totals as literals rather than formulas — Ruang Utility
+     * days 1 and 2 are typed by hand. There is no range to tell us what to sum,
+     * so the literal is authoritative and is left alone. Refusing the write
+     * instead would be worse: the A value would never land at all, and one such
+     * cell would take a whole month's export with it. The caller is told.
+     */
     if (jFormula === null || rFormula === null) {
-      throw new RkbWriteError(`cannot refresh ${jRef}/${rRef}: the totals cells carry no formula`)
+      stale.push({
+        column: target.column,
+        row: jumlah,
+        reason: 'the workbook states this total as a literal, not a formula',
+      })
+      continue
     }
     const jValue = evaluateSum(jFormula, values, jRef)
     const rValue = evaluateSum(rFormula, values, rRef)
@@ -160,8 +140,8 @@ export function refreshTotals(xml: string, targets: readonly TotalsTarget[]): st
       )
     }
 
-    out = setCached(out, jRef, String(jValue), false)
-    out = setCached(out, rRef, String(rValue), false)
+    out = setCellValue(out, jRef, String(jValue), false)
+    out = setCellValue(out, rRef, String(rValue), false)
 
     /**
      * A zero denominator stays #DIV/0!. Replacing it with 0 would read as
@@ -169,8 +149,8 @@ export function refreshTotals(xml: string, targets: readonly TotalsTarget[]): st
      * are different and only one of them is the Pimpro's fault.
      */
     out = jValue === 0
-      ? setCached(out, pRef, '#DIV/0!', true)
-      : setCached(out, pRef, String(rValue / jValue), false)
+      ? setCellValue(out, pRef, '#DIV/0!', true)
+      : setCellValue(out, pRef, String(rValue / jValue), false)
   }
-  return out
+  return { xml: out, stale }
 }

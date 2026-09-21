@@ -42,6 +42,21 @@ describe('AC-6 · A values land in the right cell for all three layouts', () => 
     expect(tag).toContain('<v>7</v>')
   })
 
+  it('finds a cell whose reference is single-quoted, rather than duplicating it', () => {
+    const entries = unzipSync(original)
+    const xml = strFromU8(entries['xl/worksheets/sheet2.xml'] as Uint8Array)
+    const quoted = zipSync({
+      ...entries,
+      'xl/worksheets/sheet2.xml': strToU8(xml.replace('r="O12"', "r='O12'")),
+    })
+    const out = writeActuals(quoted, [
+      { sheet: 'RKB TOILET ', rowNumber: 12, day: 6, value: 1 },
+    ]).bytes
+    const after = strFromU8(unzipSync(out)['xl/worksheets/sheet2.xml'] as Uint8Array)
+    const occurrences = (after.match(/r=["']O12["']/g) ?? []).length
+    expect(occurrences).toBe(1)
+  })
+
   it.each([NaN, Infinity, -Infinity])('refuses to write %s, which Excel cannot open', (value) => {
     expect(() =>
       writeActuals(original, [{ sheet: 'RKB TOILET ', rowNumber: 12, day: 6, value }]),
@@ -99,6 +114,43 @@ describe('AC-6 · A values land in the right cell for all three layouts', () => 
         { sheet: 'RKB TOILET ', rowNumber: 12, day: 6, value: 1 },
       ]).bytes
       expect(rowOf(out, 'RKB TOILET ', 1)?.days[5]?.actual).toBe(1)
+    })
+
+    /**
+     * Day 1 is the case the parity rule alone got wrong: the descriptive
+     * columns to the left of the grid share parity with the A columns, so
+     * day 1's A cell tied with JENIS PEKERJAAN and lost on document order.
+     * Candidates are now confined to the day grid.
+     */
+    it.each([
+      ['RKB TOILET ', 'xl/worksheets/sheet2.xml', 1],
+      ['RKB TOILET ', 'xl/worksheets/sheet2.xml', 6],
+      ['RKB TOILET ', 'xl/worksheets/sheet2.xml', 31],
+      ['RKB FACADE', 'xl/worksheets/sheet4.xml', 1],
+      ['RKB FACADE', 'xl/worksheets/sheet4.xml', 31],
+      ['RKB RUANG UTILITY', 'xl/worksheets/sheet5.xml', 3],
+      ['RKB RUANG UTILITY', 'xl/worksheets/sheet5.xml', 31],
+    ])('%s day %i keeps the exact style it had', (sheet, path, day) => {
+      const styleAt = (doc: string, ref: string): string | null =>
+        /\ss="(\d+)"/.exec(new RegExp(`<c[^>]*r="${ref}"[^>]*>`).exec(doc)?.[0] ?? '')?.[1] ?? null
+      const row = rowOf(original, sheet as string, 1)
+      const ref = `${row?.days[(day as number) - 1]?.aColumn}${row?.rowNumber}`
+
+      const entries = unzipSync(original)
+      const xml = strFromU8(entries[path as string] as Uint8Array)
+      const want = styleAt(xml, ref)
+      expect(want).not.toBeNull()
+
+      const gone = zipSync({
+        ...entries,
+        [path as string]: strToU8(
+          xml.replace(new RegExp(`<c [^>]*r="${ref}"[^>]*?(?:/>|>.*?</c>)`), ''),
+        ),
+      })
+      const out = writeActuals(gone, [
+        { sheet: sheet as string, rowNumber: row?.rowNumber ?? 0, day: day as number, value: 1 },
+      ]).bytes
+      expect(styleAt(strFromU8(unzipSync(out)[path as string] as Uint8Array), ref)).toBe(want)
     })
 
     it('borrows an A cell’s formatting, not the R cell next door', () => {

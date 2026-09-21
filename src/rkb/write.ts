@@ -3,7 +3,8 @@ import { parseWorkbook, type Workbook } from './read'
 import { columnToIndex, columnOf } from './sheet-xml'
 import { DAYS_IN_GRID } from './layout'
 import { RkbWriteError } from './write-error'
-import { refreshTotals, type TotalsRows } from './totals'
+import { refreshTotals, type StaleTotal, type TotalsRows } from './totals'
+import { findCell, styleOf } from './cell'
 
 export { RkbWriteError } from './write-error'
 
@@ -60,6 +61,12 @@ export interface WriteResult {
   readonly bytes: Uint8Array
   /** Blocks recorded alongside the file, never written into it. */
   readonly blocked: readonly BlockedCell[]
+  /**
+   * Totals the writer left alone because the workbook states them as literals
+   * rather than formulas. The A values are still written; these totals will
+   * not match until someone recalculates them.
+   */
+  readonly staleTotals: readonly StaleTotal[]
 }
 
 interface ResolvedEdit {
@@ -74,6 +81,8 @@ interface ResolvedEdit {
   readonly totalsColumn: string
   readonly totalsRows: TotalsRows
   readonly blocked: BlockedCell | null
+  /** First R column of the layout's day grid; the descriptive columns sit left of it. */
+  readonly firstDayColumn: string
 }
 
 /** Maps each edit to the exact cell reference it targets, or refuses it. */
@@ -127,6 +136,7 @@ function resolve(book: Workbook, edits: readonly ActualEdit[]): ResolvedEdit[] {
       value: edit.value,
       totalsColumn: day.rColumn,
       totalsRows: section.totalsRows,
+      firstDayColumn: sheet.layout.firstDayColumn,
       blocked:
         edit.blocked === undefined
           ? null
@@ -144,12 +154,13 @@ function resolve(book: Workbook, edits: readonly ActualEdit[]): ResolvedEdit[] {
 
 export function writeActuals(bytes: Uint8Array, edits: readonly ActualEdit[]): WriteResult {
   const entries = unzipSync(bytes)
-  if (edits.length === 0) return { bytes: zipSync(entries), blocked: [] }
+  if (edits.length === 0) return { bytes: zipSync(entries), blocked: [], staleTotals: [] }
 
   const resolved = resolve(parseWorkbook(bytes), edits)
   const blocked = resolved
     .map((edit) => edit.blocked)
     .filter((b): b is BlockedCell => b !== null)
+  const staleTotals: StaleTotal[] = []
 
   const bySheet = new Map<string, ResolvedEdit[]>()
   for (const edit of resolved) {
@@ -164,9 +175,11 @@ export function writeActuals(bytes: Uint8Array, edits: readonly ActualEdit[]): W
     if (xml === undefined) throw new RkbWriteError(`workbook is missing ${path}`)
     const edited = applyToSheet(strFromU8(xml), sheetEdits)
     const targets = sheetEdits.map((e) => ({ column: e.totalsColumn, rows: e.totalsRows }))
-    next[path] = strToU8(refreshTotals(edited, targets))
+    const refreshed = refreshTotals(edited, targets)
+    staleTotals.push(...refreshed.stale)
+    next[path] = strToU8(refreshed.xml)
   }
-  return { bytes: zipSync(next), blocked }
+  return { bytes: zipSync(next), blocked, staleTotals }
 }
 
 /** A numeric cell: `<c r="I12" s="105"><v>1</v></c>`. */
@@ -176,38 +189,19 @@ const numericCell = (ref: string, style: string | null, value: number): string =
 function applyToSheet(xml: string, edits: readonly ResolvedEdit[]): string {
   let out = xml
   for (const edit of edits) {
-    out = existingCell(out, edit.ref) === null
+    out = findCell(out, edit.ref) === null
       ? insertCell(out, edit)
       : replaceCellValue(out, edit)
   }
   return out
 }
 
-/** Locates `<c r="REF" …>…</c>`, or a self-closing `<c r="REF" …/>`. */
-function existingCell(xml: string, ref: string): { start: number; end: number; tag: string } | null {
-  const open = new RegExp(`<c\\s[^>]*r="${ref}"[^>]*?(/?)>`)
-  const match = open.exec(xml)
-  if (match === null) return null
-  const selfClosing = match[1] === '/'
-  if (selfClosing) {
-    return { start: match.index, end: match.index + match[0].length, tag: match[0] }
-  }
-  const closeAt = xml.indexOf('</c>', match.index)
-  if (closeAt === -1) return null
-  return { start: match.index, end: closeAt + 4, tag: match[0] }
-}
-
-function styleOf(tag: string): string | null {
-  const style = /\ss="(\d+)"/.exec(tag)
-  return style === null ? null : (style[1] ?? null)
-}
-
 function replaceCellValue(xml: string, edit: ResolvedEdit): string {
-  const found = existingCell(xml, edit.ref)
+  const found = findCell(xml, edit.ref)
   if (found === null) return xml
   // Rewrite the whole element: an existing cell may hold a formula, a shared
   // string or an inline string, and the A column must end up a plain number.
-  const replacement = numericCell(edit.ref, styleOf(found.tag), edit.value)
+  const replacement = numericCell(edit.ref, styleOf(found.text), edit.value)
   return xml.slice(0, found.start) + replacement + xml.slice(found.end)
 }
 
@@ -232,7 +226,7 @@ function insertCell(xml: string, edit: ResolvedEdit): string {
 
   const body = xml.slice(rowStart, rowEnd)
   const target = columnToIndex(columnOf(edit.ref))
-  const style = neighbourStyle(body, target)
+  const style = neighbourStyle(body, target, columnToIndex(edit.firstDayColumn))
 
   let insertAt = body.length
   for (const cell of body.matchAll(/<c\s[^>]*r="([A-Z]+)\d+"[^>]*?(?:\/>|>)/g)) {
@@ -258,7 +252,7 @@ function insertCell(xml: string, edit: ResolvedEdit): string {
  * would render the value in the wrong font, off-centre. Falls back to the
  * nearest cell of any parity only when the row has no same-parity styled cell.
  */
-function neighbourStyle(rowBody: string, target: number): string | null {
+function neighbourStyle(rowBody: string, target: number, firstDayColumn: number): string | null {
   let sameParity: { distance: number; style: string } | null = null
   let anyParity: { distance: number; style: string } | null = null
 
@@ -269,6 +263,10 @@ function neighbourStyle(rowBody: string, target: number): string | null {
     const style = styleOf(tag)
     if (style === null) continue
     const index = columnToIndex(column)
+    // The descriptive columns to the left of the grid share parity with the A
+    // columns, so day 1's A cell would otherwise tie with JENIS PEKERJAAN and
+    // lose on document order.
+    if (index < firstDayColumn) continue
     const distance = Math.abs(index - target)
     if (distance === 0) continue
     if (anyParity === null || distance < anyParity.distance) anyParity = { distance, style }

@@ -2,6 +2,7 @@ import { describe, expect, it } from 'vitest'
 import { readFile } from 'node:fs/promises'
 import { unzipSync, zipSync, strFromU8, strToU8 } from 'fflate'
 import { writeActuals } from '@/rkb/write'
+import { parseWorkbook } from '@/rkb/read'
 
 const original = new Uint8Array(await readFile('fixtures/rkb/RKB_JULI_2026.xlsx'))
 
@@ -222,6 +223,65 @@ describe('AC-7 · a SUM spanning more than one column sums all of them', () => {
     const bothColumns = Number(cellOf(writeActuals(widened, [edit]).bytes, TOILET, 'N18').cached)
 
     expect(singleColumn).toBe(1)
-    expect(bothColumns).toBeGreaterThan(singleColumn)
+    expect(bothColumns).toBe(2)
+  })
+})
+
+describe('AC-7 · a total Reno typed as a literal is left alone, not refused', () => {
+  /**
+   * Ruang Utility rows 41/42 hold literal values for days 1 and 2 rather than
+   * formulas. There is no range to tell the writer what to sum, so the literal
+   * is authoritative. Refusing the write would be worse than a stale total:
+   * the A value would never land, and one such cell would take a whole
+   * month's export with it.
+   */
+  const edit = { sheet: 'RKB RUANG UTILITY', rowNumber: 12, day: 1, value: 1 } as const
+
+  it('still writes the A value', () => {
+    const result = writeActuals(original, [edit])
+    const row = parseWorkbook(result.bytes)
+      .sheets.find((s) => s.name === 'RKB RUANG UTILITY')
+      ?.sections.flatMap((x) => x.rows)
+      .find((r) => r.rowNumber === 12)
+    expect(row?.days[0]?.actual).toBe(1)
+  })
+
+  it('reports the total it could not refresh', () => {
+    expect(writeActuals(original, [edit]).staleTotals).toEqual([
+      {
+        column: 'F',
+        row: 41,
+        reason: 'the workbook states this total as a literal, not a formula',
+      },
+    ])
+  })
+
+  it('does not take the rest of the batch down with it', () => {
+    const result = writeActuals(original, [
+      edit,
+      { sheet: 'RKB TOILET ', rowNumber: 12, day: 6, value: 1 },
+    ])
+    expect(cellOf(result.bytes, TOILET, 'N18').cached).toBe('1')
+  })
+
+  it('reports nothing stale for a sheet whose totals are all formulas', () => {
+    const result = writeActuals(original, [
+      { sheet: 'RKB TOILET ', rowNumber: 12, day: 6, value: 1 },
+    ])
+    expect(result.staleTotals).toEqual([])
+  })
+})
+
+describe('AC-5 · a self-closing cell gains exactly one value', () => {
+  it('does not emit two <v> children, which Excel offers to repair', () => {
+    // N21 on Toilet is a self-closing totals cell in section 2.
+    const out = writeActuals(original, [
+      { sheet: 'RKB TOILET ', rowNumber: 26, day: 6, value: 1 },
+    ]).bytes
+    const xml = strFromU8(unzipSync(out)[TOILET] as Uint8Array)
+    for (const ref of ['N31', 'N32', 'N33']) {
+      const tag = new RegExp(`<c [^>]*r="${ref}"[^>]*?>.*?</c>`).exec(xml)?.[0] ?? ''
+      expect((tag.match(/<v>/g) ?? []).length, `${ref} value count`).toBeLessThanOrEqual(1)
+    }
   })
 })
