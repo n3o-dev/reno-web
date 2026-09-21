@@ -1,5 +1,5 @@
 import { unzipSync, zipSync, strFromU8, strToU8 } from 'fflate'
-import { parseWorkbook, type Workbook } from './read'
+import { parseWorkbook, type Section, type Workbook } from './read'
 import { columnToIndex, columnOf } from './sheet-xml'
 import { DAYS_IN_GRID } from './layout'
 
@@ -39,6 +39,12 @@ interface ResolvedEdit {
   readonly ref: string
   readonly rowNumber: number
   readonly value: number
+  /**
+   * The totals cells for a day sit in its R column, not its A column — N18
+   * holds SUM(O11:O16). This is the column whose totals need refreshing.
+   */
+  readonly totalsColumn: string
+  readonly totalsRows: Section['totalsRows']
 }
 
 /** Maps each edit to the exact cell reference it targets, or refuses it. */
@@ -51,10 +57,11 @@ function resolve(book: Workbook, edits: readonly ActualEdit[]): ResolvedEdit[] {
     if (sheet === undefined) {
       throw new RkbWriteError(`workbook has no sheet named "${edit.sheet}"`)
     }
-    const row = sheet.sections
-      .flatMap((section) => section.rows)
-      .find((r) => r.rowNumber === edit.rowNumber)
-    if (row === undefined) {
+    const section = sheet.sections.find((sec) =>
+      sec.rows.some((r) => r.rowNumber === edit.rowNumber),
+    )
+    const row = section?.rows.find((r) => r.rowNumber === edit.rowNumber)
+    if (section === undefined || row === undefined) {
       throw new RkbWriteError(
         `sheet "${edit.sheet}" has no job row at row ${edit.rowNumber}`,
       )
@@ -68,6 +75,8 @@ function resolve(book: Workbook, edits: readonly ActualEdit[]): ResolvedEdit[] {
       ref: `${day.aColumn}${row.rowNumber}`,
       rowNumber: row.rowNumber,
       value: edit.value,
+      totalsColumn: day.rColumn,
+      totalsRows: section.totalsRows,
     }
   })
 }
@@ -89,7 +98,8 @@ export function writeActuals(bytes: Uint8Array, edits: readonly ActualEdit[]): U
   for (const [path, sheetEdits] of bySheet) {
     const xml = entries[path]
     if (xml === undefined) throw new RkbWriteError(`workbook is missing ${path}`)
-    next[path] = strToU8(applyToSheet(strFromU8(xml), sheetEdits))
+    const edited = applyToSheet(strFromU8(xml), sheetEdits)
+    next[path] = strToU8(refreshTotals(edited, sheetEdits))
   }
   return zipSync(next)
 }
@@ -187,4 +197,108 @@ function neighbourStyle(rowBody: string, target: number): string | null {
     if (best === null || distance < best.distance) best = { distance, style }
   }
   return best?.style ?? null
+}
+
+/* -------------------------------------------------------------------------
+ * Totals
+ *
+ * The JUMLAH / REALISASI / PERSENTASI rows are Reno's own formulas with cached
+ * results. The formulas are never rewritten — only their cached values are
+ * refreshed, so a reader that does not recalculate still sees the truth and
+ * Excel still recalculates on open exactly as before.
+ * ---------------------------------------------------------------------- */
+
+/** Numeric values by cell reference, for evaluating a SUM range. */
+function valueMap(xml: string): Map<string, number> {
+  const out = new Map<string, number>()
+  // Self-closing cells must be matched explicitly: `[^>]*?` happily consumes
+  // the `/` of `<c r="M12" s="132"/>`, and the pair form then swallows every
+  // cell up to the next `</c>`.
+  for (const cell of xml.matchAll(/<c ([^>]*?)(?:\/>|>(.*?)<\/c>)/g)) {
+    const attrs = cell[1] ?? ''
+    const inner = cell[2] ?? ''
+    const ref = /r="([A-Z]+\d+)"/.exec(attrs)?.[1]
+    if (ref === undefined) continue
+    if (/\st="(s|e|str)"/.test(attrs)) continue
+    const raw = /<v>(.*?)<\/v>/.exec(inner)?.[1]
+    if (raw === undefined) continue
+    const n = Number(raw)
+    if (Number.isFinite(n)) out.set(ref, n)
+  }
+  return out
+}
+
+/** Evaluates `SUM(E11:E16)` against a value map. Only the SUM form is used here. */
+function evaluateSum(formula: string, values: ReadonlyMap<string, number>): number | null {
+  const range = /^SUM\(([A-Z]+)(\d+):([A-Z]+)(\d+)\)$/.exec(formula.trim())
+  if (range === null) return null
+  const [, col, fromRow, , toRow] = range
+  if (col === undefined || fromRow === undefined || toRow === undefined) return null
+  let total = 0
+  for (let r = Number(fromRow); r <= Number(toRow); r++) total += values.get(`${col}${r}`) ?? 0
+  return total
+}
+
+function findCell(xml: string, ref: string): { start: number; end: number; text: string } | null {
+  const open = new RegExp(`<c [^>]*r="${ref}"[^>]*?(/?)>`)
+  const match = open.exec(xml)
+  if (match === null) return null
+  if (match[1] === '/') return { start: match.index, end: match.index + match[0].length, text: match[0] }
+  const closeAt = xml.indexOf('</c>', match.index)
+  if (closeAt === -1) return null
+  return { start: match.index, end: closeAt + 4, text: xml.slice(match.index, closeAt + 4) }
+}
+
+/** Replaces a cell's cached `<v>` and its error flag, leaving `<f>` untouched. */
+function setCached(xml: string, ref: string, value: string, isError: boolean): string {
+  const found = findCell(xml, ref)
+  if (found === null) return xml
+  let text = found.text
+  text = isError
+    ? (/\st="e"/.test(text) ? text : text.replace(/^<c /, '<c t="e" '))
+    : text.replace(/\st="e"/, '')
+  text = /<v>.*?<\/v>/.test(text)
+    ? text.replace(/<v>.*?<\/v>/, `<v>${value}</v>`)
+    : text.replace('</c>', `<v>${value}</v></c>`)
+  return xml.slice(0, found.start) + text + xml.slice(found.end)
+}
+
+const formulaOf = (xml: string, ref: string): string | null =>
+  /<f>(.*?)<\/f>/.exec(findCell(xml, ref)?.text ?? '')?.[1] ?? null
+
+function refreshTotals(xml: string, edits: readonly ResolvedEdit[]): string {
+  let out = xml
+  const seen = new Set<string>()
+
+  for (const edit of edits) {
+    const { jumlah, realisasi, persentasi } = edit.totalsRows
+    if (jumlah === null || realisasi === null || persentasi === null) continue
+    const key = `${edit.totalsColumn}:${jumlah}`
+    if (seen.has(key)) continue
+    seen.add(key)
+
+    const values = valueMap(out)
+    const jRef = `${edit.totalsColumn}${jumlah}`
+    const rRef = `${edit.totalsColumn}${realisasi}`
+    const pRef = `${edit.totalsColumn}${persentasi}`
+
+    const jFormula = formulaOf(out, jRef)
+    const rFormula = formulaOf(out, rRef)
+    const jValue = jFormula === null ? null : evaluateSum(jFormula, values)
+    const rValue = rFormula === null ? null : evaluateSum(rFormula, values)
+    if (jValue === null || rValue === null) continue
+
+    out = setCached(out, jRef, String(jValue), false)
+    out = setCached(out, rRef, String(rValue), false)
+
+    /**
+     * A zero denominator stays #DIV/0!. Replacing it with 0 would read as
+     * "nothing was done" when the truth is "nothing was planned" — the two
+     * are different and only one of them is the Pimpro's fault.
+     */
+    out = jValue === 0
+      ? setCached(out, pRef, '#DIV/0!', true)
+      : setCached(out, pRef, String(rValue / jValue), false)
+  }
+  return out
 }
