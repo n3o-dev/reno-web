@@ -3,6 +3,7 @@ import { cache } from 'react'
 import { parseWorkbook, type Sheet, type Workbook } from '@/rkb/read'
 import type { PlanCell } from '@/rules/realisation'
 import type { Evidence } from '@/services/evidence'
+import type { RkbMatchRecord } from '@/contract/schemas'
 
 /**
  * The RKB workbook behind the realisation screen.
@@ -34,31 +35,51 @@ export const sheetSlug = (sheetName: string): string =>
  * The workbook's R and A columns as plan cells.
  *
  * A cell counts as planned when R carries a number above zero, and as done
- * when A does. `blocked` is always false here: the workbook has no way to say
- * blocked — Reno never agreed to a marker for it — so blocks arrive from the
- * agent's records and are merged in by the caller.
+ * when the workbook says so or the agent matched a report to it.
  */
-export function planCells(sheet: Sheet, month: string): readonly PlanCell[] {
+export function planCells(
+  sheet: Sheet,
+  month: string,
+  matches: readonly RkbMatchRecord[] = [],
+): readonly PlanCell[] {
+  // `rkb_match` is the record that links a work report to a job row on a
+  // date. It existed in the contract and fed nothing, so a cell was "done"
+  // only if Reno had already typed it into the workbook, and no RKB figure
+  // could cite a message.
+  const matched = new Map(matches.map((m) => [`${m.job_row_id}|${m.date}`, m]))
+
   const cells: PlanCell[] = []
   for (const section of sheet.sections) {
     for (const row of section.rows) {
       for (const day of row.days) {
         if (day.planned === null || day.planned <= 0) continue
+        const id = jobRowId(sheet.name, section.name, row.no)
+        const date = `${month}-${String(day.day).padStart(2, '0')}`
+        const match = matched.get(`${id}|${date}`)
         cells.push({
-          job_row_id: jobRowId(sheet.name, section.name, row.no),
-          date: `${month}-${String(day.day).padStart(2, '0')}`,
+          job_row_id: id,
+          date,
           planned: true,
-          done: day.actual !== null && day.actual > 0,
+          done: match !== undefined || (day.actual !== null && day.actual > 0),
+          /*
+           * Always false, and it cannot yet be anything else: no record type
+           * in the agent contract can mark an RKB job row blocked. Complaints
+           * and work orders carry a blocked state; job rows have no such
+           * record, so net realisation is arithmetically identical to gross
+           * until one exists. The screens say so rather than implying the two
+           * figures can diverge.
+           */
           blocked: false,
-          // The workbook is the evidence for its own cells; a report-level
-          // citation only exists once the agent has matched one.
-          source_message_id: null,
+          source_message_id: match?.source_message_id ?? null,
         })
       }
     }
   }
   return cells
 }
+
+/** True while nothing can mark an RKB job row blocked. */
+export const RKB_BLOCKS_HAVE_NO_SOURCE = true
 
 /** The month the loaded workbook covers. Named in the file, not inferred. */
 export const WORKBOOK_MONTH = '2026-07'

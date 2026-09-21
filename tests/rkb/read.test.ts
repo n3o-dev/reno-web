@@ -91,3 +91,51 @@ describe('AC-2 · the layout is detected per sheet, never assumed', () => {
     expect(dayStart('RKB RUANG UTILITY')).toBe('F')
   })
 })
+
+describe('a matched report counts as done', () => {
+  /*
+   * `rkb_match` is how the agent says "this report is that job row on that
+   * day". It sat in the contract feeding nothing, so a cell counted as done
+   * only when Reno had already typed it into the workbook by hand — which
+   * meant realisation measured the paperwork rather than the work.
+   */
+  it('marks a planned cell done when a match exists, and cites it', async () => {
+    const { planCells, jobRowId } = await import('@/services/rkb')
+    const sheet = book.sheets.find((s) => s.name === 'RKB CAR PARK')
+    if (sheet === undefined) throw new Error('no car park sheet')
+
+    // Car park has 138 planned cells and no actuals at all in Reno's file.
+    expect(planCells(sheet, '2026-07').filter((c) => c.done)).toHaveLength(0)
+
+    const section = sheet.sections[0]
+    const row = section?.rows[0]
+    const day = row?.days.find((d) => (d.planned ?? 0) > 0)
+    if (section === undefined || row === undefined || day === undefined) {
+      throw new Error('no planned car park cell')
+    }
+    const date = `2026-07-${String(day.day).padStart(2, '0')}`
+
+    const withMatch = planCells(sheet, '2026-07', [
+      {
+        record_id: 'rm_1',
+        site_id: 'lwas',
+        source_message_id: 'msg_0_1',
+        sent_at: '2026-07-31T10:00:00+07:00',
+        sender_raw: 'Amartha',
+        sender_person_id: null,
+        confidence: 0.9,
+        job_row_id: jobRowId(sheet.name, section.name, row.no),
+        date,
+        work_report_id: 'wr_1',
+        matched_by: 'agent',
+      },
+    ])
+
+    const done = withMatch.filter((c) => c.done)
+    expect(done).toHaveLength(1)
+    expect(done[0]?.date).toBe(date)
+    // And the cell now cites the message, which is what makes the figure
+    // traceable rather than just present.
+    expect(done[0]?.source_message_id).toBe('msg_0_1')
+  })
+})

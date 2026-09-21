@@ -309,3 +309,52 @@ describe('the pro-rata basis the pack prints is the one it used', () => {
     expect(b.prorataDaysPerMonth).toBe(22)
   })
 })
+
+describe('AC-10 · a correction moves every figure that depends on it', () => {
+  /*
+   * The defect this replaces: an override was applied while rendering, so
+   * the number under the cursor changed and nothing else did. The per-area
+   * figures summed to 295 while the headline read 296, and a correction
+   * whose own reason said a slot went uncovered left the invoice untouched.
+   */
+  const correction = { slot_id: 'garbage:2', date: '2026-09-12', filled: 0 }
+
+  const before = buildFull({ ...contract, slots_source: 'contract' })
+  const after = buildReportPack({
+    source: fullMonth,
+    workbook,
+    month: '2026-09',
+    workbookLabel: 'RKB Juli 2026',
+    siteId: 'lwas',
+    siteLabel: 'Living World Alam Sutera',
+    contract: { ...contract, slots_source: 'contract' },
+    workbookMonth: '2026-07',
+    corrections: [correction],
+  })
+
+  it('reduces the filled slot-days by exactly what was corrected', () => {
+    expect(before.manpower.filledSlotDays - after.manpower.filledSlotDays).toBe(1)
+  })
+
+  it('keeps the per-area rows summing to the headline', () => {
+    const summed = after.manpower.coverage.reduce((n, row) => n + row.filled, 0)
+    expect(summed).toBe(after.manpower.filledSlotDays)
+  })
+
+  it('moves the amount payable, because an uncovered slot is a deduction', () => {
+    const a = before.manpower.payable
+    const b = after.manpower.payable
+    if (a.state !== 'computed' || b.state !== 'computed') throw new Error('expected both computed')
+
+    expect(b.billing.unfilledSlotDays).toBe(a.billing.unfilledSlotDays + 1)
+    // One slot-day at a thirtieth of Rp 5.000.000.
+    expect(b.billing.deduction - a.billing.deduction).toBe(Math.round(5_000_000 / 30))
+    expect(b.billing.payable).toBeLessThan(a.billing.payable)
+  })
+
+  it('touches only the slot and day it names', () => {
+    const untouched = after.manpower.coverage.filter((r) => r.area_id !== 'garbage')
+    const same = before.manpower.coverage.filter((r) => r.area_id !== 'garbage')
+    expect(untouched).toEqual(same)
+  })
+})

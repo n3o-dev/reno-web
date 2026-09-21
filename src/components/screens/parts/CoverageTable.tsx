@@ -1,10 +1,12 @@
 import { Figure } from '@/components/common/Figure'
 import type { Coverage } from '@/rules/manpower'
 import type { FigureEvidence } from './ComplaintFunnel'
+import type { SlotDayOverride } from '@/services/overrides'
 
 interface CoverageTableProps {
   readonly rows: readonly Coverage[]
   readonly evidence: FigureEvidence
+  readonly corrections: readonly SlotDayOverride[]
 }
 
 const AREA_LABEL: Record<string, string> = {
@@ -18,7 +20,7 @@ const AREA_LABEL: Record<string, string> = {
   gondola: 'Gondola',
 }
 
-export function CoverageTable({ rows, evidence }: CoverageTableProps) {
+export function CoverageTable({ rows, evidence, corrections }: CoverageTableProps) {
   return (
     <table className="w-full border-collapse text-left">
       <caption className="sr-only">Contracted against filled slot-days, by area and shift</caption>
@@ -31,7 +33,11 @@ export function CoverageTable({ rows, evidence }: CoverageTableProps) {
         </tr>
       </thead>
       <tbody>
-        {rows.map((row) => (
+        {rows.map((row) => {
+          const corrected = corrections.filter(
+            (c) => c.slot_id === `${row.area_id}:${row.shift}`,
+          )
+          return (
           <tr
             key={`${row.area_id}:${row.shift}`}
             className="border-t border-line text-[14px]"
@@ -50,9 +56,19 @@ export function CoverageTable({ rows, evidence }: CoverageTableProps) {
                 {row.filled}
               </Figure>
               <span className="text-faint"> / {row.contractedSlotDays}</span>
+              {corrected.length > 0 && (
+                <span
+                  data-overridden={`manpower.filled.${row.area_id}.${row.shift}`}
+                  className="block text-[13px] font-normal text-muted"
+                >
+                  Corrected by {corrected[corrected.length - 1]?.by}:{' '}
+                  {corrected[corrected.length - 1]?.reason}
+                </span>
+              )}
             </td>
           </tr>
-        ))}
+          )
+        })}
       </tbody>
     </table>
   )

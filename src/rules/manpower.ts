@@ -166,3 +166,35 @@ export function headcountMismatches(
       source_message_id: l.source_message_id,
     }))
 }
+
+export interface SlotDayCorrection {
+  readonly slot_id: string
+  readonly date: string
+  readonly filled: number
+}
+
+/**
+ * Applies a person's corrections to the claimed attendance.
+ *
+ * The line-up is what the project leader typed; a correction is what someone
+ * checked. Applying it here rather than at render time is what makes every
+ * figure downstream — coverage, the deduction, the amount payable — move
+ * with it instead of only the number being looked at.
+ *
+ * Names are truncated rather than invented: correcting a slot down to two
+ * keeps the first two the line-up listed, so the evidence still points at
+ * people who were named.
+ */
+export function applySlotCorrections(
+  days: readonly SlotDay[],
+  corrections: readonly SlotDayCorrection[],
+): readonly SlotDay[] {
+  if (corrections.length === 0) return days
+  const byKey = new Map(corrections.map((c) => [`${c.slot_id}|${c.date}`, c]))
+
+  return days.map((day) => {
+    const correction = byKey.get(`${day.slot_id}|${day.date}`)
+    if (correction === undefined) return day
+    return { ...day, names: day.names.slice(0, correction.filled) }
+  })
+}

@@ -4,7 +4,9 @@ import { closureStats, type ClosureStats } from '@/rules/clock'
 import { causeSplit, repeatAreas, type CauseSplit, type RepeatArea } from '@/rules/causes'
 import { countByDay, type DayCount } from '@/rules/daily'
 import type { SlotDay } from '@/rules/billing'
+import type { SlotDayCorrection } from '@/rules/manpower'
 import {
+  applySlotCorrections,
   absenceTotals,
   coverage,
   provisionalContracts,
@@ -145,6 +147,8 @@ export interface BuildInput {
   readonly contract: SiteContract
   /** The month the loaded workbook covers, `YYYY-MM`. */
   readonly workbookMonth: string
+  /** Corrections a person made to the claimed attendance. */
+  readonly corrections?: readonly SlotDayCorrection[]
 }
 
 function computePayable(input: BuildInput, days: readonly SlotDay[]): Payable {
@@ -230,14 +234,16 @@ export function buildReportPack(input: BuildInput): ReportPack {
   const lineups = source.lineups
 
   const contracts = provisionalContracts(lineups)
-  const days = slotDays(lineups)
+  // Corrections apply to the data, so coverage and the invoice move with
+  // them rather than only the figure being looked at.
+  const days = applySlotCorrections(slotDays(lineups), input.corrections ?? [])
   const rows = coverage(contracts, days)
 
   const sheets = coversThisMonth
     ? workbook.sheets.map((sheet) => ({
         name: sheet.name.trim(),
         slug: sheetSlug(sheet.name),
-        realisation: computeRealisation(planCells(sheet, month)),
+        realisation: computeRealisation(planCells(sheet, month, source.rkbMatches)),
       }))
     : []
 
@@ -253,7 +259,9 @@ export function buildReportPack(input: BuildInput): ReportPack {
       workbook: input.workbookLabel,
       coversThisMonth,
       whole: computeRealisation(
-        coversThisMonth ? workbook.sheets.flatMap((sheet) => planCells(sheet, month)) : [],
+        coversThisMonth
+          ? workbook.sheets.flatMap((sheet) => planCells(sheet, month, source.rkbMatches))
+          : [],
       ),
       sheets,
       evidence: coversThisMonth

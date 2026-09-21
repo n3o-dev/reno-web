@@ -1,11 +1,11 @@
 import { expect, test } from '@playwright/test'
 
 /**
- * AC-10 — an overridden value shows its reason and its chain, in both views.
+ * AC-10 — a correction shows its reason and its chain, in both views.
  *
- * The reason text is the assertion because that is what the client reads.
- * A correction Reno could make quietly would be worse than the agent being
- * wrong in the first place.
+ * The correction in `fixtures/site/overrides.json` says one garbage slot
+ * went uncovered on 12 September. What is checked here is that the screens
+ * agree with each other about it: the row, the headline and the client view.
  */
 const LIVE = 'lwas-2f8c41d6a9b34e07'
 const FIGURE = 'manpower.filled.garbage.2'
@@ -18,22 +18,26 @@ for (const [surface, path] of [
   test(`${surface} sees the correction and why`, async ({ page }) => {
     await page.goto(path)
 
-    // The corrected value is what is shown, not the agent's original.
+    // The corrected count, not the claimed one: the line-up named someone
+    // for all four days, and one of those was corrected away.
     await expect(page.locator(`[data-figure="${FIGURE}"]`)).toHaveText('3')
-    await expect(page.locator(`[data-overridden="${FIGURE}"]`)).toHaveText('corrected')
-
-    const disclosure = page.locator('details', {
-      has: page.locator(`summary[aria-label="Evidence for ${FIGURE}"]`),
-    })
-    await disclosure.locator('summary').click()
-    const panel = disclosure.locator('div').first()
-
-    await expect(panel).toContainText(REASON)
-    await expect(panel).toContainText('Sarwedi')
-    // The agent's own value stays on the record rather than being replaced.
-    await expect(panel).toContainText('Corrected from 4')
+    await expect(page.locator(`[data-overridden="${FIGURE}"]`)).toContainText(REASON)
+    await expect(page.locator(`[data-overridden="${FIGURE}"]`)).toContainText('Sarwedi')
   })
 }
+
+test('the rows still sum to the headline', async ({ page }) => {
+  await page.goto('/manpower')
+  const rows = await page
+    .locator('[data-figure^="manpower.filled."]')
+    .evaluateAll((nodes) => nodes.map((n) => Number(n.textContent)))
+  const headline = Number(await page.locator('[data-figure="manpower.filled_slot_days"]').textContent())
+
+  expect(rows.length).toBeGreaterThan(0)
+  // The defect this replaces: the override was applied at render time, so
+  // these summed to one less than the headline.
+  expect(rows.reduce((a, b) => a + b, 0)).toBe(headline)
+})
 
 test('a figure nobody corrected carries no marker', async ({ page }) => {
   await page.goto('/manpower')

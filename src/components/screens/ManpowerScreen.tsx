@@ -4,6 +4,7 @@ import { Card } from '@/components/styled/Card'
 import { Figure } from '@/components/common/Figure'
 import { countEvidence, resolveEvidence } from '@/services/evidence'
 import {
+  applySlotCorrections,
   absenceTotals,
   coverage,
   doubleListings,
@@ -34,7 +35,9 @@ export async function ManpowerScreen({ siteId, showSignals = true }: ManpowerScr
   const { payable } = report.pack.manpower
   const lineups = records.lineups
   const contracts = provisionalContracts(lineups)
-  const days = slotDays(lineups)
+  // The same corrected slot-days the invoice is built from, so the coverage
+  // table and the amount payable cannot disagree.
+  const days = applySlotCorrections(slotDays(lineups), report.corrections)
   const rows = coverage(contracts, days)
   const absences = absenceTotals(lineups)
   const totalFilled = rows.reduce((n, r) => n + r.filled, 0)
@@ -152,7 +155,7 @@ export async function ManpowerScreen({ siteId, showSignals = true }: ManpowerScr
             Contracted figures are provisional — taken from the fullest roster the period shows,
             not from the service contract.
           </p>
-          <CoverageTable rows={rows} evidence={lineupEvidence} />
+          <CoverageTable rows={rows} evidence={lineupEvidence} corrections={report.corrections} />
         </section>
         {showSignals && (
           <SignalsPanel

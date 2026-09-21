@@ -138,8 +138,10 @@ test.describe('Manpower & Billing', () => {
   })
 
   test('slot-day coverage comes off the line-ups', async ({ page }) => {
-    // 37 people across 8 areas, two shifts, four days.
-    await expect(page.locator(figure('manpower.filled_slot_days'))).toHaveText('296')
+    // 37 people across 8 areas, two shifts, four days is 296 claimed — less
+    // the one slot-day a person corrected away, which the invoice also
+    // deducts for.
+    await expect(page.locator(figure('manpower.filled_slot_days'))).toHaveText('295')
     await expect(page.locator(figure('manpower.filled.gf.1'))).toContainText('32')
   })
 
