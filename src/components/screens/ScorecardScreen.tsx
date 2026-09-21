@@ -4,6 +4,8 @@ import { Card } from '@/components/styled/Card'
 import { Figure } from '@/components/common/Figure'
 import { countEvidence, resolveEvidence, type Evidence } from '@/services/evidence'
 import { closureStats } from '@/rules/clock'
+import { repeatAreas } from '@/rules/causes'
+import { coverage, provisionalContracts, slotDays } from '@/rules/manpower'
 import { computeRapor, AUTO_FILLED, RAPOR_INDICATORS, type Indicator } from '@/rules/rapor'
 import { computeRealisation } from '@/rules/realisation'
 import { countBeforeAfter, findDuplicatePhotos, validationPassRate } from '@/rules/quality'
@@ -17,6 +19,13 @@ export async function ScorecardScreen({ siteId }: ScreenProps) {
     book.sheets.flatMap((sheet) => planCells(sheet, WORKBOOK_MONTH)),
   )
   const complaints = closureStats(records.complaints)
+  // Both of these used to be literals typed into the call, which meant the
+  // Pimpro's score did not move when the thing it scores did.
+  const days = slotDays(records.lineups)
+  const unfilledSlotDays = coverage(provisionalContracts(records.lineups), days).reduce(
+    (short, row) => short + (row.contractedSlotDays - row.filled),
+    0,
+  )
   const reports = records.workReports
 
   const rapor = computeRapor({
@@ -24,11 +33,10 @@ export async function ScorecardScreen({ siteId }: ScreenProps) {
     complaints: {
       raised: complaints.raised,
       closedUnder24h: complaints.closedWithPhoto,
-      // The seven areas the period saw complained about on more than one day.
-      repeatAreas: 7,
+      repeatAreas: repeatAreas(records.complaints).length,
       clientIssuedSp: false,
     },
-    attendance: { unfilledSlotDays: 0 },
+    attendance: { unfilledSlotDays },
     reports: {
       total: reports.length,
       passed: Math.round(validationPassRate(reports) * reports.length),

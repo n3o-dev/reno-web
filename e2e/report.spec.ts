@@ -81,8 +81,8 @@ test('the client report prints the same figures the screens show', async ({ page
   const report = page.locator('.report')
   await expect(report).toContainText('75')
   await expect(report).toContainText('41 min')
-  await expect(report).toContainText('Rp 370.000.000')
-  await expect(report).toContainText('assumed from the line-ups')
+  await expect(report).toContainText('Not yet stated')
+  await expect(report).toContainText('no line-up')
   // Sections a person fills are printed as such, never left blank.
   await expect(report).toContainText('Written by the Project Coordinator')
   await expect(report).toContainText('Awaiting')

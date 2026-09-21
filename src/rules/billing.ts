@@ -44,6 +44,12 @@ export interface BillingInput {
   readonly contracts: readonly SlotContract[]
   readonly days: readonly SlotDay[]
   readonly monthlyRatePerMp: number
+  /**
+   * The divisor for a pro-rata deduction. Passed in rather than fixed here,
+   * because the pack prints this number: hardcoding it meant the document
+   * could state a basis the arithmetic had not used.
+   */
+  readonly prorataDaysPerMonth?: number
 }
 
 export interface Billing {
@@ -58,11 +64,16 @@ export interface Billing {
 }
 
 /** A month of pro-rata is priced on 30 days, matching how Reno invoices. */
-const DAYS_PER_MONTH = 30
+export const DAYS_PER_MONTH = 30
 
-export function computeBilling({ contracts, days, monthlyRatePerMp }: BillingInput): Billing {
+export function computeBilling({
+  contracts,
+  days,
+  monthlyRatePerMp,
+  prorataDaysPerMonth = DAYS_PER_MONTH,
+}: BillingInput): Billing {
   const byId = new Map(contracts.map((c) => [c.slot_id, c]))
-  const dailyRate = monthlyRatePerMp / DAYS_PER_MONTH
+  const dailyRate = monthlyRatePerMp / prorataDaysPerMonth
 
   let filled = 0
   let unfilled = 0

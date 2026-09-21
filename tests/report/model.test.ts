@@ -4,6 +4,8 @@ import { createRecordSource, loadFixtureSource } from '@/contract/source'
 import { parseWorkbook } from '@/rkb/read'
 import { buildReportPack, type ReportPack } from '@/report/model'
 import { getContract } from '@/services/contract'
+import { daysInMonth } from '@/report/period'
+import type { LineupRecord } from '@/contract/schemas'
 
 /**
  * AC-2 — every figure in the pack stands on something.
@@ -90,7 +92,7 @@ describe('the figures match the rest of the system', () => {
   })
 
   it('computes an amount, and marks it provisional while the headcount is assumed', () => {
-    const { payable } = pack.manpower
+    const { payable } = buildFull().manpower
     expect(payable.state).toBe('computed')
     if (payable.state !== 'computed') throw new Error('expected a computed figure')
     expect(payable.monthlyRatePerMp).toBe(5_000_000)
@@ -102,14 +104,14 @@ describe('the figures match the rest of the system', () => {
   })
 
   it('stops being provisional once the table comes from the contract', () => {
-    const fromContract = build('2026-09', { ...contract, slots_source: 'contract' })
+    const fromContract = buildFull({ ...contract, slots_source: 'contract' })
     const { payable } = fromContract.manpower
     if (payable.state !== 'computed') throw new Error('expected a computed figure')
     expect(payable.provisional).toBe(false)
   })
 
   it('states no amount at all when there is no table', () => {
-    const noTable = build('2026-09', { ...contract, slots: null })
+    const noTable = buildFull({ ...contract, slots: null })
     const { payable } = noTable.manpower
     expect(payable.state).toBe('incomplete')
     if (payable.state !== 'incomplete') throw new Error('expected an incomplete figure')
@@ -162,6 +164,58 @@ describe('AC-8 · the sections a person fills say so', () => {
   })
 })
 
+/*
+ * The fixtures cover 10-13 September, so a September pack refuses to state
+ * an amount: a month is invoiced in full and deducted from, and 26 days
+ * nobody reported would otherwise be billed as covered. These tests need a
+ * fully reported month, so the four days of real line-ups are repeated
+ * across all thirty.
+ */
+const everyDay: LineupRecord[] = daysInMonth('2026-09').flatMap((date) =>
+  ([1, 2] as const).map((shift) => {
+    const template = source.lineups.find((l) => l.shift === shift)
+    if (template === undefined) throw new Error(`no shift ${shift} line-up to copy`)
+    return {
+      ...template,
+      record_id: `lu_${date}_${shift}`,
+      date,
+      sent_at: `${date}T0${shift === 1 ? 7 : 8}:00:00+07:00`,
+    }
+  }),
+)
+
+const fullMonth = createRecordSource({
+  message: [...source.messages],
+  work_report: [...source.workReports],
+  complaint: [...source.complaints],
+  work_order: [...source.workOrders],
+  lineup: everyDay,
+  rkb_match: [...source.rkbMatches],
+  photo: [...source.photos],
+  person: [...source.people],
+})
+
+const buildFull = (over = contract): ReportPack =>
+  buildReportPack({
+    source: fullMonth,
+    workbook,
+    month: '2026-09',
+    workbookLabel: 'RKB Juli 2026',
+    siteId: 'lwas',
+    siteLabel: 'Living World Alam Sutera',
+    contract: over,
+    workbookMonth: '2026-07',
+  })
+
+describe('a month missing its line-ups is not invoiced', () => {
+  it('names the days rather than billing them as covered', () => {
+    const { payable } = pack.manpower
+    expect(payable.state).toBe('incomplete')
+    if (payable.state !== 'incomplete') throw new Error('expected an incomplete figure')
+    expect(payable.missing[0]).toMatch(/26 of 30 days have no line-up/)
+  })
+})
+
 describe('AC-4 · the payable figure, once the contract is known', () => {
   /* A slot table small enough to check by hand. */
   const AREAS = ['external', 'garbage', 'gf', 'gondola', 'lk', 'lt1', 'lt2', 'ug']
@@ -170,7 +224,7 @@ describe('AC-4 · the payable figure, once the contract is known', () => {
   )
   const withSlots = { ...contract, slots }
 
-  const packed = build('2026-09', withSlots)
+  const packed = buildFull(withSlots)
 
   it('multiplies the rate by the contracted headcount, not by the roster', () => {
     const { payable } = packed.manpower
@@ -204,24 +258,54 @@ describe('AC-4 · the payable figure, once the contract is known', () => {
     const short = slots.map((s) =>
       s.area_id === 'garbage' ? { ...s, contracted: 3 } : s,
     )
-    const shortStaffed = build('2026-09', { ...contract, slots: short })
+    const shortStaffed = buildFull({ ...contract, slots: short })
     const { payable } = shortStaffed.manpower
     if (payable.state !== 'computed') throw new Error('expected a computed figure')
 
-    // Two short on each of two shifts, over four days: 16 slot-days.
-    expect(payable.billing.unfilledSlotDays).toBe(16)
-    expect(payable.billing.deduction).toBe(Math.round((16 * 5_000_000) / 30))
+    // Two short on each of two shifts, over all thirty days: 120 slot-days,
+    // each worth a thirtieth of Rp 5.000.000.
+    expect(payable.billing.unfilledSlotDays).toBe(120)
+    expect(payable.billing.deduction).toBe(20_000_000)
     expect(payable.billing.payable).toBe(payable.billing.gross - payable.billing.deduction)
   })
 })
 
 describe('a roster that strays outside the contract', () => {
   it('names the area-shifts nobody contracted rather than billing around them', () => {
-    const partial = build('2026-09', { ...contract, slots: [{ area_id: 'gf', shift: 1, contracted: 8 }] })
+    const partial = buildFull({ ...contract, slots: [{ area_id: 'gf', shift: 1, contracted: 8 }] })
     const { payable } = partial.manpower
     expect(payable.state).toBe('incomplete')
     if (payable.state !== 'incomplete') throw new Error('expected an incomplete figure')
     expect(payable.missing[0]).toMatch(/does not cover/)
     expect(payable.missing[0]).toMatch(/external:1/)
+  })
+})
+
+describe('the pro-rata basis the pack prints is the one it used', () => {
+  it('deducts on the contract divisor, not a constant', () => {
+    const slots = [{ area_id: 'garbage', shift: 1 as const, contracted: 3 }]
+    const areas = ['external', 'gf', 'ug', 'lt1', 'lt2', 'lk', 'gondola']
+    const full = [
+      ...slots,
+      ...areas.flatMap((area_id) =>
+        ([1, 2] as const).map((shift) => ({ area_id, shift, contracted: 1 })),
+      ),
+      { area_id: 'garbage', shift: 2 as const, contracted: 1 },
+    ]
+
+    const onThirty = buildFull({ ...contract, slots: full, prorata_days_per_month: 30 })
+    const onTwentyTwo = buildFull({ ...contract, slots: full, prorata_days_per_month: 22 })
+
+    const a = onThirty.manpower.payable
+    const b = onTwentyTwo.manpower.payable
+    if (a.state !== 'computed' || b.state !== 'computed') throw new Error('expected both computed')
+
+    // Same shortfall, different basis, therefore a different deduction —
+    // which is what makes the printed basis meaningful.
+    expect(a.billing.unfilledSlotDays).toBe(b.billing.unfilledSlotDays)
+    expect(a.billing.unfilledSlotDays).toBeGreaterThan(0)
+    expect(b.billing.deduction).toBeGreaterThan(a.billing.deduction)
+    expect(a.prorataDaysPerMonth).toBe(30)
+    expect(b.prorataDaysPerMonth).toBe(22)
   })
 })

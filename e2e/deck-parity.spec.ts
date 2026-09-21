@@ -154,13 +154,13 @@ test.describe('Manpower & Billing', () => {
     await expect(page.locator('[data-reno-only="true"]')).toHaveCount(1)
   })
 
-  test('states the amount, and that the headcount behind it is assumed', async ({ page }) => {
-    // 74 assumed slots at Rp5.000.000, fully covered, so nothing deducts.
-    await expect(page.locator('[data-status="manpower.payable"]')).toHaveText(/370\.000\.000/)
-    // And it says the headcount behind it is not the contract's.
-    await expect(page.locator('[data-provisional="manpower.payable"]')).toContainText(
-      /assumed from the line-ups/,
-    )
+  test('refuses to invoice a month it has only four days of roster for', async ({ page }) => {
+    // The rate and the slot table are both loaded, but September has
+    // line-ups for four days out of thirty. A month is invoiced in full and
+    // deducted from, so billing it on four days would charge for 26 days
+    // nobody reported.
+    await expect(page.locator('[data-status="manpower.payable"]')).toHaveText('Not yet stated')
+    await expect(page.getByText(/26 of 30 days have no line-up/)).toBeVisible()
   })
 })
 

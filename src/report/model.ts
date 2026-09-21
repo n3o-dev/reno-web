@@ -17,7 +17,7 @@ import { computeRealisation, type Realisation } from '@/rules/realisation'
 import { deliveryOf, summariseDeliveries, type Delivery, type DeliverySummary } from '@/rules/work-orders'
 import { planCells, sheetSlug, workbookEvidence } from '@/services/rkb'
 import { bundleEvidence, type FigureEvidence } from '@/services/evidence'
-import { narrowToMonth } from './period'
+import { daysInMonth, narrowToMonth } from './period'
 import { computeBilling, type Billing } from '@/rules/billing'
 import { contractSlots, type SiteContract } from '@/services/contract'
 
@@ -162,6 +162,26 @@ function computePayable(input: BuildInput, days: readonly SlotDay[]): Payable {
   }
 
   /*
+   * A month missing line-ups cannot be invoiced. `gross` is a whole month
+   * while the deduction only accumulates over days a roster was actually
+   * posted, so four days of data would bill a full month and deduct
+   * nothing — a missing roster would be free. Rather than guess whether
+   * nobody worked or nobody reported, the pack says which days are missing.
+   */
+  const reported = new Set(days.map((d) => d.date))
+  const unreported = daysInMonth(input.month).filter((date) => !reported.has(date))
+  if (unreported.length > 0) {
+    return {
+      state: 'incomplete',
+      currency: contract.currency,
+      monthlyRatePerMp: contract.monthly_rate_per_mp,
+      missing: [
+        `${unreported.length} of ${daysInMonth(input.month).length} days have no line-up: ${unreported.slice(0, 5).join(', ')}${unreported.length > 5 ? ', …' : ''}. A month is invoiced in full and deducted from, so a day nobody reported would otherwise be billed as covered.`,
+      ],
+    }
+  }
+
+  /*
    * Every slot the roster shows has to be in the contract. A line-up naming
    * an area nobody contracted means either the table is incomplete or people
    * are working somewhere unbilled, and both need a person — so the pack
@@ -188,6 +208,7 @@ function computePayable(input: BuildInput, days: readonly SlotDay[]): Payable {
       contracts: slots,
       days,
       monthlyRatePerMp: contract.monthly_rate_per_mp,
+      prorataDaysPerMonth: contract.prorata_days_per_month,
     }),
     currency: contract.currency,
     monthlyRatePerMp: contract.monthly_rate_per_mp,
