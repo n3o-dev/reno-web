@@ -62,8 +62,12 @@ _Avoid_: Daily coverage.
 ### Plan and realisation
 
 **RKB**:
-Rencana Kerja Bulanan. The monthly Excel workbook of periodic job rows, authored at the site by the Pimpro. Six sheets, 145 job rows, 31 day-columns each holding a paired R and A value.
+Rencana Kerja Bulanan. The monthly Excel workbook of periodic job rows, authored at the site by the Pimpro. Six sheets, 144 job rows, 31 day-columns each holding a paired R and A value.
 _Avoid_: Monthly work plan, schedule.
+
+**Section**:
+A run of job rows in one RKB sheet, ending at its `PERSENTASI (%)` row. Not to be confused with **Blocked**.
+_Avoid_: Block (it collides with Blocked).
 
 **R**:
 Rencana. The planned value in an RKB day-column. Read-only in the dashboard.

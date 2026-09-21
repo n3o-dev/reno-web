@@ -12,7 +12,8 @@
     "test:fixtures": "vitest run tests/fixtures",
     "test:rules": "vitest run tests/rules",
     "schema:emit": "tsx scripts/emit-schema.ts",
-    "fixtures:build": "tsx scripts/build-fixtures.ts"
+    "fixtures:build": "tsx scripts/build-fixtures.ts",
+    "test:rkb": "vitest run tests/rkb"
   },
   "devDependencies": {
     "@types/node": "^26.6.2",
@@ -23,6 +24,8 @@
   "dependencies": {
     "ajv": "^8.20.0",
     "ajv-formats": "^3.0.1",
+    "fast-xml-parser": "^5.11.1",
+    "fflate": "^0.8.3",
     "zod": "^4.6.5"
   }
 }
