@@ -111,6 +111,15 @@ export async function ManpowerScreen({ siteId, showSignals = true }: ManpowerScr
                 {rupiah(payable.billing.deduction, payable.currency)} for{' '}
                 {payable.billing.unfilledSlotDays} unfilled slot-days
               </p>
+              {payable.provisional && (
+                <p
+                  data-provisional="manpower.payable"
+                  className="mt-2 border-t border-line pt-2 text-[13px] text-muted"
+                >
+                  Provisional. The headcount behind this is assumed from the line-ups, not
+                  taken from the service contract.
+                </p>
+              )}
             </>
           ) : (
             <>

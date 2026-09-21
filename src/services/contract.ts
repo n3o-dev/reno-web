@@ -11,11 +11,14 @@ import type { SlotContract } from '@/rules/billing'
  * contract requires in each area on each shift — which is what the rate gets
  * multiplied by, and what nobody has supplied yet.
  *
- * Until the slot table arrives the dashboard counts slot-days and states no
- * money, because the only numbers available to multiply by are derived from
- * the roster and are demonstrably wrong: the same 37 people appear on both
- * shifts, so deriving a contracted headcount from them counts everyone
- * twice.
+ * The slot table currently in use is assumed from the line-ups rather than
+ * read from the contract, and `slots_source` says so. It is enough to run
+ * the arithmetic end to end and will be replaced when the real figures
+ * arrive — from the contract, or later from whatever API serves them. Every
+ * amount derived from an assumed table is labelled provisional, because the
+ * assumption is load-bearing: the same people appear on both shifts in the
+ * rosters, so whether the site is 37 people or 74 is exactly the thing
+ * nobody has confirmed.
  *
  * See docs/specs/monthly-report-pack.md
  */
@@ -37,7 +40,15 @@ const contract = z.strictObject({
    * more than a thirtieth, so this is stated rather than assumed.
    */
   prorata_days_per_month: z.int().min(1).max(31),
-  /** Null until Reno supplies it. */
+  /**
+   * Where the slot table came from. `assumed_from_lineups` means nobody has
+   * supplied the contract's own figures and these were taken from the
+   * rosters the group posts — good enough to run the arithmetic on, not good
+   * enough to invoice from, and labelled as such everywhere the amount
+   * appears.
+   */
+  slots_source: z.enum(['contract', 'assumed_from_lineups']),
+  /** Null until anyone supplies it, assumed or otherwise. */
   slots: z.array(slot).nullable(),
 })
 

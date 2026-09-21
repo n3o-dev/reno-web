@@ -154,12 +154,13 @@ test.describe('Manpower & Billing', () => {
     await expect(page.locator('[data-reno-only="true"]')).toHaveCount(1)
   })
 
-  test('states no amount until it knows what to multiply the rate by', async ({ page }) => {
-    // A status, not a figure: it states no number, so it cites no evidence.
-    await expect(page.locator('[data-status="manpower.payable"]')).toHaveText('Not yet stated')
-    // The rate is loaded and shown; what is missing is named precisely.
-    await expect(page.getByText(/Rp\s?5\.000\.000 per person per month/)).toBeVisible()
-    await expect(page.getByText(/each area on each shift/)).toBeVisible()
+  test('states the amount, and that the headcount behind it is assumed', async ({ page }) => {
+    // 74 assumed slots at Rp5.000.000, fully covered, so nothing deducts.
+    await expect(page.locator('[data-status="manpower.payable"]')).toHaveText(/370\.000\.000/)
+    // And it says the headcount behind it is not the contract's.
+    await expect(page.locator('[data-provisional="manpower.payable"]')).toContainText(
+      /assumed from the line-ups/,
+    )
   })
 })
 

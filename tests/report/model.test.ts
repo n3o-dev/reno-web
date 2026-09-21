@@ -59,14 +59,47 @@ describe('the figures match the rest of the system', () => {
     expect(pack.rkb.sheets).toHaveLength(6)
   })
 
-  it('states no money while the contract slot table is unknown', () => {
+  it('computes an amount, and marks it provisional while the headcount is assumed', () => {
     const { payable } = pack.manpower
-    expect(payable.state).toBe('incomplete')
-    if (payable.state !== 'incomplete') throw new Error('expected an incomplete figure')
-    // The rate is known; what is missing is what to multiply it by.
+    expect(payable.state).toBe('computed')
+    if (payable.state !== 'computed') throw new Error('expected a computed figure')
     expect(payable.monthlyRatePerMp).toBe(5_000_000)
     expect(payable.currency).toBe('IDR')
-    expect(payable.missing).toHaveLength(1)
+    expect(payable.prorataDaysPerMonth).toBe(30)
+    // The slot table is assumed from the line-ups, so nobody can invoice
+    // from this yet and the figure has to say so.
+    expect(payable.provisional).toBe(true)
+  })
+
+  it('stops being provisional once the table comes from the contract', () => {
+    const fromContract = buildReportPack({
+      source,
+      workbook,
+      month: '2026-07',
+      workbookLabel: 'RKB Juli 2026',
+      siteId: 'lwas',
+      siteLabel: 'Living World Alam Sutera',
+      contract: { ...contract, slots_source: 'contract' },
+    })
+    const { payable } = fromContract.manpower
+    if (payable.state !== 'computed') throw new Error('expected a computed figure')
+    expect(payable.provisional).toBe(false)
+  })
+
+  it('states no amount at all when there is no table', () => {
+    const noTable = buildReportPack({
+      source,
+      workbook,
+      month: '2026-07',
+      workbookLabel: 'RKB Juli 2026',
+      siteId: 'lwas',
+      siteLabel: 'Living World Alam Sutera',
+      contract: { ...contract, slots: null },
+    })
+    const { payable } = noTable.manpower
+    expect(payable.state).toBe('incomplete')
+    if (payable.state !== 'incomplete') throw new Error('expected an incomplete figure')
+    expect(payable.monthlyRatePerMp).toBe(5_000_000)
     expect(payable.missing[0]).toMatch(/each area on each shift/)
   })
 

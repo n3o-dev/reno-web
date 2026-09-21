@@ -23,7 +23,7 @@ const CAUSE_LABEL: Record<string, string> = {
   external_other: 'External, other',
 }
 
-function Row({ label, value, note }: { label: string; value: string; note?: string }) {
+function Row({ label, value, note }: { label: string; value: string; note?: string | undefined }) {
   return (
     <div className="flex items-baseline justify-between gap-4 border-b border-line py-2 last:border-0">
       <span className="text-[14px]">
@@ -186,6 +186,11 @@ export function PrintableReport({ report }: PrintableReportProps) {
             <Row
               label="Amount payable"
               value={rupiah(pack.manpower.payable.billing.payable, pack.manpower.payable.currency)}
+              note={
+                pack.manpower.payable.provisional
+                  ? 'Provisional. The contracted headcount behind this is assumed from the line-ups, not taken from the service contract.'
+                  : undefined
+              }
             />
           </>
         ) : (

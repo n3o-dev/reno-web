@@ -4,5 +4,87 @@
   "monthly_rate_per_mp": 5000000,
   "working_days_per_week": 5,
   "prorata_days_per_month": 30,
-  "slots": null
+  "slots_source": "assumed_from_lineups",
+  "slots": [
+    {
+      "area_id": "external",
+      "shift": 1,
+      "contracted": 6
+    },
+    {
+      "area_id": "gf",
+      "shift": 1,
+      "contracted": 8
+    },
+    {
+      "area_id": "ug",
+      "shift": 1,
+      "contracted": 5
+    },
+    {
+      "area_id": "lt1",
+      "shift": 1,
+      "contracted": 5
+    },
+    {
+      "area_id": "lt2",
+      "shift": 1,
+      "contracted": 6
+    },
+    {
+      "area_id": "lk",
+      "shift": 1,
+      "contracted": 3
+    },
+    {
+      "area_id": "garbage",
+      "shift": 1,
+      "contracted": 1
+    },
+    {
+      "area_id": "gondola",
+      "shift": 1,
+      "contracted": 3
+    },
+    {
+      "area_id": "external",
+      "shift": 2,
+      "contracted": 6
+    },
+    {
+      "area_id": "gf",
+      "shift": 2,
+      "contracted": 8
+    },
+    {
+      "area_id": "ug",
+      "shift": 2,
+      "contracted": 5
+    },
+    {
+      "area_id": "lt1",
+      "shift": 2,
+      "contracted": 5
+    },
+    {
+      "area_id": "lt2",
+      "shift": 2,
+      "contracted": 6
+    },
+    {
+      "area_id": "lk",
+      "shift": 2,
+      "contracted": 3
+    },
+    {
+      "area_id": "garbage",
+      "shift": 2,
+      "contracted": 1
+    },
+    {
+      "area_id": "gondola",
+      "shift": 2,
+      "contracted": 3
+    }
+  ]
 }

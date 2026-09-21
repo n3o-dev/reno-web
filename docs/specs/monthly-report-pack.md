@@ -45,6 +45,10 @@ to PDF from the browser.
 - **AC-2**: Every figure in the generated client report traces to at least one `source_message_id`. `pnpm test:report` walks the report model and fails on any figure with empty evidence.
 - **AC-3**: The complaint section shows the cause split, and the amount payable is unaffected by complaint count. A test generates two packs differing only in complaint volume and asserts the BAPP figure is identical.
 - **AC-4**: The BAPP figure equals gross less unreplaced slot-day deductions, and the pack shows the arithmetic. A test asserts the printed components sum to the printed total.
+
+  *Rate: Rp 5.000.000 per person per month, confirmed by the user. A missed slot-day deducts a thirtieth of it — also confirmed, and printed on the pack so the basis is visible rather than assumed. The five-day week does not change the divisor: the site is covered seven days with staff rotating their days off, which is what `Off Day` is for and why it never deducts.*
+
+  *The contracted headcount is **assumed from the line-ups** until Reno supplies the real table, and `slots_source` in `fixtures/site/contract.json` records that. Every amount derived from an assumed table renders as provisional, on the screen and on the pack. The assumption is load-bearing — the rosters list the same people on both shifts, so whether the site is 37 people or 74 is the open question, and at this rate that is Rp 185.000.000 against Rp 370.000.000 a month.*
 - **AC-5**: Generation is blocked until the roster is confirmed. A test attempts generation on an unconfirmed month and asserts a named refusal identifying the month.
 - **AC-6**: Generation is blocked while any alias candidate is undecided. A test asserts the refusal names the undecided candidates.
 - **AC-7**: Generation is blocked by a `blocked` record without a citation. A test asserts the refusal names the record.

@@ -60,6 +60,12 @@ export type Payable =
       readonly currency: string
       readonly monthlyRatePerMp: number
       readonly prorataDaysPerMonth: number
+      /**
+       * True while the headcount came from the rosters rather than the
+       * contract. The arithmetic is real; what it multiplies is not yet
+       * agreed, and an amount nobody can invoice from must say so.
+       */
+      readonly provisional: boolean
     }
   | {
       readonly state: 'incomplete'
@@ -176,6 +182,7 @@ function computePayable(input: BuildInput, days: readonly SlotDay[]): Payable {
     currency: contract.currency,
     monthlyRatePerMp: contract.monthly_rate_per_mp,
     prorataDaysPerMonth: contract.prorata_days_per_month,
+    provisional: contract.slots_source !== 'contract',
   }
 }
 
