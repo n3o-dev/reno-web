@@ -3,6 +3,7 @@ import { readFile } from 'node:fs/promises'
 import { createRecordSource, loadFixtureSource } from '@/contract/source'
 import { parseWorkbook } from '@/rkb/read'
 import { buildReportPack, type ReportPack } from '@/report/model'
+import { getContract } from '@/services/contract'
 
 /**
  * AC-2 — every figure in the pack stands on something.
@@ -13,6 +14,7 @@ import { buildReportPack, type ReportPack } from '@/report/model'
  */
 const source = await loadFixtureSource()
 const workbook = parseWorkbook(new Uint8Array(await readFile('fixtures/rkb/RKB_JULI_2026.xlsx')))
+const contract = await getContract()
 
 const pack: ReportPack = buildReportPack({
   source,
@@ -21,6 +23,7 @@ const pack: ReportPack = buildReportPack({
   workbookLabel: 'RKB Juli 2026',
   siteId: 'lwas',
   siteLabel: 'Living World Alam Sutera',
+  contract,
 })
 
 describe('every section cites its sources', () => {
@@ -56,8 +59,15 @@ describe('the figures match the rest of the system', () => {
     expect(pack.rkb.sheets).toHaveLength(6)
   })
 
-  it('states no money while the contract rate is unknown', () => {
-    expect(pack.manpower.payable).toBeNull()
+  it('states no money while the contract slot table is unknown', () => {
+    const { payable } = pack.manpower
+    expect(payable.state).toBe('incomplete')
+    if (payable.state !== 'incomplete') throw new Error('expected an incomplete figure')
+    // The rate is known; what is missing is what to multiply it by.
+    expect(payable.monthlyRatePerMp).toBe(5_000_000)
+    expect(payable.currency).toBe('IDR')
+    expect(payable.missing).toHaveLength(1)
+    expect(payable.missing[0]).toMatch(/each area on each shift/)
   })
 
   it('counts every complaint exactly once across the cause split', () => {
@@ -84,6 +94,7 @@ describe('AC-3 · complaints never touch the billing figure', () => {
       workbookLabel: 'RKB Juli 2026',
       siteId: 'lwas',
       siteLabel: 'Living World Alam Sutera',
+      contract,
     })
     expect(withoutComplaints.manpower.filledSlotDays).toBe(pack.manpower.filledSlotDays)
     expect(withoutComplaints.manpower.contractedSlotDays).toBe(pack.manpower.contractedSlotDays)
@@ -100,5 +111,96 @@ describe('AC-8 · the sections a person fills say so', () => {
       expect(section.awaiting).not.toBe('')
       expect(section.awaiting).not.toMatch(/^0$/)
     }
+  })
+})
+
+describe('AC-4 · the payable figure, once the contract is known', () => {
+  /*
+   * A slot table small enough to check by hand: two areas on one shift,
+   * six people in total. Over four days that is 24 contracted slot-days.
+   */
+  const AREAS = ['external', 'garbage', 'gf', 'gondola', 'lk', 'lt1', 'lt2', 'ug']
+  const slots = [1 as const, 2 as const].flatMap((shift) =>
+    AREAS.map((area_id) => ({ area_id, shift, contracted: area_id === 'gf' ? 4 : 1 })),
+  )
+  const withSlots = { ...contract, slots }
+
+  const packed = buildReportPack({
+    source,
+    workbook,
+    month: '2026-07',
+    workbookLabel: 'RKB Juli 2026',
+    siteId: 'lwas',
+    siteLabel: 'Living World Alam Sutera',
+    contract: withSlots,
+  })
+
+  it('multiplies the rate by the contracted headcount, not by the roster', () => {
+    const { payable } = packed.manpower
+    expect(payable.state).toBe('computed')
+    if (payable.state !== 'computed') throw new Error('expected a computed figure')
+
+    // 16 area-shifts: two at four people, fourteen at one. 22 at Rp5,000,000.
+    expect(slots.reduce((n, s) => n + s.contracted, 0)).toBe(22)
+    expect(payable.billing.gross).toBe(110_000_000)
+    expect(payable.monthlyRatePerMp).toBe(5_000_000)
+    expect(payable.prorataDaysPerMonth).toBe(30)
+  })
+
+  it('shows arithmetic that adds up', () => {
+    const { payable } = packed.manpower
+    if (payable.state !== 'computed') throw new Error('expected a computed figure')
+    const { gross, deduction, payable: total } = payable.billing
+    expect(gross - deduction).toBe(total)
+  })
+
+  it('deducts nothing when every slot was covered', () => {
+    const { payable } = packed.manpower
+    if (payable.state !== 'computed') throw new Error('expected a computed figure')
+    // The line-ups list at least as many people as these slots require.
+    expect(payable.billing.unfilledSlotDays).toBe(0)
+    expect(payable.billing.deduction).toBe(0)
+  })
+
+  it('deducts a thirtieth of the monthly rate for each unfilled slot-day', () => {
+    // Garbage is staffed by one person; require three and it runs short.
+    const short = slots.map((s) =>
+      s.area_id === 'garbage' ? { ...s, contracted: 3 } : s,
+    )
+    const shortStaffed = buildReportPack({
+      source,
+      workbook,
+      month: '2026-07',
+      workbookLabel: 'RKB Juli 2026',
+      siteId: 'lwas',
+      siteLabel: 'Living World Alam Sutera',
+      contract: { ...contract, slots: short },
+    })
+    const { payable } = shortStaffed.manpower
+    if (payable.state !== 'computed') throw new Error('expected a computed figure')
+
+    // Two short on each of two shifts, over four days: 16 slot-days.
+    expect(payable.billing.unfilledSlotDays).toBe(16)
+    expect(payable.billing.deduction).toBe(Math.round((16 * 5_000_000) / 30))
+    expect(payable.billing.payable).toBe(payable.billing.gross - payable.billing.deduction)
+  })
+})
+
+describe('a roster that strays outside the contract', () => {
+  it('names the area-shifts nobody contracted rather than billing around them', () => {
+    const partial = buildReportPack({
+      source,
+      workbook,
+      month: '2026-07',
+      workbookLabel: 'RKB Juli 2026',
+      siteId: 'lwas',
+      siteLabel: 'Living World Alam Sutera',
+      contract: { ...contract, slots: [{ area_id: 'gf', shift: 1, contracted: 8 }] },
+    })
+    const { payable } = partial.manpower
+    expect(payable.state).toBe('incomplete')
+    if (payable.state !== 'incomplete') throw new Error('expected an incomplete figure')
+    expect(payable.missing[0]).toMatch(/does not cover/)
+    expect(payable.missing[0]).toMatch(/external:1/)
   })
 })

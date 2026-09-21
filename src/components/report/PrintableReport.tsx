@@ -1,4 +1,5 @@
 import { areaLabel } from '@/rules/area'
+import { rupiah } from '@/report/money'
 import type { MonthReport } from '@/services/report'
 import { PrintButton } from './PrintButton'
 import './print.css'
@@ -170,11 +171,30 @@ export function PrintableReport({ report }: PrintableReportProps) {
         <Row label="Sakit" value={String(pack.manpower.absences.sakit)} />
         <Row label="Izin" value={String(pack.manpower.absences.izin)} />
         <Row label="Alfa" value={String(pack.manpower.absences.alfa)} />
-        <Row
-          label="Amount payable"
-          value="Rate not loaded"
-          note="The monthly rate per MP comes from the service contract. Until it is loaded this pack counts slot-days and states no money."
-        />
+        {pack.manpower.payable.state === 'computed' ? (
+          <>
+            <Row
+              label="Gross"
+              value={rupiah(pack.manpower.payable.billing.gross, pack.manpower.payable.currency)}
+              note={`${rupiah(pack.manpower.payable.monthlyRatePerMp, pack.manpower.payable.currency)} per person per month`}
+            />
+            <Row
+              label="Less unfilled, unreplaced slot-days"
+              value={`− ${rupiah(pack.manpower.payable.billing.deduction, pack.manpower.payable.currency)}`}
+              note={`${pack.manpower.payable.billing.unfilledSlotDays} slot-days, pro-rata on ${pack.manpower.payable.prorataDaysPerMonth} days`}
+            />
+            <Row
+              label="Amount payable"
+              value={rupiah(pack.manpower.payable.billing.payable, pack.manpower.payable.currency)}
+            />
+          </>
+        ) : (
+          <Row
+            label="Amount payable"
+            value="Not yet stated"
+            note={`Rate ${pack.manpower.payable.monthlyRatePerMp === null ? 'not loaded' : `${rupiah(pack.manpower.payable.monthlyRatePerMp, pack.manpower.payable.currency)} per person per month`}. ${pack.manpower.payable.missing.join(' ')}`}
+          />
+        )}
       </Section>
 
       <Section title="Evidence">

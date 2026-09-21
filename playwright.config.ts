@@ -29,6 +29,14 @@ export default defineConfig({
    * than passing silently or failing the run.
    */
   expect: { timeout: 20_000 },
+  /*
+   * PGlite is one connection and serialises every query, so ten workers
+   * bursting at a freshly started server queue behind each other and the
+   * occasional page waits out its timeout. Production talks to a real
+   * Postgres and has no such queue; four workers keeps the suite honest
+   * without pretending the constraint is not there.
+   */
+  workers: 4,
   retries: 1,
   use: { baseURL: BASE_URL, trace: 'on-first-retry' },
   projects: [

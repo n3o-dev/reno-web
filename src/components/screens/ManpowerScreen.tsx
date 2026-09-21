@@ -12,6 +12,8 @@ import {
   slotDays,
 } from '@/rules/manpower'
 import { getRecords } from '@/services/records'
+import { monthReport } from '@/services/report'
+import { rupiah } from '@/report/money'
 import { CoverageTable } from '@/components/screens/parts/CoverageTable'
 import { SignalsPanel } from '@/components/screens/parts/SignalsPanel'
 
@@ -28,7 +30,8 @@ interface ManpowerScreenProps extends ScreenProps {
 }
 
 export async function ManpowerScreen({ siteId, showSignals = true }: ManpowerScreenProps) {
-  const records = await getRecords(siteId)
+  const [records, report] = await Promise.all([getRecords(siteId), monthReport('2026-09')])
+  const { payable } = report.pack.manpower
   const lineups = records.lineups
   const contracts = provisionalContracts(lineups)
   const days = slotDays(lineups)
@@ -95,16 +98,37 @@ export async function ManpowerScreen({ siteId, showSignals = true }: ManpowerScr
           title="Amount payable"
           info="Gross less any unfilled, unreplaced slot-days. The arithmetic is shown in full on the BAPP pack. Complaints never touch this figure: a filthy toilet costs the Pimpro his score, not the invoice."
         >
-          <p
-            data-status="manpower.payable"
-            className="font-[family-name:var(--font-display)] text-[20px] leading-[1.2] text-muted"
-          >
-            Rate not loaded
-          </p>
-          <p className="mt-1 text-[13px] text-muted">
-            The monthly rate per MP comes from the service contract. Until it is loaded this
-            screen counts slot-days and states no money.
-          </p>
+          {payable.state === 'computed' ? (
+            <>
+              <p
+                data-status="manpower.payable"
+                className="font-[family-name:var(--font-display)] text-[32px] leading-[1.05] tabular-nums"
+              >
+                {rupiah(payable.billing.payable, payable.currency)}
+              </p>
+              <p className="mt-1 text-[13px] text-muted">
+                {rupiah(payable.billing.gross, payable.currency)} less{' '}
+                {rupiah(payable.billing.deduction, payable.currency)} for{' '}
+                {payable.billing.unfilledSlotDays} unfilled slot-days
+              </p>
+            </>
+          ) : (
+            <>
+              <p
+                data-status="manpower.payable"
+                className="font-[family-name:var(--font-display)] text-[20px] leading-[1.2] text-muted"
+              >
+                Not yet stated
+              </p>
+              <p className="mt-1 text-[13px] text-muted">
+                Rate{' '}
+                {payable.monthlyRatePerMp === null
+                  ? 'not loaded'
+                  : `${rupiah(payable.monthlyRatePerMp, payable.currency)} per person per month`}
+                . {payable.missing.join(' ')}
+              </p>
+            </>
+          )}
         </Card>
       </div>
 

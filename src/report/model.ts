@@ -3,6 +3,7 @@ import type { Workbook } from '@/rkb/read'
 import { closureStats, type ClosureStats } from '@/rules/clock'
 import { causeSplit, repeatAreas, type CauseSplit, type RepeatArea } from '@/rules/causes'
 import { countByDay, type DayCount } from '@/rules/daily'
+import type { SlotDay } from '@/rules/billing'
 import {
   absenceTotals,
   coverage,
@@ -16,6 +17,8 @@ import { computeRealisation, type Realisation } from '@/rules/realisation'
 import { deliveryOf, summariseDeliveries, type Delivery, type DeliverySummary } from '@/rules/work-orders'
 import { planCells, sheetSlug, workbookEvidence } from '@/services/rkb'
 import { bundleEvidence, type FigureEvidence } from '@/services/evidence'
+import { computeBilling, type Billing } from '@/rules/billing'
+import { contractSlots, type SiteContract } from '@/services/contract'
 
 /**
  * Everything the monthly pack says, computed once.
@@ -41,6 +44,30 @@ export interface SheetRealisation {
   readonly slug: string
   readonly realisation: Realisation
 }
+
+/**
+ * What the client owes, or precisely what is missing before it can be said.
+ *
+ * Two inputs, and only one is known: the rate per person per month, and how
+ * many people the contract requires. A figure built on a headcount derived
+ * from the roster would be wrong by the number of shifts, so the pack names
+ * what it is waiting for rather than guessing.
+ */
+export type Payable =
+  | {
+      readonly state: 'computed'
+      readonly billing: Billing
+      readonly currency: string
+      readonly monthlyRatePerMp: number
+      readonly prorataDaysPerMonth: number
+    }
+  | {
+      readonly state: 'incomplete'
+      readonly currency: string
+      readonly monthlyRatePerMp: number | null
+      /** In words, each naming the thing to supply. */
+      readonly missing: readonly string[]
+    }
 
 export interface HumanSection {
   readonly title: string
@@ -80,12 +107,7 @@ export interface ReportPack {
     readonly filledSlotDays: number
     readonly contractedSlotDays: number
     readonly evidence: FigureEvidence
-    /**
-     * Null until the service contract is loaded. The pack prints the
-     * arithmetic it can and says the rate is missing; a plausible rupiah
-     * figure on a document the client signs is worse than none.
-     */
-    readonly payable: null
+    readonly payable: Payable
   }
 
   readonly evidenceGallery: {
@@ -106,6 +128,55 @@ export interface BuildInput {
   readonly workbookLabel: string
   readonly siteId: string
   readonly siteLabel: string
+  readonly contract: SiteContract
+}
+
+function computePayable(input: BuildInput, days: readonly SlotDay[]): Payable {
+  const { contract } = input
+  const slots = contractSlots(contract)
+  if (slots === null) {
+    return {
+      state: 'incomplete',
+      currency: contract.currency,
+      monthlyRatePerMp: contract.monthly_rate_per_mp,
+      missing: [
+        'How many people the contract requires in each area on each shift. The roster cannot stand in for it: the same people appear on more than one shift, so a headcount derived from it counts them twice.',
+      ],
+    }
+  }
+
+  /*
+   * Every slot the roster shows has to be in the contract. A line-up naming
+   * an area nobody contracted means either the table is incomplete or people
+   * are working somewhere unbilled, and both need a person — so the pack
+   * names the areas rather than quietly billing the ones it recognises.
+   */
+  const contracted = new Set(slots.map((slot) => slot.slot_id))
+  const uncontracted = [...new Set(days.map((d) => d.slot_id))]
+    .filter((id) => !contracted.has(id))
+    .sort()
+  if (uncontracted.length > 0) {
+    return {
+      state: 'incomplete',
+      currency: contract.currency,
+      monthlyRatePerMp: contract.monthly_rate_per_mp,
+      missing: [
+        `The roster lists ${uncontracted.length} area-shift(s) the contract does not cover: ${uncontracted.join(', ')}. Either the slot table is incomplete or people are working somewhere unbilled.`,
+      ],
+    }
+  }
+
+  return {
+    state: 'computed',
+    billing: computeBilling({
+      contracts: slots,
+      days,
+      monthlyRatePerMp: contract.monthly_rate_per_mp,
+    }),
+    currency: contract.currency,
+    monthlyRatePerMp: contract.monthly_rate_per_mp,
+    prorataDaysPerMonth: contract.prorata_days_per_month,
+  }
 }
 
 const MONTH_LABEL = new Intl.DateTimeFormat('en-GB', { month: 'long', year: 'numeric' })
@@ -184,7 +255,7 @@ export function buildReportPack(input: BuildInput): ReportPack {
         lineups.map((l) => l.source_message_id),
         'No line-up was posted in this period.',
       ),
-      payable: null,
+      payable: computePayable(input, days),
     },
 
     evidenceGallery: {

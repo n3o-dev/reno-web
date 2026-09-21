@@ -1,0 +1,8 @@
+{
+  "site_id": "lwas",
+  "currency": "IDR",
+  "monthly_rate_per_mp": 5000000,
+  "working_days_per_week": 5,
+  "prorata_days_per_month": 30,
+  "slots": null
+}
