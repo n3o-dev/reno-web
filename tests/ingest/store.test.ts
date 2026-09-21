@@ -1,3 +1,4 @@
+import { readdir } from 'node:fs/promises'
 import { describe, expect, it } from 'vitest'
 import { PGlite } from '@electric-sql/pglite'
 import { RECORD_TYPES } from '@/contract/schemas'
@@ -111,8 +112,15 @@ describe('AC-12 · migrations run forward and are idempotent', () => {
       await pg.exec(script)
     }
 
+    // Not a hardcoded list: that would need editing for every migration
+    // added, which is noise rather than a check. What matters is that every
+    // file on disk ran, in order, and that a second run runs none of them.
+    const onDisk = (await readdir(new URL('../../src/db/migrations/', import.meta.url)))
+      .filter((f) => f.endsWith('.sql'))
+      .sort()
     const first = await migrate(sql, exec)
-    expect(first).toEqual(['0001_records.sql'])
+    expect(first).toEqual(onDisk)
+    expect(first.length).toBeGreaterThan(0)
 
     const columns = async () =>
       sql<{ table_name: string; column_name: string }>(

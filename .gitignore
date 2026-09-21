@@ -22,3 +22,5 @@ next-env.d.ts
 *.tsbuildinfo
 test-results/
 playwright-report/
+.pglite-e2e/
+e2e/.auth/

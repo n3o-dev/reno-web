@@ -1,6 +1,7 @@
 import { existsSync } from 'node:fs'
 import { homedir } from 'node:os'
 import { defineConfig, devices } from '@playwright/test'
+import { STORAGE_STATE } from './e2e/credentials'
 
 /*
  * Playwright 1.63 wants Chromium build 1243; this machine has 1217 cached from
@@ -31,12 +32,23 @@ export default defineConfig({
   retries: 1,
   use: { baseURL: BASE_URL, trace: 'on-first-retry' },
   projects: [
-    { name: 'desktop', use: { ...devices['Desktop Chrome'], launchOptions } },
+    // Signs in once; the two browser projects reuse the cookie.
+    { name: 'setup', testMatch: /auth\.setup\.ts/, use: { launchOptions } },
+    {
+      name: 'desktop',
+      use: { ...devices['Desktop Chrome'], launchOptions, storageState: STORAGE_STATE },
+      dependencies: ['setup'],
+    },
     // AC-12: the client view has to work on a phone held inside WhatsApp.
-    { name: 'mobile', use: { ...devices['Pixel 7'], launchOptions } },
+    {
+      name: 'mobile',
+      use: { ...devices['Pixel 7'], launchOptions, storageState: STORAGE_STATE },
+      dependencies: ['setup'],
+    },
   ],
   webServer: {
-    command: `pnpm build && pnpm start --port ${PORT}`,
+    env: { DATABASE_URL: 'pglite://./.pglite-e2e' },
+    command: `pnpm seed:e2e && pnpm build && pnpm start --port ${PORT}`,
     url: BASE_URL,
     reuseExistingServer: process.env['CI'] === undefined,
     timeout: 180_000,

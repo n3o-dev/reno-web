@@ -23,7 +23,9 @@
     "lint:i18n": "tsx scripts/lint-i18n.ts",
     "test:evidence": "playwright test e2e/evidence.spec.ts --project=desktop",
     "test:ingest": "vitest run tests/ingest",
-    "db:migrate": "tsx scripts/db-migrate.ts"
+    "db:migrate": "tsx scripts/db-migrate.ts",
+    "user:add": "tsx scripts/user-add.ts",
+    "seed:e2e": "tsx scripts/seed-e2e.ts"
   },
   "devDependencies": {
     "@playwright/test": "^1.63.0",
@@ -45,6 +47,7 @@
   },
   "dependencies": {
     "@electric-sql/pglite": "^0.5.8",
+    "@hookform/resolvers": "^5.9.1",
     "@tanstack/react-query": "^5.103.2",
     "ajv": "^8.20.0",
     "ajv-formats": "^3.0.1",
@@ -55,6 +58,7 @@
     "pg": "^8.23.0",
     "react": "^19.3.0",
     "react-dom": "^19.3.0",
+    "react-hook-form": "^7.88.0",
     "zod": "^4.6.5",
     "zustand": "^5.0.15"
   }

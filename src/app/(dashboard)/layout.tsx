@@ -1,10 +1,15 @@
 import { AppNav } from '@/components/common/AppNav'
+import { SignOutButton } from '@/components/common/SignOutButton'
+import { requireAccount } from '@/services/current-account'
 
 interface DashboardLayoutProps {
   readonly children: React.ReactNode
 }
 
-export default function DashboardLayout({ children }: DashboardLayoutProps) {
+export default async function DashboardLayout({ children }: DashboardLayoutProps) {
+  // Middleware saw a cookie; this confirms the session behind it is live.
+  const account = await requireAccount('/')
+
   return (
     <div className="min-h-dvh">
       <header className="bg-ink text-surface">
@@ -12,6 +17,10 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
           <span className="font-[family-name:var(--font-display)] text-[17px]">Reno</span>
           <span className="text-[13px] tracking-[0.04em] text-[#cfc7bd]">
             Living World Alam Sutera
+          </span>
+          <span className="ml-auto flex items-center gap-3 text-[13px] text-[#cfc7bd]">
+            <span data-signed-in-as>{account.display_name}</span>
+            <SignOutButton />
           </span>
         </div>
       </header>

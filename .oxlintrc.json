@@ -60,7 +60,8 @@
     {
       "files": [
         "src/db/**",
-        "tests/ingest/**"
+        "tests/ingest/**",
+        "scripts/seed-e2e.ts"
       ],
       "rules": {
         "no-await-in-loop": "off"
