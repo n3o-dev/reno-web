@@ -17,7 +17,7 @@ export interface Cell {
   readonly row: number
   /** Resolved value: shared strings already dereferenced. */
   readonly value: string | null
-  /** Style index, which is how the workbook records weekend shading. */
+  /** Style index; resolved against the font table to find weekend marking. */
   readonly style: number | null
 }
 

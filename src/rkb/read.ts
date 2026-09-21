@@ -24,10 +24,17 @@ export interface Layout {
   readonly id: 'A' | 'B' | 'C'
   /** Column holding the `NO` value. */
   readonly noColumn: string
-  readonly locationColumn: string
-  readonly jobColumn: string
-  /** The fourth descriptive column layouts B and C add, if any. */
-  readonly extraColumn: string | null
+  /**
+   * Column repeating the area for every row. Layout A has none — its area is
+   * the section heading — so the three layouts are not simply shifted copies.
+   */
+  readonly areaColumn: string | null
+  /** The thing being cleaned: `Cover lampu`, `SISI HOTEL`, `RUANG LVMDP`. */
+  readonly subjectColumn: string
+  /** The work done to it: `Dusting`, `SPOOTING / GLASS CLEANING`. */
+  readonly workColumn: string
+  /** Header text of the extra column B and C carry, used to tell them apart. */
+  readonly discriminator: string | null
   /** First R column of the 31-day grid. */
   readonly firstDayColumn: string
 }
@@ -36,25 +43,28 @@ const LAYOUTS: readonly Layout[] = [
   {
     id: 'A',
     noColumn: 'A',
-    locationColumn: 'B',
-    jobColumn: 'C',
-    extraColumn: null,
+    areaColumn: null,
+    subjectColumn: 'B',
+    workColumn: 'C',
+    discriminator: null,
     firstDayColumn: 'D',
   },
   {
     id: 'B',
     noColumn: 'B',
-    locationColumn: 'C',
-    jobColumn: 'D',
-    extraColumn: 'PROGRES',
+    areaColumn: 'C',
+    subjectColumn: 'D',
+    workColumn: 'E',
+    discriminator: 'PROGRES',
     firstDayColumn: 'F',
   },
   {
     id: 'C',
     noColumn: 'B',
-    locationColumn: 'C',
-    jobColumn: 'D',
-    extraColumn: 'ZONA',
+    areaColumn: 'C',
+    subjectColumn: 'D',
+    workColumn: 'E',
+    discriminator: 'ZONA',
     firstDayColumn: 'F',
   },
 ]
@@ -66,22 +76,32 @@ export interface DayEntry {
   readonly aColumn: string
   readonly planned: number | null
   readonly actual: number | null
-  /** Weekend or national holiday, taken from the sheet's own shading. */
+  /** Weekend or national holiday, from the red font on the day-name header row. */
   readonly isNonWorkingDay: boolean
 }
 
 export interface JobRow {
   readonly no: number
-  readonly location: string
-  readonly job: string
+  /** The area group: the section heading on layout A, the AREA column on B and C. */
+  readonly area: string
+  /** The thing being cleaned. */
+  readonly subject: string
+  /** The work done to it. On B and C this is the PROGRES column. */
+  readonly work: string
   readonly rowNumber: number
   readonly days: readonly DayEntry[]
 }
 
-export interface Block {
+/**
+ * A run of job rows ending at a `PERSENTASI (%)` row.
+ *
+ * Named Section, not Block: CONTEXT.md reserves "Blocked" for a job row that
+ * could not proceed, and the writer is about to deal with both.
+ */
+export interface Section {
   readonly name: string
   readonly rows: readonly JobRow[]
-  /** Sheet row numbers of the three computed rows below the block. */
+  /** Sheet row numbers of the three computed rows below the section. */
   readonly totalsRows: {
     readonly jumlah: number | null
     readonly realisasi: number | null
@@ -93,7 +113,7 @@ export interface Sheet {
   readonly name: string
   readonly path: string
   readonly layout: Layout
-  readonly blocks: readonly Block[]
+  readonly sections: readonly Section[]
 }
 
 export interface Workbook {
@@ -121,20 +141,25 @@ function detectLayout(sheet: RawSheet): Detected {
   for (const [rowNumber, cells] of sheet.rows) {
     for (const layout of LAYOUTS) {
       const no = norm(cells.get(layout.noColumn)?.value)
-      const location = norm(cells.get(layout.locationColumn)?.value)
-      const job = norm(cells.get(layout.jobColumn)?.value)
-      if (no !== 'NO' || !location.startsWith('AREA')) continue
-      const fourth = norm(cells.get(shiftColumn(layout.jobColumn, 1))?.value)
-      if (layout.extraColumn === null) {
-        // Layout A has no fourth descriptive column; B and C do.
-        if (job.includes('PEKERJAAN') && fourth !== 'PROGRES') return { layout, headerRow: rowNumber }
+      // The column after NO always heads the area or the subject, and always says AREA.
+      const headsArea = norm(cells.get(shiftColumn(layout.noColumn, 1))?.value).startsWith('AREA')
+      if (no !== 'NO' || !headsArea) continue
+
+      if (layout.discriminator === null) {
+        // Layout A: the third column is the work, and there is no fourth.
+        const work = norm(cells.get(layout.workColumn)?.value)
+        const fourth = norm(cells.get(shiftColumn(layout.workColumn, 1))?.value)
+        if (work.includes('PEKERJAAN') && fourth !== 'PROGRES') {
+          return { layout, headerRow: rowNumber }
+        }
         continue
       }
-      // B and C sit in the same columns; the fourth column is what separates them.
-      if (layout.id === 'B' && job.includes('PEKERJAAN') && fourth === 'PROGRES') {
-        return { layout, headerRow: rowNumber }
-      }
-      if (layout.id === 'C' && job === 'ZONA') return { layout, headerRow: rowNumber }
+      // B and C sit in the same columns; the third column header separates them.
+      const third = norm(cells.get(layout.subjectColumn)?.value)
+      const fourth = norm(cells.get(layout.workColumn)?.value)
+      if (fourth !== 'PROGRES') continue
+      if (layout.id === 'B' && third.includes('PEKERJAAN')) return { layout, headerRow: rowNumber }
+      if (layout.id === 'C' && third === 'ZONA') return { layout, headerRow: rowNumber }
     }
   }
   throw new RkbLayoutError(sheet.name, 'no header row with NO / AREA / job columns was found')
@@ -195,24 +220,40 @@ function nonWorkingDays(
   return out
 }
 
-function readBlocks(
+/** Finds a totals label anywhere in the row — Facade puts them in D, the rest in B. */
+function totalsLabelOf(cells: ReadonlyMap<string, Cell>): 'jumlah' | 'realisasi' | 'persentasi' | null {
+  for (const cell of cells.values()) {
+    const text = norm(cell.value)
+    if (text === 'JUMLAH MCP') return 'jumlah'
+    if (text === 'REALISASI MCP') return 'realisasi'
+    if (text.startsWith('PERSENTASI')) return 'persentasi'
+  }
+  return null
+}
+
+function readSections(
   sheet: RawSheet,
   layout: Layout,
   headerRow: number,
   fontColourByStyle: ReadonlyMap<number, string>,
-): Block[] {
-  const blocks: Block[] = []
+): Section[] {
+  const sections: Section[] = []
   const nonWorking = nonWorkingDays(sheet, layout, headerRow, fontColourByStyle)
   const ordered = [...sheet.rows.keys()].sort((a, b) => a - b).filter((n) => n >= headerRow)
 
   let name: string | null = null
   let carriedArea: string | null = null
+  let carriedWork: string | null = null
   let rows: JobRow[] = []
-  let totals = { jumlah: null as number | null, realisasi: null as number | null, persentasi: null as number | null }
+  let totals = {
+    jumlah: null as number | null,
+    realisasi: null as number | null,
+    persentasi: null as number | null,
+  }
 
   const flush = (): void => {
     if (rows.length === 0) return
-    blocks.push({ name: name ?? 'UNNAMED', rows, totalsRows: totals })
+    sections.push({ name: name ?? 'UNNAMED', rows, totalsRows: totals })
     rows = []
     totals = { jumlah: null, realisasi: null, persentasi: null }
     name = null
@@ -222,49 +263,66 @@ function readBlocks(
     const cells = sheet.rows.get(rowNumber)
     if (cells === undefined) continue
 
-    const label = norm(cells.get(layout.locationColumn)?.value)
-    if (label === 'JUMLAH MCP') totals = { ...totals, jumlah: rowNumber }
-    if (label === 'REALISASI MCP') totals = { ...totals, realisasi: rowNumber }
-    if (label.startsWith('PERSENTASI')) {
+    const label = totalsLabelOf(cells)
+    if (label === 'jumlah') totals = { ...totals, jumlah: rowNumber }
+    if (label === 'realisasi') totals = { ...totals, realisasi: rowNumber }
+    if (label === 'persentasi') {
       totals = { ...totals, persentasi: rowNumber }
       flush()
       continue
     }
+    if (label !== null) continue
 
     const noCell = cells.get(layout.noColumn)?.value ?? null
-    const location = cells.get(layout.locationColumn)?.value ?? null
-    const job = cells.get(layout.jobColumn)?.value ?? null
+    const subject = cells.get(layout.subjectColumn)?.value ?? null
+    const workCell = cells.get(layout.workColumn)?.value ?? null
 
     /**
-     * A block heading sits alone in the NO column with no job beside it.
-     * A block can carry more than one heading — Koridor dalam puts OFFICE MO
-     * and MUSHOLLA under a single JUMLAH MCP — so a heading names the block
-     * only if it has not been named yet. Blocks end at PERSENTASI, not here.
+     * A section heading sits alone in the NO column with no subject beside it.
+     * A section can carry more than one heading — Koridor dalam puts OFFICE MO
+     * and MUSHOLLA under a single JUMLAH MCP — so a heading names the section
+     * only if it has not been named yet. Sections end at PERSENTASI, not here.
      */
-    if (noCell !== null && !/^\d+$/.test(noCell.trim()) && (job === null || job.trim() === '')) {
+    if (
+      noCell !== null &&
+      !/^\d+$/.test(noCell.trim()) &&
+      (subject === null || subject.trim() === '')
+    ) {
       name ??= noCell.trim()
       continue
     }
 
     if (noCell === null || !/^\d+$/.test(noCell.trim())) continue
-    if (job === null || job.trim() === '') continue
+    if (subject === null || subject.trim() === '') continue
 
-    // Layouts B and C state the area once and let it carry down the rows.
-    if (location !== null && location.trim() !== '') carriedArea = location.trim()
-    const area = carriedArea
-    if (area === null) continue
+    /**
+     * Layouts B and C state the area and the work once and let both carry down
+     * the rows beneath — Ruang Utility writes SWEEPING,MOPPING… on the first
+     * row of a floor and leaves it blank for the rest. Requiring a value on
+     * every row loses 23 of its 29 rows.
+     */
+    if (layout.areaColumn !== null) {
+      const areaCell = cells.get(layout.areaColumn)?.value ?? null
+      if (areaCell !== null && areaCell.trim() !== '') carriedArea = areaCell.trim()
+    }
+    if (workCell !== null && workCell.trim() !== '') carriedWork = workCell.trim()
+
+    const area: string | null = layout.areaColumn === null ? name : carriedArea
+    const work: string | null = layout.areaColumn === null ? workCell : carriedWork
+    if (area === null || work === null || work.trim() === '') continue
 
     name ??= area
     rows.push({
       no: Number(noCell.trim()),
-      location: area,
-      job: job.trim(),
+      area,
+      subject: subject.trim(),
+      work: work.trim(),
       rowNumber,
       days: readDays(cells, layout, nonWorking),
     })
   }
   flush()
-  return blocks
+  return sections
 }
 
 export function parseWorkbook(bytes: Uint8Array): Workbook {
@@ -275,7 +333,7 @@ export function parseWorkbook(bytes: Uint8Array): Workbook {
       name: sheet.name,
       path: sheet.path,
       layout,
-      blocks: readBlocks(sheet, layout, headerRow, raw.fontColourByStyle),
+      sections: readSections(sheet, layout, headerRow, raw.fontColourByStyle),
     }
   })
   return { sheets, raw }
