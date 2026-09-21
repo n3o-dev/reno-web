@@ -153,3 +153,44 @@ describe('AC-14 · nothing secret reaches the logs', () => {
     expect(JSON.stringify(result.body)).not.toContain(message.text.slice(0, 20))
   })
 })
+
+describe('AC-9 · a record id another site already uses', () => {
+  /*
+   * Record ids are not namespaced by site — the agent emits cmp_1, msg_0_0 —
+   * and record_id is a global key. Without a guard, a token for one site
+   * posting an id another site already holds overwrites that record and
+   * reparents it: exactly the write AC-9 exists to prevent, reached by the
+   * back door rather than by putting the wrong site_id in the payload.
+   */
+  it('refuses the batch rather than overwriting the other site', async () => {
+    await ingest(db, { authorization: `Bearer ${TOKEN}`, json: batch }, ENV)
+
+    const collision = {
+      records: [{ type: 'message' as const, payload: { ...message, site_id: 'ggb' } }],
+    }
+    const result = await ingest(db, { authorization: `Bearer ${OTHER}`, json: collision }, ENV)
+
+    expect(result.status).toBe(403)
+    expect(String(result.body['error'])).toContain(message.record_id)
+
+    // The original is untouched and still belongs to its own site.
+    const kept = await loadSource(db.sql, 'lwas')
+    expect(kept.messages).toHaveLength(1)
+    expect(kept.messages[0]).toEqual(message)
+    expect((await loadSource(db.sql, 'ggb')).messages).toEqual([])
+  })
+
+  it('still lets a site update its own record', async () => {
+    await ingest(db, { authorization: `Bearer ${TOKEN}`, json: batch }, ENV)
+    const again = await ingest(
+      db,
+      {
+        authorization: `Bearer ${TOKEN}`,
+        json: { records: [{ type: 'message', payload: { ...message, confidence: 0.5 } }] },
+      },
+      ENV,
+    )
+    expect(again.status).toBe(200)
+    expect((await loadSource(db.sql, 'lwas')).messages[0]?.confidence).toBe(0.5)
+  })
+})

@@ -16,15 +16,28 @@ const source = await loadFixtureSource()
 const workbook = parseWorkbook(new Uint8Array(await readFile('fixtures/rkb/RKB_JULI_2026.xlsx')))
 const contract = await getContract()
 
-const pack: ReportPack = buildReportPack({
-  source,
-  workbook,
-  month: '2026-07',
-  workbookLabel: 'RKB Juli 2026',
-  siteId: 'lwas',
-  siteLabel: 'Living World Alam Sutera',
-  contract,
-})
+/*
+ * The records and the workbook are from different months, and that is the
+ * real situation: the group export covers 10-13 September, the only RKB we
+ * hold is July's. A pack built for September therefore carries every record
+ * figure and no realisation, and a pack built for July carries the plan and
+ * no records. Both are tested, because the old code reported both at once by
+ * ignoring the month entirely.
+ */
+const build = (month: string, over = contract): ReportPack =>
+  buildReportPack({
+    source,
+    workbook,
+    month,
+    workbookLabel: 'RKB Juli 2026',
+    siteId: 'lwas',
+    siteLabel: 'Living World Alam Sutera',
+    contract: over,
+    workbookMonth: '2026-07',
+  })
+
+const pack: ReportPack = build('2026-09')
+const july: ReportPack = build('2026-07')
 
 describe('every section cites its sources', () => {
   it.each([
@@ -54,9 +67,26 @@ describe('the figures match the rest of the system', () => {
     expect(pack.complaints.repeats).toHaveLength(7)
   })
 
-  it('carries the workbook realisation', () => {
-    expect(pack.rkb.whole.planned).toBe(533)
-    expect(pack.rkb.sheets).toHaveLength(6)
+  it('carries the workbook realisation for the month the workbook covers', () => {
+    expect(july.rkb.coversThisMonth).toBe(true)
+    expect(july.rkb.whole.planned).toBe(533)
+    expect(july.rkb.sheets).toHaveLength(6)
+  })
+
+  it('reports no realisation for a month the loaded workbook is not for', () => {
+    expect(pack.rkb.coversThisMonth).toBe(false)
+    expect(pack.rkb.whole.planned).toBe(0)
+    expect(pack.rkb.sheets).toEqual([])
+    const [why] = pack.rkb.evidence.items
+    expect(why?.kind).toBe('absent')
+    if (why?.kind !== 'absent') throw new Error('expected a stated absence')
+    expect(why.reason).toMatch(/covers 2026-07, not 2026-09/)
+  })
+
+  it('carries no record from outside the month', () => {
+    expect(july.complaints.stats.raised).toBe(0)
+    expect(july.workOrders.summary.total).toBe(0)
+    expect(july.evidenceGallery.reportCount).toBe(0)
   })
 
   it('computes an amount, and marks it provisional while the headcount is assumed', () => {
@@ -72,30 +102,14 @@ describe('the figures match the rest of the system', () => {
   })
 
   it('stops being provisional once the table comes from the contract', () => {
-    const fromContract = buildReportPack({
-      source,
-      workbook,
-      month: '2026-07',
-      workbookLabel: 'RKB Juli 2026',
-      siteId: 'lwas',
-      siteLabel: 'Living World Alam Sutera',
-      contract: { ...contract, slots_source: 'contract' },
-    })
+    const fromContract = build('2026-09', { ...contract, slots_source: 'contract' })
     const { payable } = fromContract.manpower
     if (payable.state !== 'computed') throw new Error('expected a computed figure')
     expect(payable.provisional).toBe(false)
   })
 
   it('states no amount at all when there is no table', () => {
-    const noTable = buildReportPack({
-      source,
-      workbook,
-      month: '2026-07',
-      workbookLabel: 'RKB Juli 2026',
-      siteId: 'lwas',
-      siteLabel: 'Living World Alam Sutera',
-      contract: { ...contract, slots: null },
-    })
+    const noTable = build('2026-09', { ...contract, slots: null })
     const { payable } = noTable.manpower
     expect(payable.state).toBe('incomplete')
     if (payable.state !== 'incomplete') throw new Error('expected an incomplete figure')
@@ -123,11 +137,12 @@ describe('AC-3 · complaints never touch the billing figure', () => {
         person: [...source.people],
       }),
       workbook,
-      month: '2026-07',
+      month: '2026-09',
       workbookLabel: 'RKB Juli 2026',
       siteId: 'lwas',
       siteLabel: 'Living World Alam Sutera',
       contract,
+      workbookMonth: '2026-07',
     })
     expect(withoutComplaints.manpower.filledSlotDays).toBe(pack.manpower.filledSlotDays)
     expect(withoutComplaints.manpower.contractedSlotDays).toBe(pack.manpower.contractedSlotDays)
@@ -148,25 +163,14 @@ describe('AC-8 · the sections a person fills say so', () => {
 })
 
 describe('AC-4 · the payable figure, once the contract is known', () => {
-  /*
-   * A slot table small enough to check by hand: two areas on one shift,
-   * six people in total. Over four days that is 24 contracted slot-days.
-   */
+  /* A slot table small enough to check by hand. */
   const AREAS = ['external', 'garbage', 'gf', 'gondola', 'lk', 'lt1', 'lt2', 'ug']
   const slots = [1 as const, 2 as const].flatMap((shift) =>
     AREAS.map((area_id) => ({ area_id, shift, contracted: area_id === 'gf' ? 4 : 1 })),
   )
   const withSlots = { ...contract, slots }
 
-  const packed = buildReportPack({
-    source,
-    workbook,
-    month: '2026-07',
-    workbookLabel: 'RKB Juli 2026',
-    siteId: 'lwas',
-    siteLabel: 'Living World Alam Sutera',
-    contract: withSlots,
-  })
+  const packed = build('2026-09', withSlots)
 
   it('multiplies the rate by the contracted headcount, not by the roster', () => {
     const { payable } = packed.manpower
@@ -200,15 +204,7 @@ describe('AC-4 · the payable figure, once the contract is known', () => {
     const short = slots.map((s) =>
       s.area_id === 'garbage' ? { ...s, contracted: 3 } : s,
     )
-    const shortStaffed = buildReportPack({
-      source,
-      workbook,
-      month: '2026-07',
-      workbookLabel: 'RKB Juli 2026',
-      siteId: 'lwas',
-      siteLabel: 'Living World Alam Sutera',
-      contract: { ...contract, slots: short },
-    })
+    const shortStaffed = build('2026-09', { ...contract, slots: short })
     const { payable } = shortStaffed.manpower
     if (payable.state !== 'computed') throw new Error('expected a computed figure')
 
@@ -221,15 +217,7 @@ describe('AC-4 · the payable figure, once the contract is known', () => {
 
 describe('a roster that strays outside the contract', () => {
   it('names the area-shifts nobody contracted rather than billing around them', () => {
-    const partial = buildReportPack({
-      source,
-      workbook,
-      month: '2026-07',
-      workbookLabel: 'RKB Juli 2026',
-      siteId: 'lwas',
-      siteLabel: 'Living World Alam Sutera',
-      contract: { ...contract, slots: [{ area_id: 'gf', shift: 1, contracted: 8 }] },
-    })
+    const partial = build('2026-09', { ...contract, slots: [{ area_id: 'gf', shift: 1, contracted: 8 }] })
     const { payable } = partial.manpower
     expect(payable.state).toBe('incomplete')
     if (payable.state !== 'incomplete') throw new Error('expected an incomplete figure')

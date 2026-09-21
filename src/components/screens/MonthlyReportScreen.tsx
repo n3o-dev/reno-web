@@ -10,7 +10,7 @@ import { ConfirmRoster } from '@/components/screens/parts/ConfirmRoster'
 const MONTH = '2026-09'
 
 export async function MonthlyReportScreen({ siteId }: ScreenProps) {
-  const report = await monthReport(MONTH)
+  const report = await monthReport(MONTH, siteId)
   const { pack, gates } = report
   const isClient = siteId !== undefined
 
@@ -47,7 +47,16 @@ export async function MonthlyReportScreen({ siteId }: ScreenProps) {
       source: `${pack.workOrders.summary.total} requests`,
       state: 'ready',
     },
-    { title: 'Manpower and billing', source: 'Contract rate not loaded', state: 'blocked' },
+    {
+      title: 'Manpower and billing',
+      source:
+        pack.manpower.payable.state === 'computed'
+          ? pack.manpower.payable.provisional
+            ? 'Amount computed, headcount assumed'
+            : 'Amount computed from the contract'
+          : 'Waiting on the contract',
+      state: pack.manpower.payable.state === 'computed' ? 'ready' : 'blocked',
+    },
     {
       title: 'Before-after gallery',
       source: `${pack.evidenceGallery.beforeAfter} reports`,
@@ -95,12 +104,15 @@ export async function MonthlyReportScreen({ siteId }: ScreenProps) {
             ))}
           </ul>
           <div className="mt-4 flex flex-wrap gap-3 border-t border-line pt-4 text-[14px]">
+            {/* Print lives outside /c, so the client cannot reach it. */}
+            {!isClient && (
             <Link
               href={`/print/${MONTH}`}
               className="min-h-11 rounded-[var(--radius-control)] border border-line px-4 py-2.5"
             >
               Open the client report
             </Link>
+            )}
             {!isClient && (
               <a
                 href={`/api/report/rkb?month=${MONTH}`}

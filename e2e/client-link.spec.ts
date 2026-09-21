@@ -80,3 +80,34 @@ test.describe('a link that should not work', () => {
     await expect(page.locator('[data-figure="complaints.raised"]')).toHaveText('0')
   })
 })
+
+test.describe('a token for another site sees none of this one', () => {
+  /*
+   * Records were scoped from the start; the workbook, the contract and the
+   * amount payable were not. A Grand Galaxy token rendered LWAS's
+   * Rp 370.000.000, its 533 planned job-row days and its 75 complaints.
+   */
+  const FIGURES_AT_ZERO = [
+    ['/complaints', 'complaints.raised'],
+    ['/report', 'report.complaints'],
+    ['/manpower', 'manpower.filled_slot_days'],
+  ] as const
+
+  for (const [path, figure] of FIGURES_AT_ZERO) {
+    test(`${path} reads zero`, async ({ page }) => {
+      await page.goto(`/c/${OTHER_SITE}${path}`)
+      await expect(page.locator(`[data-figure="${figure}"]`)).toHaveText('0')
+    })
+  }
+
+  test('the amount payable is not shown at all', async ({ page }) => {
+    await page.goto(`/c/${OTHER_SITE}/manpower`)
+    await expect(page.locator('body')).not.toContainText('370.000.000')
+  })
+
+  test('the RKB workbook is not shown at all', async ({ page }) => {
+    await page.goto(`/c/${OTHER_SITE}/rkb`)
+    await expect(page.getByText('No RKB workbook has been loaded for this site.')).toBeVisible()
+    await expect(page.locator('body')).not.toContainText('533')
+  })
+})

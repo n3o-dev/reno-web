@@ -19,7 +19,7 @@ const STATE_LABEL: Record<string, string> = {
   closed_without_photo: 'Closed without photo',
 }
 
-/** Lowest confidence first: the ones most worth a human eye sit at the top. */
+/** Oldest first: the longest-running complaint is the one most worth seeing. */
 export function OpenItems({ complaints }: OpenItemsProps) {
   const ordered = [...complaints].sort((a, b) => a.raised_at.localeCompare(b.raised_at))
 

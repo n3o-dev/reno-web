@@ -36,7 +36,7 @@ try {
   const fixtures = await loadFixtureSource()
   for (const type of RECORD_TYPES) {
     const batch = parseBatch(fixtures.all(type).map((payload) => ({ type, payload })))
-    await db.transaction((sql) => upsertBatch(sql, batch))
+    await db.transaction((sql) => upsertBatch(sql, batch, 'lwas'))
   }
   console.log(`seeded ${E2E_DIR}: one account and the full fixture set`)
 } finally {

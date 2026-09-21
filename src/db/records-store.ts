@@ -59,14 +59,41 @@ export function parseBatch(records: readonly IncomingRecord[]): readonly ParsedR
   })
 }
 
+export class CrossSiteRecord extends Error {
+  constructor(readonly recordIds: readonly string[]) {
+    super(
+      `record id(s) already belong to another site: ${recordIds.join(', ')}. Record ids are not namespaced by site, so this is a collision, not an update.`,
+    )
+    this.name = 'CrossSiteRecord'
+  }
+}
+
 /**
  * Writes a validated batch in one transaction.
  *
  * An unchanged payload is still recorded as accepted but does not touch the
  * record, so posting the same batch twice is a no-op the agent can retry
  * safely after a timeout it never saw the answer to.
+ *
+ * `record_id` is a global key and the agent's ids are not namespaced by site
+ * — `cmp_1`, `msg_0_0` — so a token for one site posting an id another site
+ * already uses would otherwise overwrite that record and reparent it. The
+ * batch is refused instead, in the same transaction that would have written
+ * it.
  */
-export async function upsertBatch(sql: Sql, batch: readonly ParsedRecord[]): Promise<number> {
+export async function upsertBatch(
+  sql: Sql,
+  batch: readonly ParsedRecord[],
+  siteId: string,
+): Promise<number> {
+  const foreign = await sql<{ record_id: string }>(
+    `SELECT record_id FROM records WHERE record_id = ANY($1) AND site_id <> $2 ORDER BY record_id`,
+    [batch.map((r) => r.payload.record_id), siteId],
+  )
+  if (foreign.length > 0) {
+    throw new CrossSiteRecord(foreign.map((row) => row.record_id))
+  }
+
   let written = 0
   for (const { type, payload } of batch) {
     const changed = await sql<{ changed: boolean }>(
@@ -79,8 +106,12 @@ export async function upsertBatch(sql: Sql, batch: readonly ParsedRecord[]): Pro
              sent_at = EXCLUDED.sent_at,
              source_message_id = EXCLUDED.source_message_id,
              retracted_at = NULL
-         WHERE records.payload IS DISTINCT FROM EXCLUDED.payload
-            OR records.retracted_at IS NOT NULL
+         -- The site predicate is belt as well as braces: the check above
+         -- refuses the batch, and this makes reparenting impossible even if
+         -- some future caller forgets to pass a site.
+         WHERE records.site_id = EXCLUDED.site_id
+           AND (records.payload IS DISTINCT FROM EXCLUDED.payload
+                OR records.retracted_at IS NOT NULL)
        RETURNING true AS changed`,
       [
         payload.record_id,

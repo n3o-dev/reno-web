@@ -1,9 +1,11 @@
-import { notFound } from 'next/navigation'
+import { notFound, unauthorized } from 'next/navigation'
 import Link from 'next/link'
 import { ScreenHeader } from '@/components/common/ScreenHeader'
 import { computeRealisation } from '@/rules/realisation'
 import { WORKBOOK_LABEL, WORKBOOK_MONTH, getWorkbook, planCells, sheetSlug } from '@/services/rkb'
 import { DayGrid } from '@/components/screens/parts/DayGrid'
+import { resolveToken } from '@/services/tokens'
+import { SITE_ID } from '@/services/report'
 
 interface SheetPageProps {
   readonly params: Promise<{ readonly sheet: string; readonly token: string }>
@@ -11,6 +13,11 @@ interface SheetPageProps {
 
 export default async function SheetPage({ params }: SheetPageProps) {
   const { sheet: slug, token } = await params
+  const link = await resolveToken(token)
+  if (link === null) unauthorized()
+  // The workbook belongs to one site; another site's token sees no sheet.
+  if (link.site_id !== SITE_ID) notFound()
+
   const book = await getWorkbook()
   const sheet = book.sheets.find((s) => sheetSlug(s.name) === slug)
   if (sheet === undefined) notFound()

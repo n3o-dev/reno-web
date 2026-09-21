@@ -30,7 +30,7 @@ interface ManpowerScreenProps extends ScreenProps {
 }
 
 export async function ManpowerScreen({ siteId, showSignals = true }: ManpowerScreenProps) {
-  const [records, report] = await Promise.all([getRecords(siteId), monthReport('2026-09')])
+  const [records, report] = await Promise.all([getRecords(siteId), monthReport('2026-09', siteId)])
   const { payable } = report.pack.manpower
   const lineups = records.lineups
   const contracts = provisionalContracts(lineups)
@@ -90,9 +90,11 @@ export async function ManpowerScreen({ siteId, showSignals = true }: ManpowerScr
               </div>
             ))}
           </dl>
-          <p className="mt-3 border-t border-line pt-3 text-[13px] text-muted">
-            None reported in this period.
-          </p>
+          {Object.values(absences).every((n) => n === 0) && (
+            <p className="mt-3 border-t border-line pt-3 text-[13px] text-muted">
+              None reported in this period.
+            </p>
+          )}
         </Card>
         <Card
           title="Amount payable"

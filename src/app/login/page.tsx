@@ -3,15 +3,31 @@ import { SignInForm } from './_components/SignInForm'
 
 export const metadata: Metadata = { title: 'Sign in · Reno' }
 
+/**
+ * A path on this site, or the home page.
+ *
+ * `startsWith('/') && !startsWith('//')` is not enough. The browser parses
+ * the value by WHATWG rules, where a backslash is interchangeable with a
+ * slash and leading control characters are stripped: `/\\evil.com` and
+ * `/<tab>/evil.com` both resolve to another origin. An open redirect off a
+ * real Reno URL is the ideal setup for a "your session expired" phish, so
+ * this parses the value the way the browser will and keeps only the parts
+ * that cannot leave the site.
+ */
+function safePath(next: string | undefined): string {
+  if (next === undefined) return '/'
+  const resolved = URL.parse(next, 'https://reno.invalid')
+  if (resolved === null || resolved.origin !== 'https://reno.invalid') return '/'
+  return `${resolved.pathname}${resolved.search}`
+}
+
 interface LoginPageProps {
   readonly searchParams: Promise<{ readonly next?: string }>
 }
 
 export default async function LoginPage({ searchParams }: LoginPageProps) {
   const { next } = await searchParams
-  // Only a path on this site: an open redirect turns the sign-in page into a
-  // way to send someone somewhere else with Reno's name on it.
-  const safeNext = next !== undefined && next.startsWith('/') && !next.startsWith('//') ? next : '/'
+  const safeNext = safePath(next)
 
   return (
     <main className="mx-auto flex min-h-dvh max-w-sm flex-col justify-center px-4 py-10">

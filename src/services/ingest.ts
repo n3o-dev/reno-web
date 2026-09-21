@@ -1,7 +1,7 @@
 import { z } from 'zod'
 import type { Database } from '@/db/client'
 import { RECORD_TYPES } from '@/contract/schemas'
-import { parseBatch, retract, upsertBatch, RecordRejected } from '@/db/records-store'
+import { parseBatch, retract, upsertBatch, CrossSiteRecord, RecordRejected } from '@/db/records-store'
 import { resolveAgentToken } from './ingest-auth'
 
 /**
@@ -79,8 +79,15 @@ export async function ingest(
     return refuse(403, `this token may only write records for ${token.siteId}`, { index: foreign })
   }
 
-  const written = await db.transaction((sql) => upsertBatch(sql, batch))
-  return { status: 200, body: { accepted: batch.length, written } }
+  try {
+    const written = await db.transaction((sql) => upsertBatch(sql, batch, token.siteId))
+    return { status: 200, body: { accepted: batch.length, written } }
+  } catch (error) {
+    if (error instanceof CrossSiteRecord) {
+      return refuse(403, error.message, { recordIds: error.recordIds })
+    }
+    throw error
+  }
 }
 
 export async function withdraw(

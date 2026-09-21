@@ -50,13 +50,16 @@ export async function PersonnelScreen({ siteId }: ScreenProps) {
         </Card>
         <Card
           title="Contracted slots"
-          info="Headcount per area per shift, from the service contract. Nothing has loaded it yet, so Manpower is running on figures derived from the roster and says so."
+          info="Headcount per area per shift. The contract's own figures have not been supplied, so these are assumed from the line-ups and every amount derived from them is marked provisional."
         >
           <p
             data-status="personnel.contracted_slots"
             className="font-[family-name:var(--font-display)] text-[20px] leading-[1.2] text-muted"
           >
-            Not loaded
+            Assumed
+          </p>
+          <p className="mt-1 text-[13px] text-muted">
+            From the line-ups, not from the contract.
           </p>
         </Card>
       </div>

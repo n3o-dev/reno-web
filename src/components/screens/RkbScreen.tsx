@@ -11,6 +11,7 @@ import {
   workbookEvidence,
 } from '@/services/rkb'
 import { SheetRealisation, type SheetSummary } from '@/components/screens/parts/SheetRealisation'
+import { SITE_ID } from '@/services/report'
 
 const percent = (value: number | null): string =>
   value === null ? '—' : `${Math.round(value * 100)}%`
@@ -18,9 +19,25 @@ const percent = (value: number | null): string =>
 interface RkbScreenProps {
   /** Where a sheet link points; the client link lives under its token. */
   readonly basePath?: string
+  /** Set on the client surface. The workbook belongs to one site. */
+  readonly siteId?: string
 }
 
-export async function RkbScreen({ basePath = '/rkb' }: RkbScreenProps = {}) {
+export async function RkbScreen({ basePath = '/rkb', siteId }: RkbScreenProps = {}) {
+  // The loaded workbook is this site's. Another site's token must not see
+  // its plan, let alone its realisation.
+  if (siteId !== undefined && siteId !== SITE_ID) {
+    return (
+      <>
+        <ScreenHeader
+          title="RKB Realisation"
+          question="What was planned, what was done, what was blocked"
+        />
+        <p className="text-[14px] text-muted">No RKB workbook has been loaded for this site.</p>
+      </>
+    )
+  }
+
   const book = await getWorkbook()
   const sheets: SheetSummary[] = book.sheets.map((sheet) => ({
     name: sheet.name,

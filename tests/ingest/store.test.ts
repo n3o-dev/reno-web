@@ -15,7 +15,7 @@ async function seeded() {
   const db = await testDatabase()
   for (const type of RECORD_TYPES) {
     const batch = parseBatch(fixtures.all(type).map((payload) => ({ type, payload })))
-    await db.transaction((sql) => upsertBatch(sql, batch))
+    await db.transaction((sql) => upsertBatch(sql, batch, 'lwas'))
   }
   return db
 }

@@ -17,6 +17,7 @@ import { computeRealisation, type Realisation } from '@/rules/realisation'
 import { deliveryOf, summariseDeliveries, type Delivery, type DeliverySummary } from '@/rules/work-orders'
 import { planCells, sheetSlug, workbookEvidence } from '@/services/rkb'
 import { bundleEvidence, type FigureEvidence } from '@/services/evidence'
+import { narrowToMonth } from './period'
 import { computeBilling, type Billing } from '@/rules/billing'
 import { contractSlots, type SiteContract } from '@/services/contract'
 
@@ -87,6 +88,13 @@ export interface ReportPack {
 
   readonly rkb: {
     readonly workbook: string
+    /**
+     * False when the loaded workbook is for a different month. The plan
+     * cannot be relabelled: July's rows are not September's, and printing
+     * them under September's heading would be the same lie the inert `month`
+     * argument used to tell.
+     */
+    readonly coversThisMonth: boolean
     readonly whole: Realisation
     readonly sheets: readonly SheetRealisation[]
     readonly evidence: FigureEvidence
@@ -135,6 +143,8 @@ export interface BuildInput {
   readonly siteId: string
   readonly siteLabel: string
   readonly contract: SiteContract
+  /** The month the loaded workbook covers, `YYYY-MM`. */
+  readonly workbookMonth: string
 }
 
 function computePayable(input: BuildInput, days: readonly SlotDay[]): Payable {
@@ -189,7 +199,11 @@ function computePayable(input: BuildInput, days: readonly SlotDay[]): Payable {
 const MONTH_LABEL = new Intl.DateTimeFormat('en-GB', { month: 'long', year: 'numeric' })
 
 export function buildReportPack(input: BuildInput): ReportPack {
-  const { source, workbook, month } = input
+  const { workbook, month } = input
+  // Everything below reads the narrowed source. Nothing in a monthly pack
+  // may come from outside its month.
+  const source = narrowToMonth(input.source, month)
+  const coversThisMonth = input.workbookMonth === month
   const complaints = source.complaints
   const reports = source.workReports
   const lineups = source.lineups
@@ -198,11 +212,13 @@ export function buildReportPack(input: BuildInput): ReportPack {
   const days = slotDays(lineups)
   const rows = coverage(contracts, days)
 
-  const sheets = workbook.sheets.map((sheet) => ({
-    name: sheet.name.trim(),
-    slug: sheetSlug(sheet.name),
-    realisation: computeRealisation(planCells(sheet, month)),
-  }))
+  const sheets = coversThisMonth
+    ? workbook.sheets.map((sheet) => ({
+        name: sheet.name.trim(),
+        slug: sheetSlug(sheet.name),
+        realisation: computeRealisation(planCells(sheet, month)),
+      }))
+    : []
 
   return {
     period: {
@@ -214,17 +230,30 @@ export function buildReportPack(input: BuildInput): ReportPack {
 
     rkb: {
       workbook: input.workbookLabel,
-      whole: computeRealisation(workbook.sheets.flatMap((sheet) => planCells(sheet, month))),
+      coversThisMonth,
+      whole: computeRealisation(
+        coversThisMonth ? workbook.sheets.flatMap((sheet) => planCells(sheet, month)) : [],
+      ),
       sheets,
-      evidence: {
-        items: workbook.sheets.map((sheet) =>
-          workbookEvidence(
-            sheet.name,
-            sheet.sections.flatMap((s) => s.rows.map((r) => r.rowNumber)),
-          ),
-        ),
-        total: workbook.sheets.length,
-      },
+      evidence: coversThisMonth
+        ? {
+            items: workbook.sheets.map((sheet) =>
+              workbookEvidence(
+                sheet.name,
+                sheet.sections.flatMap((s) => s.rows.map((r) => r.rowNumber)),
+              ),
+            ),
+            total: workbook.sheets.length,
+          }
+        : {
+            items: [
+              {
+                kind: 'absent',
+                reason: `The loaded workbook covers ${input.workbookMonth}, not ${month}. Upload this month's RKB to report its realisation.`,
+              },
+            ],
+            total: 1,
+          },
     },
 
     complaints: {
