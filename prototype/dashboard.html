@@ -1,0 +1,734 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Reno AI</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,700&display=swap" rel="stylesheet">
+<style>
+:root{
+  /* from the brand kit */
+  --surface:#ffffff; --ink:#400000; --primary:#dc5f05; --accent:#820000; --line:#e4dbdb;
+  /* derived — see DESIGN.md */
+  --plane:#f8f4f4; --muted:#7a5c5c; --faint:#947878; --tint:#fdf0e6;
+  /* ordinal: brand primary is the middle step */
+  --o1:#8a3c03; --o2:#dc5f05; --o3:#f2a065;
+  /* categorical: brand orange leads, rest snapped to passing steps */
+  --c1:#dc5f05; --c2:#2a78d6; --c3:#1baf7a; --c4:#7f66ff; --c5:#e87ba4;
+  --good:#0ca30c; --warn:#fab219; --serious:#ec835a; --critical:#d03b3b;
+  --head:"Space Grotesk",system-ui,sans-serif;
+  --body:"DM Sans",system-ui,sans-serif;
+}
+*{box-sizing:border-box}
+html,body{margin:0;padding:0;overflow-x:hidden}
+body{background:var(--plane);color:var(--ink);font:400 16px/1.55 var(--body);-webkit-font-smoothing:antialiased}
+button{font:inherit;color:inherit;background:none;border:0;cursor:pointer}
+h1,h2,h3{font-family:var(--head);margin:0;font-weight:700}
+
+/* header */
+.top{position:sticky;top:0;z-index:40;background:var(--ink);color:#fff;display:flex;align-items:center;gap:16px;padding:0 20px;height:56px}
+.logo{font-family:var(--head);font-weight:800;font-size:17px;letter-spacing:-.02em}
+.logo i{color:var(--primary);font-style:normal}
+.ctx{display:flex;align-items:center;gap:8px;font-size:13px;color:var(--faint)}
+.ctx b{color:#fff;font-weight:500}
+.ctx .sep{color:rgba(255,255,255,.22)}
+.grow{flex:1}
+.seg{display:flex;background:rgba(255,255,255,.08);border-radius:9px;padding:2px}
+.seg button{padding:5px 12px;border-radius:7px;font-size:13px;color:var(--faint)}
+.seg button[aria-pressed="true"]{background:var(--primary);color:var(--ink);font-weight:700}
+
+/* nav */
+.nav{position:sticky;top:56px;z-index:39;background:var(--surface);border-bottom:1px solid var(--line);display:flex;gap:0;overflow-x:auto;padding:0 12px}
+.nav button{padding:13px 13px;font-size:14px;color:var(--muted);border-bottom:2px solid transparent;white-space:nowrap}
+.nav button[aria-pressed="true"]{color:var(--ink);font-weight:700;border-bottom-color:var(--primary)}
+.nav button.hide{display:none}
+
+main{max-width:1400px;margin:0 auto;padding:24px 20px 64px}
+.eyebrow{font:500 11.5px/1.2 var(--body);letter-spacing:.10em;text-transform:uppercase;color:var(--accent);margin-bottom:8px}
+h2{font-size:28px;line-height:1.2;letter-spacing:-.01em;margin-bottom:24px}
+h3{font-size:17px;line-height:1.3;letter-spacing:-.005em}
+
+.row{display:grid;gap:16px;margin-bottom:16px}
+.r4{grid-template-columns:repeat(4,1fr)}
+.r3{grid-template-columns:repeat(3,1fr)}
+.r2{grid-template-columns:repeat(2,1fr)}
+.r21{grid-template-columns:2fr 1fr}
+.r12{grid-template-columns:1fr 2fr}
+@media(max-width:1060px){.r4{grid-template-columns:repeat(2,1fr)}.r3,.r21,.r12{grid-template-columns:1fr 1fr}}
+@media(max-width:700px){.row{grid-template-columns:1fr!important}}
+
+.card{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:20px}
+.card>h3{margin-bottom:14px}
+.card.pad0{padding:20px 0 4px}
+.card.pad0>h3,.card.pad0>.legend{padding:0 20px}
+
+/* stat */
+.stat{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:18px 20px}
+.stat .k{font:500 11.5px/1.2 var(--body);letter-spacing:.10em;text-transform:uppercase;color:var(--muted)}
+.stat .v{font-family:var(--head);font-weight:700;font-size:32px;letter-spacing:-.02em;line-height:1.05;margin-top:10px}
+.stat .v s{text-decoration:none;font-size:16px;font-weight:700;color:var(--faint)}
+.stat .n{font-size:13px;color:var(--muted);margin-top:7px}
+.stat .n.bad{color:var(--critical)}
+.stat .n.ok{color:var(--good)}
+.stat.dark{background:var(--ink);border-color:var(--ink);color:#fff}
+.stat.dark .v{font-size:38px;line-height:1.15}
+.stat.dark .k{color:var(--primary)}
+.stat.dark .n{color:var(--faint)}
+.stat.dark .v s{color:rgba(255,255,255,.45)}
+
+/* pills */
+.pill{display:inline-flex;align-items:center;gap:6px;font-size:13px;font-weight:500;padding:3px 10px;border-radius:999px;border:1px solid var(--line);color:var(--muted);white-space:nowrap}
+.pill b{width:13px;height:13px;flex:0 0 auto;font-size:0;background:currentColor;
+  -webkit-mask:var(--ic) center/contain no-repeat;mask:var(--ic) center/contain no-repeat;
+  --ic:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Ccircle cx='12' cy='12' r='10'/%3E%3C/svg%3E")}
+.pill.good b{--ic:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M22 11.08V12a10 10 0 1 1-5.93-9.14'/%3E%3Cpolyline points='22 4 12 14.01 9 11.01'/%3E%3C/svg%3E")}
+.pill.warn b{--ic:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z'/%3E%3Cline x1='12' y1='9' x2='12' y2='13'/%3E%3Cline x1='12' y1='17' x2='12.01' y2='17'/%3E%3C/svg%3E")}
+.pill.crit b{--ic:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolygon points='7.86 2 16.14 2 22 7.86 22 16.14 16.14 22 7.86 22 2 16.14 2 7.86 7.86 2'/%3E%3Cline x1='12' y1='8' x2='12' y2='12'/%3E%3Cline x1='12' y1='16' x2='12.01' y2='16'/%3E%3C/svg%3E")}
+.pill.blk b{--ic:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Ccircle cx='12' cy='12' r='10'/%3E%3Cline x1='10' y1='15' x2='10' y2='9'/%3E%3Cline x1='14' y1='15' x2='14' y2='9'/%3E%3C/svg%3E")}
+.pill.edit b{--ic:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M17 3a2.828 2.828 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z'/%3E%3C/svg%3E")}
+.pill.ext b{--ic:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6'/%3E%3Cpolyline points='15 3 21 3 21 9'/%3E%3Cline x1='10' y1='14' x2='21' y2='3'/%3E%3C/svg%3E")}
+.pill.ask b{--ic:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Ccircle cx='12' cy='12' r='10'/%3E%3Cpath d='M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3'/%3E%3Cline x1='12' y1='17' x2='12.01' y2='17'/%3E%3C/svg%3E")}
+.pill.edit{color:#8a5a00;border-color:#f6e2ae;background:#fdf7e8}
+.pill.ext{color:var(--accent);border-color:#e9cccc;background:#fbf2f2}
+.pill.ask{color:#8a5a00;border-color:#f6e2ae;background:#fdf7e8}
+.pill.good{color:#067806;border-color:#bce7bc;background:#f1fbf1}
+.pill.warn{color:#8a5a00;border-color:#f6e2ae;background:#fdf7e8}
+.pill.crit{color:var(--critical);border-color:#f2c3c3;background:#fdf2f2}
+.pill.blk{border-style:dashed;color:var(--muted)}
+.pill.info{color:var(--accent);border-color:#f3d9c4;background:var(--tint)}
+
+/* table */
+table{width:100%;border-collapse:collapse;font-size:14px}
+th{font:500 13px/1.5 var(--body);letter-spacing:.04em;text-transform:uppercase;color:var(--muted);text-align:left;padding:0 10px 8px;border-bottom:1px solid var(--line)}
+td{padding:10px;border-bottom:1px solid var(--line);vertical-align:middle}
+tr:last-child td{border-bottom:0}
+.num{text-align:right;font-variant-numeric:tabular-nums}
+.ctr{text-align:center;font-variant-numeric:tabular-nums}
+tbody tr.hv:hover{background:var(--tint)}
+.card{color:var(--ink)}
+.scroll{overflow-x:auto}
+
+.ev{border-bottom:1px dashed var(--faint);padding:0;font:inherit}
+.ev:hover{color:var(--accent);border-bottom-color:var(--accent)}
+
+.legend{display:flex;flex-wrap:wrap;gap:14px;font-size:13px;color:var(--muted);margin-bottom:12px}
+.legend span{display:inline-flex;align-items:center;gap:6px}
+.sw{width:10px;height:10px;border-radius:3px}
+
+.track{height:6px;background:var(--line);border-radius:999px;overflow:hidden}
+.fill{height:100%;border-radius:999px;background:var(--primary)}
+
+.tt{position:fixed;z-index:80;pointer-events:none;opacity:0;transition:opacity .08s;background:var(--ink);color:#fff;border-radius:9px;padding:8px 11px;font-size:13px;box-shadow:0 8px 24px rgba(64,0,0,.3)}
+.tt.on{opacity:1}
+.tt b{display:block;font-weight:600;margin-bottom:4px}
+.tt .l{display:flex;justify-content:space-between;gap:16px;color:var(--faint)}
+.tt .l em{font-style:normal;color:#fff;font-weight:600}
+
+.dw{position:fixed;inset:0;z-index:90;display:none}
+.dw.on{display:block}
+.dw .sc{position:absolute;inset:0;background:rgba(64,0,0,.42)}
+.dw .pn{position:absolute;top:0;right:0;bottom:0;width:min(440px,100%);background:var(--surface);overflow-y:auto;padding:22px 22px 40px}
+.dw .x{position:absolute;right:16px;top:16px;font-size:22px;line-height:1;color:var(--muted)}
+.dw h3{margin-bottom:16px}
+.msg{border:1px solid var(--line);border-radius:12px;padding:12px 14px;margin-bottom:10px;background:var(--plane)}
+.msg .w{font-weight:600;font-size:13px}
+.msg .b{font-size:13.5px;margin-top:3px}
+.msg .m{font-size:11.5px;color:var(--muted);margin-top:8px;display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+.ph{margin-top:9px;height:96px;border-radius:9px;border:1px dashed var(--faint);background:#fff;display:grid;place-items:center;font-size:11px;color:var(--faint)}
+.ph.two{display:grid;grid-template-columns:1fr 1fr;gap:8px;border:0;height:auto;padding:0}
+.ph.two>div{height:96px;border-radius:9px;border:1px dashed var(--faint);background:#fff;display:grid;place-items:center;font-size:11px;color:var(--faint)}
+
+.tbtn{font-size:13px;color:var(--muted);border:1px solid var(--line);border-radius:8px;padding:4px 10px}
+.tv{display:none;margin-top:14px}
+.tv.on{display:block}
+
+.renoonly{}
+body[data-role="client"] .renoonly{display:none!important}
+
+svg{display:block;overflow:visible}
+svg text{font:11px var(--body);fill:var(--muted)}
+svg text.v{font-weight:600;font-size:10.5px;fill:var(--ink)}
+svg .gl{stroke:var(--line);stroke-width:1}
+svg .bl{stroke:var(--faint);stroke-width:1}
+.hit{fill:transparent;cursor:pointer}
+
+.hm td{padding:3px 4px;border:0}
+.hm th{padding:0 4px 8px;text-align:center}
+.hm th:first-child{text-align:left}
+.hm .cell{border-radius:7px;padding:7px 0;text-align:center;font-weight:600;font-size:12px;font-variant-numeric:tabular-nums}
+.hm .lbl{font-size:14px;color:var(--ink);white-space:nowrap;padding-right:10px}
+
+.dot{display:inline-block;width:9px;height:9px;border-radius:50%}
+
+/* phone — the client opens this from inside WhatsApp */
+@media(max-width:760px){
+  main{padding:16px 12px 48px;min-width:0}
+  .card,.stat{padding:16px 14px;min-width:0}
+  .card table,.scroll{display:block;overflow-x:auto;-webkit-overflow-scrolling:touch;max-width:100%}
+  .top{height:auto;min-height:54px;padding:9px 12px;flex-wrap:wrap;row-gap:6px}
+  .logo{white-space:nowrap}
+  .ctx{order:3;width:100%;font-size:12px}
+  .seg button{padding:7px 14px}
+  .nav button{padding:12px 11px}
+  h2{font-size:25px;margin-bottom:18px}
+  .stat .v{font-size:28px}
+  .row{gap:12px;margin-bottom:12px}
+  .fpct{display:none}
+}
+</style>
+</head>
+<body data-role="reno">
+
+<header class="top">
+  <div class="logo">Reno<i> AI</i></div>
+  <div class="ctx"><b>Living World Alam Sutera</b><span class="sep">·</span><b>10–13 Sep 2026</b></div>
+  <div class="grow"></div>
+  <div class="seg"><button id="rReno" aria-pressed="true">Reno</button><button id="rClient" aria-pressed="false">Client</button></div>
+</header>
+<nav class="nav" id="nav"></nav>
+<main id="main"></main>
+
+<div class="tt" id="tt"></div>
+<div class="dw" id="dw"><div class="sc" data-x></div><div class="pn"><button class="x" data-x>&times;</button><div id="dwb"></div></div></div>
+
+<script>
+/* ---------------- data: LWAS 10–13 Sep 2026, from the case-study deck --------------- */
+const DD=['10 Sep','11 Sep','12 Sep','13 Sep'];
+const D={
+ msgs:[339,414,326,299], photos:[264,314,251,223], reports:[166,149,170,154],
+ repShift:{1:[58,60,65,54],2:[75,56,68,62],3:[9,15,15,5]},
+ comps:[19,35,4,17], compShift:{1:[13,30,3,12],2:[6,5,1,5],3:[0,0,0,0]},
+ answered:[17,25,4,16], closed:[9,10,3,7],
+ areas:['Carpark','Tenant frontage','Corridor & floor','Toilet','Outdoor','Lobby & gate','Lift & escalator','Other'],
+ byArea:{'Carpark':[7,6,0,1],'Tenant frontage':[2,3,0,6],'Corridor & floor':[2,5,1,2],'Toilet':[3,3,1,2],
+   'Outdoor':[2,5,0,1],'Lobby & gate':[1,3,1,1],'Lift & escalator':[1,1,0,1],'Other':[1,9,1,3]},
+ closedArea:{'Carpark':[[1,7],[3,6],null,[1,1]],'Tenant frontage':[[2,2],[1,3],null,[2,6]],
+   'Corridor & floor':[[2,2],[2,5],[1,1],[2,2]],'Toilet':[[2,3],[0,3],[1,1],[0,2]],
+   'Outdoor':[[0,2],[1,5],null,[0,1]],'Lobby & gate':[[0,1],[0,3],[1,1],[0,1]],
+   'Lift & escalator':[[1,1],[1,1],null,[1,1]],'Other':[[1,1],[2,9],[0,1],[1,3]]},
+ causes:[{k:'Cleaning standard',v:[16,25,4,11],c:1},{k:'Tenant / project / event',v:[1,6,0,1],c:2},
+   {k:'Engineering / equipment',v:[1,3,0,1],c:3},{k:'Spill',v:[0,1,0,3],c:4},{k:'Volcanic ash',v:[1,0,0,1],c:5}],
+ repeats:[
+  {a:'Toilet LT2',s:[0,2,1,2],e:'Formal customer complaint',n:'Client 11 Sep → direksi 12 Sep → customer 13 Sep'},
+  {a:'Tempat sampah CMO',s:[1,1,0,1],e:'Repeat',n:'Three days'},
+  {a:'Tangga carpark P1–P10',s:[2,0,2,0],e:'Re-asked',n:'Same photo resent from 10 Sep'},
+  {a:'Asbak smoking area',s:[0,2,0,2],e:'Re-asked',n:'No proof photo either day'},
+  {a:'Carpark P1 zona A',s:[2,1,0,0],e:'Repeat',n:'Traced to a tenant'},
+  {a:'Area APONG',s:[1,1,0,0],e:'Repeat',n:'Held on genie lift'},
+  {a:'Depan Skin+',s:[1,0,0,2],e:'Repeat',n:'Reopened 13 Sep'}],
+ wo:[
+  {t:'Take Out Kursi Area LDL & West Lobby',by:'Desak Made Meyasni',rq:'10 Sep 12:31',due:'10 Sep',st:'done',ev:'10 Sep 16:40'},
+  {t:'Peminjaman Meja & Qline — Bee Cheng Hiang',by:'Desak Made Meyasni',rq:'10 Sep 11:17',due:'12 Sep',st:'done',ev:'12 Sep 09:12'},
+  {t:'WO to HK — Pioneer DJ',by:'Rachmad Adi',rq:'9 Sep 21:41',due:'12–13 Sep',st:'open',ev:null}],
+ defects:[{k:'No area',v:[7,12,9,8],c:1},{k:'Done, no complaint',v:[5,3,2,2],c:2},
+   {k:'No caption',v:[5,4,0,1],c:3},{k:'Photo reused',v:[3,0,0,0],c:4}],
+ late1:[17,18,13,2], late3:[11,8,6,0],
+ lateWho:[{w:'Faisal Hanafi',v:26},{w:'Ahmad zamroni',v:11},{w:'Aldo',v:6},{w:'N',v:5},{w:'Amartha',v:1},{w:'Sarwedi',v:1}],
+ ba:[{w:'Amartha',b:32,t:124},{w:'Faisal Hanafi',b:19,t:48},{w:'Aldo',b:8,t:161},{w:'Acenk (Bontot)',b:2,t:114},
+     {w:'N',b:2,t:74},{w:'yeyenriani',b:2,t:69},{w:'Sarwedi',b:0,t:43}],
+ dupes:[['10 Sep 14:35 · Faisal · kaca kanopi','10 Sep 14:37 · Faisal · gutter kanopi'],
+   ['10 Sep 15:48 · Faisal · carpark P8','10 Sep 19:01 · Ahmad zamroni · carpark P8'],
+   ['11 Sep 09:52 · Faisal · carpark P9 progres','11 Sep 16:13 · Faisal · carpark P9 done']],
+ slots:[
+  {s:'External / S1',c:6,f:[6,6,5,6],comp:23,open:17,ppl:'Renno, Sandi, Nando, Ade, Okta, Marhadi'},
+  {s:'GF / S1',c:8,f:[8,8,7,8],comp:3,open:3,ppl:'Ani, Deviana, Febby, Tiara, Warti, M. Hafiz, Septian'},
+  {s:'LT2 / S1',c:7,f:[7,7,7,6],comp:8,open:3,ppl:'Hera, Iska, Naisah, Dikri, Aryo, Tahta, Inez'},
+  {s:'LT2 / S2',c:6,f:[6,6,6,6],comp:6,open:2,ppl:'Andika, Indra, Laras, Noval, Farida, Puput'},
+  {s:'External / S2',c:5,f:[5,4,4,5],comp:5,open:3,ppl:'Fazri, Putra, Adit, Amsar, Rangga'}],
+ rkb:[{s:'Koridor dalam',r:39,b:7,p:64,d:57,x:0},{s:'Toilet',r:25,b:5,p:50,d:41,x:0},
+   {s:'Car park',r:36,b:6,p:72,d:66,x:0},{s:'Facade',r:7,b:1,p:14,d:6,x:5},
+   {s:'Ruang Utility',r:30,b:1,p:20,d:18,x:0},{s:'Food court',r:8,b:1,p:10,d:9,x:0}],
+ rkbRows:[
+  {bl:'TOILET LT 2',it:[
+   {l:'Cover lampu',j:'Dusting',r:[1,0,0,1],a:[1,0,0,1]},
+   {l:'Ac Grill / Exhausfan',j:'Dusting',r:[0,1,0,0],a:[0,0,0,0]},
+   {l:'Dinding / Partisi',j:'Spotting / Wall cleaning',r:[0,0,1,0],a:[0,0,1,0]},
+   {l:'Pintu Toilet (kubikal)',j:'Spotting / Wall cleaning',r:[1,0,0,0],a:[1,0,0,0]},
+   {l:'Lantai (Nat-nat)',j:'Brushing / spotting',r:[0,0,0,1],a:[0,0,0,0]}]},
+  {bl:'FACADE',it:[
+   {l:'Sisi selatan',j:'Spotting / Glass cleaning',r:[1,1,0,0],a:[1,0,0,0],x:[0,1,0,0],why:'Car gondola not on site — Cristian B. Suryanto, 11 Sep 11:38'},
+   {l:'Pintu gate keluar masuk mobil',j:'Spotting / Glass cleaning',r:[0,0,1,1],a:[0,0,0,0],x:[0,0,1,1],why:'Scaffolding not delivered — Ahmad zamroni, 11 Sep 10:45'}]}],
+ rapor:[
+  {k:'A',t:'Realisasi Rencana Kerja',w:30,i:[
+   {n:'Eksekusi Realisasi Rencana Kerja',s:3,a:1,b:'Net realisation 92%'},
+   {n:'Standar Kebersihan Harian',s:null,a:0,b:'Physical inspection'},
+   {n:'Penyelesaian Komplain',s:3,a:1,b:'29 of 75 closed with photo, 7 repeat areas'},
+   {n:'Inovasi Area',s:null,a:0,b:'Not in the group'}]},
+  {k:'B',t:'Manajemen Aset & Mesin',w:20,i:[
+   {n:'Kebersihan Fisik Mesin',s:null,a:0,b:'Physical inspection'},
+   {n:'Logbook & Maintenance',s:null,a:0,b:'Paper logbook'},
+   {n:'Stok Opname Gudang',s:null,a:0,b:'Warehouse count'}]},
+  {k:'C',t:'Kepemimpinan & Pengembangan SDM',w:25,i:[
+   {n:'Training & Edukasi',s:null,a:0,b:'Renno Grow Hub'},
+   {n:'Kesiapan Tim',s:null,a:0,b:'Manager judgement'},
+   {n:'Kedisiplinan Tim',s:3,a:1,b:'3 unfilled slot-days'}]},
+  {k:'D',t:'Administrasi & Hubungan Klien',w:25,i:[
+   {n:'Kepuasan Klien',s:null,a:0,b:'Formal complaint 13 Sep'},
+   {n:'Ketepatan BAPP',s:null,a:0,b:'Billing calendar'},
+   {n:'Kualitas Laporan',s:3,a:1,b:'90% pass, before-after 10%, 3 reused photos'}]}],
+ people:[
+  {n:'Faisal Hanafi',r:'Pimpro',a:'All',al:'—',st:'ok'},
+  {n:'Amartha',r:'Team Leader',a:'LT1, LT2',al:'—',st:'ok'},
+  {n:'Acenk (Bontot)',r:'Team Leader',a:'UG, GF, External',al:'M. Aceng',st:'ok'},
+  {n:'Sarwedi',r:'Team Leader',a:'Carpark / S3',al:'—',st:'ok'},
+  {n:'Dame',r:'Cleaner',a:'UG',al:'Damme',st:'alias'},
+  {n:'Naisah',r:'Cleaner',a:'LT2',al:'Naisyah',st:'alias'},
+  {n:'Okta',r:'Cleaner',a:'External',al:'—',st:'quiet'},
+  {n:'Marhadi',r:'Cleaner',a:'External',al:'—',st:'quiet'}]
+};
+const S=a=>a.reduce((x,y)=>x+(y||0),0);
+const T={comps:S(D.comps),closed:S(D.closed),ans:S(D.answered),reports:S(D.reports)};
+const ORD=['var(--o1)','var(--o2)','var(--o3)'];
+const CAT=n=>`var(--c${n})`;
+const SEQ=['#fdf0e6','#fbdcc4','#f8c49c','#f4a870','#ee8a42','#dc5f05','#b94e04','#8a3c03','#5c2802'];
+
+/* ---------------- chart helpers ---------------- */
+const tt=document.getElementById('tt');
+function tip(e,h){tt.innerHTML=h;tt.classList.add('on');const w=tt.offsetWidth,ht=tt.offsetHeight;
+  let x=e.clientX+14,y=e.clientY-ht-10; if(x+w>innerWidth-8)x=e.clientX-w-14; if(y<8)y=e.clientY+16;
+  tt.style.left=x+'px';tt.style.top=y+'px';}
+const untip=()=>tt.classList.remove('on');
+const E=(n,a={})=>{const e=document.createElementNS('http://www.w3.org/2000/svg',n);for(const k in a)e.setAttribute(k,a[k]);return e;};
+const nice=v=>{if(v<=0)return 1;const p=Math.pow(10,Math.floor(Math.log10(v)));for(const m of[1,1.2,1.5,2,2.5,3,4,5,6,8,10])if(m*p>=v)return m*p;return 10*p;};
+const bar=(x,y,w,h,r=4)=>{r=Math.min(r,w/2,h);return h<=0?'':`M${x},${y+h} L${x},${y+r} Q${x},${y} ${x+r},${y} L${x+w-r},${y} Q${x+w},${y} ${x+w},${y+r} L${x+w},${y+h} Z`;};
+
+function grouped(el,{g,s,h=196,lab=1}){
+  const W=el.clientWidth||600,m={t:22,r:10,b:26,l:32},iw=W-m.l-m.r,ih=h-m.t-m.b;
+  const mx=nice(Math.max(...s.flatMap(x=>x.v)));
+  const sv=E('svg',{viewBox:`0 0 ${W} ${h}`,width:'100%',height:h});
+  for(let i=0;i<=4;i++){const y=m.t+ih-ih*i/4;sv.appendChild(E('line',{class:i?'gl':'bl',x1:m.l,x2:m.l+iw,y1:y,y2:y}));
+    const t=E('text',{x:m.l-8,y:y+3.5,'text-anchor':'end'});t.textContent=Math.round(mx*i/4);sv.appendChild(t);}
+  const gw=iw/g.length,n=s.length,bw=Math.min(24,(gw-16)/n-2);
+  g.forEach((gl,gi)=>{const gx=m.l+gw*gi+(gw-(bw*n+2*(n-1)))/2;
+    s.forEach((se,si)=>{const v=se.v[gi]||0,bh=ih*v/mx,x=gx+si*(bw+2),y=m.t+ih-bh;
+      if(bh>0)sv.appendChild(E('path',{d:bar(x,y,bw,bh),fill:se.f}));
+      if(lab){const t=E('text',{x:x+bw/2,y:y-6,'text-anchor':'middle',class:'v'});t.textContent=v;sv.appendChild(t);}
+      const ht=E('rect',{class:'hit',x:x-1,y:m.t,width:bw+2,height:ih});
+      ht.addEventListener('mousemove',ev=>tip(ev,`<b>${gl}</b><div class="l">${se.k}<em>${v}</em></div>`));
+      ht.addEventListener('mouseleave',untip);sv.appendChild(ht);});
+    const t=E('text',{x:m.l+gw*gi+gw/2,y:h-8,'text-anchor':'middle'});t.textContent=gl;sv.appendChild(t);});
+  el.innerHTML='';el.appendChild(sv);
+}
+function stacked(el,{g,s,h=206}){
+  const W=el.clientWidth||600,m={t:22,r:10,b:26,l:32},iw=W-m.l-m.r,ih=h-m.t-m.b;
+  const tot=g.map((_,i)=>S(s.map(x=>x.v[i]))),mx=nice(Math.max(...tot));
+  const sv=E('svg',{viewBox:`0 0 ${W} ${h}`,width:'100%',height:h});
+  for(let i=0;i<=4;i++){const y=m.t+ih-ih*i/4;sv.appendChild(E('line',{class:i?'gl':'bl',x1:m.l,x2:m.l+iw,y1:y,y2:y}));
+    const t=E('text',{x:m.l-8,y:y+3.5,'text-anchor':'end'});t.textContent=Math.round(mx*i/4);sv.appendChild(t);}
+  const gw=iw/g.length,bw=Math.min(44,gw-28);
+  g.forEach((gl,gi)=>{const x=m.l+gw*gi+(gw-bw)/2;let acc=0;
+    s.forEach(se=>{const v=se.v[gi]||0;if(!v)return;const bh=ih*v/mx,y=m.t+ih-ih*acc/mx-bh;
+      const top=acc+v>=tot[gi]-.001;
+      sv.appendChild(E('path',{d:top?bar(x,y,bw,bh):`M${x},${y} h${bw} v${bh} h${-bw} Z`,fill:se.f,stroke:'#fff','stroke-width':2}));
+      const ht=E('rect',{class:'hit',x,y,width:bw,height:bh});
+      ht.addEventListener('mousemove',ev=>tip(ev,`<b>${gl}</b><div class="l">${se.k}<em>${v}</em></div><div class="l">Total<em>${tot[gi]}</em></div>`));
+      ht.addEventListener('mouseleave',untip);sv.appendChild(ht);acc+=v;});
+    const t=E('text',{x:x+bw/2,y:m.t+ih-ih*tot[gi]/mx-7,'text-anchor':'middle',class:'v'});t.textContent=tot[gi];sv.appendChild(t);
+    const l=E('text',{x:m.l+gw*gi+gw/2,y:h-8,'text-anchor':'middle'});l.textContent=gl;sv.appendChild(l);});
+  el.innerHTML='';el.appendChild(sv);
+}
+function hbars(el,{rows,fmt=v=>v}){
+  const rh=28,W=el.clientWidth||520,m={t:2,r:52,l:Math.min(148,W*.34)},h=rows.length*rh+6,iw=W-m.l-m.r;
+  const mx=nice(Math.max(...rows.map(r=>r.v)));
+  const sv=E('svg',{viewBox:`0 0 ${W} ${h}`,width:'100%',height:h});
+  rows.forEach((r,i)=>{const y=m.t+i*rh+6,bh=15,bw=iw*r.v/mx;
+    sv.appendChild(E('rect',{x:m.l,y,width:iw,height:bh,rx:4,fill:'var(--line)',opacity:.5}));
+    if(bw>0)sv.appendChild(E('path',{d:`M${m.l},${y} h${Math.max(bw-4,1)} q4,0 4,4 v${bh-8} q0,4 -4,4 h${-Math.max(bw-4,1)} Z`,fill:r.f||'var(--primary)'}));
+    const l=E('text',{x:m.l-10,y:y+11.5,'text-anchor':'end'});l.textContent=r.k;sv.appendChild(l);
+    const v=E('text',{x:m.l+iw+9,y:y+11.5,class:'v'});v.textContent=fmt(r.v);sv.appendChild(v);
+    const ht=E('rect',{class:'hit',x:m.l,y:y-5,width:iw,height:rh-2});
+    ht.addEventListener('mousemove',e=>tip(e,`<b>${r.k}</b><div class="l">${r.lab||''}<em>${fmt(r.v)}</em></div>${r.n?`<div class="l">${r.n}</div>`:''}`));
+    ht.addEventListener('mouseleave',untip);sv.appendChild(ht);});
+  el.innerHTML='';el.appendChild(sv);
+}
+function heat(el,{rows,get,fmt,ttl}){
+  const mx=Math.max(...rows.flatMap(r=>DD.map((_,i)=>{const g=get(r,i);return g&&g.v!=null?g.v:0;})));
+  let h='<table class="hm"><thead><tr><th></th>'+DD.map(d=>`<th>${d}</th>`).join('')+'</tr></thead><tbody>';
+  rows.forEach(r=>{h+=`<tr><td class="lbl">${r}</td>`;
+    DD.forEach((d,i)=>{const g=get(r,i);
+      if(!g||g.v==null){h+='<td class="ctr" style="color:var(--faint)">–</td>';return;}
+      const k=g.v===0?0:Math.min(8,Math.ceil(g.v/mx*9)-1);
+      h+=`<td><div class="cell" style="background:${SEQ[k]};color:${k>=6?'#fff':'var(--ink)'}" data-tip="${ttl(r,d,g)}">${fmt(g)}</div></td>`;});
+    h+='</tr>';});
+  el.innerHTML=h+'</tbody></table>';
+  el.querySelectorAll('[data-tip]').forEach(c=>{c.addEventListener('mousemove',e=>tip(e,`<b>${c.dataset.tip}</b>`));c.addEventListener('mouseleave',untip);});
+}
+const leg=a=>`<div class="legend">${a.map(i=>`<span><i class="sw" style="background:${i.f}"></i>${i.k}</span>`).join('')}</div>`;
+const stat=(k,v,n,c)=>`<div class="stat"><div class="k">${k}</div><div class="v">${v}</div>${n?`<div class="n ${c||''}">${n}</div>`:''}</div>`;
+const statD=(k,v,n)=>`<div class="stat dark"><div class="k">${k}</div><div class="v">${v}</div>${n?`<div class="n">${n}</div>`:''}</div>`;
+
+/* ---------------- screens ---------------- */
+const V=[
+ {id:'today',l:'Today',c:1},{id:'comp',l:'Complaints',c:1},{id:'wo',l:'Work Orders',c:1},
+ {id:'rkb',l:'RKB',c:1},{id:'mp',l:'Manpower & Billing',c:1},{id:'qa',l:'Report Quality',c:0},
+ {id:'rapor',l:'Scorecard',c:0},{id:'month',l:'Monthly Report',c:1},{id:'ppl',l:'People',c:0}];
+
+const SC={};
+
+SC.today=()=>`
+<div class="eyebrow">Sunday 13 September · Shift 2</div><h2>Today</h2>
+<div class="row r4">
+ ${statD('On shift','34<s> / 34</s>','All slots filled')}
+ ${stat('Open complaints','5','1 on its third day','bad')}
+ ${stat('Closed with photo','7<s> / 17</s>','41%','bad')}
+ ${stat('RKB due today','5','3 done · 1 blocked')}
+</div>
+<div class="row r21">
+ <div class="card"><h3>Open</h3>
+  <table><thead><tr><th>Time</th><th>Area</th><th>Raised by</th><th>Status</th><th class="num">Left</th></tr></thead><tbody>
+  <tr class="hv"><td><button class="ev" data-ev="c1">19:55</button></td><td>Toilet LT2 dekat Rockstar</td><td>Cristian B. Suryanto</td><td><span class="pill crit"><b>●</b>3rd day</span></td><td class="num" style="color:var(--critical);font-weight:600">19h 48m</td></tr>
+  <tr class="hv"><td><button class="ev" data-ev="c2">16:15</button></td><td>Driveway depan pintu kaca</td><td>Alexander Tarigan</td><td><span class="pill blk"><b>◐</b>Blocked</span></td><td class="num" style="color:var(--muted)">paused</td></tr>
+  <tr class="hv"><td><button class="ev" data-ev="c2">11:27</button></td><td>Driver room timur</td><td>Rachmad Adi</td><td><span class="pill warn"><b>●</b>In progress</span></td><td class="num">11h 27m</td></tr>
+  <tr class="hv"><td><button class="ev" data-ev="c2">11:04</button></td><td>Lantai depan Skin+</td><td>Sofyan</td><td><span class="pill warn"><b>●</b>No photo</span></td><td class="num">11h 04m</td></tr>
+  <tr class="hv"><td><button class="ev" data-ev="c2">09:45</button></td><td>Asbak smoking area</td><td>Rachmad Adi</td><td><span class="pill warn"><b>●</b>No photo</span></td><td class="num">9h 45m</td></tr>
+  </tbody></table></div>
+ <div class="card"><h3>Slots</h3><div id="k-today"></div></div>
+</div>
+<div class="card"><h3>RKB due today</h3>
+ <table><thead><tr><th>Job</th><th>Sheet</th><th>Reported by</th><th>Status</th></tr></thead><tbody>
+ <tr><td>General cleaning toilet LT2</td><td>Toilet</td><td>N, yeyenriani</td><td><span class="pill good"><b>●</b>Done</span></td></tr>
+ <tr><td>Spider web cleaning koridor</td><td>Koridor dalam</td><td>Amartha, Faisal</td><td><span class="pill good"><b>●</b>Done</span></td></tr>
+ <tr><td>Pencucian lantai carpark P1, P3, P4, P9</td><td>Car park</td><td>Sarwedi, Faisal</td><td><span class="pill good"><b>●</b>Done</span></td></tr>
+ <tr><td>Glass cleaning canopy, ACP, lobby</td><td>Facade</td><td>—</td><td><span class="pill blk"><b>◐</b>Blocked</span></td></tr>
+ <tr><td>Brushing lantai P1 zona A dan gate</td><td>Car park</td><td>—</td><td><span class="pill"><b>○</b>Not reported</span></td></tr>
+ </tbody></table></div>`;
+
+SC.comp=()=>`
+<div class="eyebrow">10–13 September</div><h2>Complaints</h2>
+<div class="row r4">
+ ${statD('Raised','75','Across four days')}
+ ${stat('Closed with photo','29','39%','bad')}
+ ${stat('Median reply','3<s> min</s>','Slowest 25 min','ok')}
+ ${stat('Median close','41<s> min</s>','Slowest 16h 50m','bad')}
+</div>
+<div class="row r21">
+ <div class="card"><h3>Funnel</h3><div id="k-fun"></div></div>
+ <div class="card pad0"><h3>Cause</h3><div id="k-causeL"></div><div id="k-cause" style="padding:0 16px"></div>
+   <div style="padding:0 20px 8px"><button class="tbtn" data-tv="tv-cause">Table</button><div class="tv" id="tv-cause"></div></div></div>
+</div>
+<div class="row r2">
+ <div class="card"><h3>By area</h3><div id="k-h1"></div></div>
+ <div class="card"><h3>Closed with photo</h3><div id="k-h2"></div></div>
+</div>
+<div class="card"><h3>Repeat areas</h3>
+ <table><thead><tr><th>Area</th>${DD.map(d=>`<th class="ctr">${d}</th>`).join('')}<th>Escalation</th><th>Note</th></tr></thead><tbody>
+ ${D.repeats.map(r=>`<tr><td style="font-weight:500">${r.a}</td>
+  ${r.s.map(s=>`<td class="ctr">${s===0?'<span style="color:var(--faint)">–</span>':
+   s===1?'<span class="dot" style="background:var(--good)" title="Closed with photo"></span>':
+   '<span class="dot" style="background:var(--critical)" title="No proof photo"></span>'}</td>`).join('')}
+  <td>${r.e==='Formal customer complaint'?`<span class="pill crit"><b>●</b>${r.e}</span>`:r.e==='Re-asked'?`<span class="pill warn"><b>●</b>${r.e}</span>`:`<span class="pill">${r.e}</span>`}</td>
+  <td style="color:var(--muted);font-size:12.5px">${r.n}</td></tr>`).join('')}
+ </tbody></table></div>
+<div class="row r2">
+ <div class="card pad0"><h3>By shift</h3><div id="k-csL"></div><div id="k-cs" style="padding:0 16px"></div></div>
+ <div class="card pad0"><h3>Raised, answered, closed</h3><div id="k-cdL"></div><div id="k-cd" style="padding:0 16px"></div></div>
+</div>`;
+
+SC.wo=()=>`
+<div class="eyebrow">10–13 September</div><h2>Work Orders</h2>
+<div class="row r4">
+ ${statD('Requested','3','By the client')}
+ ${stat('Delivered on time','2','67%')}
+ ${stat('Open','1','Pioneer DJ, due 12–13 Sep','bad')}
+ ${stat('Median turnaround','4<s> h</s>','From request to photo')}
+</div>
+<div class="card"><h3>Requests</h3>
+ <table><thead><tr><th>Request</th><th>From</th><th>Received</th><th>Due</th><th>Evidence</th><th>Status</th></tr></thead><tbody>
+ ${D.wo.map(w=>`<tr class="hv"><td style="font-weight:500">${w.t}<div style="font-size:11.5px;color:var(--muted);margin-top:2px">PDF</div></td>
+  <td>${w.by}</td><td>${w.rq}</td><td>${w.due}</td>
+  <td>${w.ev?`<button class="ev" data-ev="wo">${w.ev}</button>`:'<span style="color:var(--faint)">—</span>'}</td>
+  <td>${w.st==='done'?'<span class="pill good"><b>●</b>Done</span>':'<span class="pill warn"><b>●</b>Open</span>'}</td></tr>`).join('')}
+ </tbody></table></div>`;
+
+SC.rkb=()=>{
+ const p=S(D.rkb.map(r=>r.p)),d=S(D.rkb.map(r=>r.d)),x=S(D.rkb.map(r=>r.x));
+ return `
+<div class="eyebrow">September 2026 · 145 job rows · 6 sheets</div><h2>RKB Realisation</h2>
+<div class="row r4">
+ ${statD('Gross',Math.round(d/p*100)+'<s>%</s>',`${d} of ${p}`)}
+ ${stat('Net of blocked',Math.round(d/(p-x)*100)+'<s>%</s>',`${x} rows blocked`)}
+ ${stat('Blocked',String(x),'Facade — equipment','bad')}
+ ${stat('Scores A.1','3','5 at 100%, 3 below, 1 under 60%','bad')}
+</div>
+<div class="row r21">
+ <div class="card"><h3>By sheet</h3>
+  <table><thead><tr><th>Sheet</th><th class="num">Rows</th><th class="num">Planned</th><th class="num">Done</th><th class="num">Blocked</th><th style="width:160px">Realisation</th></tr></thead><tbody>
+  ${D.rkb.map(r=>{const pc=Math.round(r.d/r.p*100);return `<tr><td style="font-weight:500">${r.s}</td>
+   <td class="num">${r.r}</td><td class="num">${r.p}</td><td class="num">${r.d}</td>
+   <td class="num">${r.x?`<span class="pill blk">${r.x}</span>`:'<span style="color:var(--faint)">–</span>'}</td>
+   <td><div style="display:flex;align-items:center;gap:9px"><div class="track" style="flex:1"><div class="fill" style="width:${pc}%;background:${pc>=90?'var(--good)':pc>=60?'var(--warn)':'var(--critical)'}"></div></div>
+   <b class="num" style="min-width:36px">${pc}%</b></div></td></tr>`;}).join('')}
+  </tbody></table></div>
+ <div class="card"><h3>Sheet layouts</h3>
+  <table><thead><tr><th>Layout</th><th>Sheets</th><th>Extra</th></tr></thead><tbody>
+  <tr><td><b>A</b></td><td>Koridor, Toilet, Car park, Food court</td><td style="color:var(--faint)">—</td></tr>
+  <tr><td><b>B</b></td><td>Facade</td><td>PROGRES</td></tr>
+  <tr><td><b>C</b></td><td>Ruang Utility</td><td>ZONA</td></tr>
+  </tbody></table></div>
+</div>
+${D.rkbRows.map(b=>`<div class="card"><h3>${b.bl}</h3><div class="scroll">
+ <table><thead><tr><th style="min-width:180px">Area / Lokasi</th><th style="min-width:150px">Jenis Pekerjaan</th>
+ ${DD.map(d=>`<th class="ctr" colspan="2" style="border-left:1px solid var(--line)">${d}</th>`).join('')}</tr>
+ <tr><th></th><th></th>${DD.map(()=>'<th class="ctr" style="border-left:1px solid var(--line);font-size:10px">R</th><th class="ctr" style="font-size:10px">A</th>').join('')}</tr></thead><tbody>
+ ${b.it.map(it=>`<tr><td>${it.l}</td><td style="color:var(--muted)">${it.j}</td>
+  ${DD.map((_,i)=>{const bl=it.x&&it.x[i];
+   const a=bl?`<span class="pill blk" title="${it.why}">blocked</span>`
+    :it.a[i]?`<button class="ev" data-ev="rkb" style="color:var(--good);font-weight:700">1</button>`
+    :(it.r[i]?'<span style="color:var(--critical);font-weight:600">0</span>':'<span style="color:var(--faint)">·</span>');
+   return `<td class="ctr" style="border-left:1px solid var(--line)">${it.r[i]||'<span style="color:var(--faint)">·</span>'}</td><td class="ctr">${a}</td>`;}).join('')}</tr>`).join('')}
+ <tr style="background:var(--tint)"><td colspan="2" style="font-weight:600;font-size:12px">JUMLAH · REALISASI · % net</td>
+  ${DD.map((_,i)=>{const p=S(b.it.map(x=>x.r[i])),a=S(b.it.map(x=>x.a[i]));
+   const bk=S(b.it.map(x=>(x.x&&x.x[i]&&x.r[i])?1:0)), net=p-bk;
+   const cell=!p?'<span style="color:var(--faint)">·</span>'
+    :net===0?'<span class="pill blk">blocked</span>'
+    :`${a} <span style="color:var(--muted);font-weight:400">${Math.round(a/net*100)}%</span>`;
+   return `<td class="ctr" style="border-left:1px solid var(--line);font-weight:700">${p}</td><td class="ctr" style="font-weight:700">${cell}</td>`;}).join('')}</tr>
+ </tbody></table></div></div>`).join('')}`;};
+
+SC.mp=()=>{
+ const tot=S(D.slots.map(s=>s.c*4)),fil=S(D.slots.map(s=>S(s.f))),miss=tot-fil;
+ const rate=4250000,gross=34*rate,ded=Math.round(miss/30*rate);
+ const f=n=>'Rp '+n.toLocaleString('id-ID');
+ return `
+<div class="eyebrow">10–13 September · slot = area × shift × day</div><h2>Manpower &amp; Billing</h2>
+<div class="row r4">
+ ${statD('Slot-days',String(tot),'5 slots, 4 days')}
+ ${stat('Filled',String(fil),Math.round(fil/tot*100)+'% coverage','ok')}
+ ${stat('Unfilled','3','Deducts pro-rata','bad')}
+ ${stat('Payable','<s>Rp </s>144.075.000',`Gross ${f(gross)}`)}
+</div>
+<div class="card"><h3>Coverage</h3><div class="scroll">
+ <table><thead><tr><th>Slot</th><th class="num">Contracted</th>${DD.map(d=>`<th class="ctr">${d}</th>`).join('')}
+ <th class="num">Complaints</th><th class="num">Open</th><th>Named</th></tr></thead><tbody>
+ ${D.slots.map(s=>`<tr><td style="font-weight:500">${s.s}</td><td class="num">${s.c}</td>
+  ${s.f.map(v=>`<td class="ctr" ${v<s.c?'style="color:var(--critical);font-weight:700"':''}>${v}${v<s.c?`<span style="font-weight:400;color:var(--muted)">/${s.c}</span>`:''}</td>`).join('')}
+  <td class="num">${s.comp}</td><td class="num" ${s.open>10?'style="color:var(--critical);font-weight:700"':''}>${s.open}</td>
+  <td style="color:var(--muted);font-size:12.5px">${s.ppl}</td></tr>`).join('')}
+ </tbody></table></div></div>
+<div class="row r2">
+ <div class="card"><h3>Absence</h3>
+  <table><thead><tr><th>Reason</th><th class="num">Days</th><th class="num">Replaced</th><th class="num">Deducts</th></tr></thead><tbody>
+  <tr><td>Off Day</td><td class="num">12</td><td class="num">12</td><td class="num" style="color:var(--faint)">never</td></tr>
+  <tr><td>Sakit</td><td class="num">2</td><td class="num">1</td><td class="num" style="font-weight:600">1</td></tr>
+  <tr><td>Izin</td><td class="num">3</td><td class="num">1</td><td class="num" style="font-weight:600">2</td></tr>
+  <tr><td>Alfa</td><td class="num">0</td><td class="num">0</td><td class="num">0</td></tr>
+  </tbody></table>
+  <div style="margin-top:14px"><span class="pill info"><b>●</b>Claimed — from the line-up</span></div></div>
+ <div class="card renoonly"><h3>Check queue <span class="pill">Reno only</span></h3>
+  <table><thead><tr><th>Signal</th><th class="num">Count</th><th>Names</th></tr></thead><tbody>
+  <tr><td>In line-up, in no report</td><td class="num" style="font-weight:700">6</td><td style="color:var(--muted);font-size:12.5px">Okta, Marhadi, Tahta, Inez, Amsar, Septian</td></tr>
+  <tr><td>Listed in two areas</td><td class="num" style="font-weight:700">1</td><td style="color:var(--muted);font-size:12.5px">Ani — GF and Lantai 1, 10 Sep</td></tr>
+  <tr><td>Headcount mismatch</td><td class="num">0</td><td style="color:var(--faint)">—</td></tr>
+  <tr><td>Alias undecided</td><td class="num" style="font-weight:700">2</td><td style="color:var(--muted);font-size:12.5px">Dame / Damme · Naisah / Naisyah</td></tr>
+  </tbody></table></div>
+</div>`;};
+
+SC.qa=()=>`
+<div class="eyebrow">639 work reports</div><h2>Report Quality</h2>
+<div class="row r4">
+ ${statD('Passed validation','578<s> / 639</s>','90%')}
+ ${stat('Before &amp; after','61','10%','bad')}
+ ${stat('Photo reused','3','Scores D.3 at 1','bad')}
+ ${stat('Sent 3h+ late','25','Median gap 3 min','bad')}
+</div>
+<div class="row r2">
+ <div class="card pad0"><h3>Defects</h3><div id="k-defL"></div><div id="k-def" style="padding:0 16px"></div>
+  <div style="padding:0 20px 8px"><button class="tbtn" data-tv="tv-def">Table</button><div class="tv" id="tv-def"></div></div></div>
+ <div class="card pad0"><h3>Late photos</h3><div id="k-lateL"></div><div id="k-late" style="padding:0 16px"></div></div>
+</div>
+<div class="row r2">
+ <div class="card"><h3>Before &amp; after by reporter</h3><div id="k-ba"></div></div>
+ <div class="card"><h3>Late by reporter</h3><div id="k-lw"></div></div>
+</div>
+<div class="card"><h3>Duplicates</h3>
+ <div class="row r3" style="margin:0">
+ ${D.dupes.map(d=>`<div style="border:1px solid var(--line);border-radius:12px;padding:12px">
+  <div style="display:flex;gap:9px;align-items:center">
+   <div class="ph" style="flex:1;margin:0;height:76px">photo</div>
+   <div style="color:var(--critical);font-weight:700;font-family:var(--head)">=</div>
+   <div class="ph" style="flex:1;margin:0;height:76px">photo</div></div>
+  <div style="font-size:11.5px;color:var(--muted);margin-top:10px">${d[0]}</div>
+  <div style="font-size:11.5px;color:var(--muted)">${d[1]}</div></div>`).join('')}
+ </div></div>`;
+
+SC.rapor=()=>{
+ let tot=0,miss=0;
+ const sec=D.rapor.map(s=>{const sc=s.i.filter(i=>i.s!=null);miss+=s.i.length-sc.length;
+  const av=sc.length?sc.reduce((a,b)=>a+b.s,0)/sc.length:null; if(av!=null)tot+=av*s.w/100; return {...s,av};});
+ const bd=tot>=4.5?['A','Sangat Baik','good']:tot>=3?['B','Baik / Cukup','warn']:['C','Kurang','crit'];
+ return `
+<div class="eyebrow">Faisal Hanafi · Pimpro · September 2026</div><h2>Scorecard</h2>
+<div class="row r4">
+ ${statD('Provisional',tot.toFixed(2),`Predikat ${bd[0]}`)}
+ ${stat('From data','4<s> / 13</s>','A.1, A.3, C.3, D.3')}
+ ${stat('Awaiting a person',String(miss),'Machines, stock, training, BAPP','bad')}
+ ${stat('Recommendation','Extend','Perpanjang kontrak')}
+</div>
+${sec.map(s=>`<div class="card">
+ <div style="display:flex;align-items:baseline;gap:12px;margin-bottom:14px">
+  <h3 style="margin:0">${s.k}. ${s.t}</h3><span class="pill">${s.w}%</span><div style="flex:1"></div>
+  <div style="font-size:13px;color:var(--muted)">Average <b style="font-family:var(--head);font-size:18px;color:var(--ink);margin-left:6px">${s.av!=null?s.av.toFixed(2):'—'}</b>
+  <span style="color:var(--faint)">→ ${s.av!=null?(s.av*s.w/100).toFixed(2):'—'}</span></div></div>
+ <table><thead><tr><th style="width:30%">Indicator</th><th style="width:96px">Score</th><th style="width:130px">Source</th><th>Basis</th></tr></thead><tbody>
+ ${s.i.map(i=>`<tr><td>${i.n}</td>
+  <td>${i.s==null?'<span style="color:var(--faint)">—</span>':`<span style="font-family:var(--head);font-weight:700;font-size:20px;color:${i.s>=5?'var(--good)':i.s>=3?'var(--ink)':'var(--critical)'}">${i.s}</span><span style="color:var(--faint)"> / 5</span>`}</td>
+  <td>${i.a?'<span class="pill good"><b>●</b>Data</span>':'<span class="pill edit"><b>✎</b>Person</span>'}</td>
+  <td style="color:var(--muted);font-size:12.5px">${i.b}</td></tr>`).join('')}
+ </tbody></table></div>`).join('')}
+<div class="card" style="display:flex;align-items:center;gap:22px;flex-wrap:wrap">
+ <div><div class="k" style="font:600 11px/1.2 var(--body);letter-spacing:.08em;text-transform:uppercase;color:var(--muted)">Total</div>
+  <div style="font-family:var(--head);font-weight:700;font-size:38px;letter-spacing:-.03em">${tot.toFixed(2)}</div></div>
+ <div style="width:1px;height:40px;background:var(--line)"></div>
+ <span class="pill ${bd[2]}" style="font-size:14px;padding:6px 14px"><b>●</b>${bd[0]} — ${bd[1]}</span>
+ <div style="flex:1"></div>
+ <div style="font-size:12.5px;color:var(--muted)">Provisional · ${miss} indicators unscored</div>
+</div>`;};
+
+SC.month=()=>`
+<div class="eyebrow">September 2026</div><h2>Monthly Report</h2>
+<div class="row r4">
+ ${statD('Sections ready','4<s> / 7</s>','Three need a person')}
+ ${stat('Evidence linked','1.052','Photos traced to messages')}
+ ${stat('Payable','<s>Rp </s>144.075.000','Gross less deductions')}
+ ${stat('BAPP window','25 Sep – 5 Oct','Zero delay invoice')}
+</div>
+<div class="card"><h3>Pack</h3>
+ <table><thead><tr><th style="width:26%">Section</th><th style="width:150px">Source</th><th>Contents</th><th style="width:26%">Output</th></tr></thead><tbody>
+ <tr><td style="font-weight:500">RKB realisation</td><td><span class="pill good"><b>●</b>Data</span></td><td style="color:var(--muted);font-size:12.5px">145 job rows, R against A</td><td style="color:var(--muted);font-size:12.5px">xlsx, Reno's template</td></tr>
+ <tr><td style="font-weight:500">Complaints</td><td><span class="pill good"><b>●</b>Data</span></td><td style="color:var(--muted);font-size:12.5px">75, cause split, closure proof</td><td style="color:var(--muted);font-size:12.5px">PDF + evidence appendix</td></tr>
+ <tr><td style="font-weight:500">Work orders</td><td><span class="pill good"><b>●</b>Data</span></td><td style="color:var(--muted);font-size:12.5px">3 requested, 2 delivered</td><td style="color:var(--muted);font-size:12.5px">PDF section</td></tr>
+ <tr><td style="font-weight:500">Manpower &amp; billing</td><td><span class="pill good"><b>●</b>Data</span></td><td style="color:var(--muted);font-size:12.5px">Coverage, absence, payable</td><td style="color:var(--muted);font-size:12.5px">BAPP pack</td></tr>
+ <tr><td style="font-weight:500">Before-after gallery</td><td><span class="pill good"><b>●</b>Data</span></td><td style="color:var(--muted);font-size:12.5px">61 reports, 68 photo sets</td><td style="color:var(--muted);font-size:12.5px">PDF, feeds QBR</td></tr>
+ <tr><td style="font-weight:500">Training</td><td><span class="pill ext"><b>↗</b>External</span></td><td style="color:var(--muted);font-size:12.5px">Renno Grow Hub</td><td style="color:var(--muted);font-size:12.5px">Attached by hand</td></tr>
+ <tr><td style="font-weight:500">Action plan</td><td><span class="pill edit"><b>✎</b>Person</span></td><td style="color:var(--muted);font-size:12.5px">Written by the coordinator</td><td style="color:var(--muted);font-size:12.5px">PDF section</td></tr>
+ </tbody></table>
+ <div style="display:flex;gap:10px;margin-top:18px;flex-wrap:wrap">
+  <button style="background:var(--ink);color:#fff;border-radius:9px;padding:10px 18px;font-weight:600;font-size:13.5px">Export RKB · xlsx</button>
+  <button style="border:1px solid var(--line);border-radius:9px;padding:10px 18px;font-size:13.5px">Client report · PDF</button>
+  <button style="border:1px solid var(--line);border-radius:9px;padding:10px 18px;font-size:13.5px">BAPP pack</button>
+  <button class="renoonly" style="border:1px solid var(--line);border-radius:9px;padding:10px 18px;font-size:13.5px">QBR material</button>
+ </div></div>
+<div class="row r2">
+ <div class="card pad0"><h3>Volume</h3><div id="k-volL"></div><div id="k-vol" style="padding:0 16px"></div></div>
+ <div class="card pad0"><h3>Reports by shift</h3><div id="k-rsL"></div><div id="k-rs" style="padding:0 16px"></div></div>
+</div>`;
+
+SC.ppl=()=>`
+<div class="eyebrow">Living World Alam Sutera</div><h2>People</h2>
+<div class="row r4">
+ ${statD('On the master','34','Contracted 34')}
+ ${stat('Alias undecided','2','Blocks BAPP','bad')}
+ ${stat('No report all period','2','Okta, Marhadi','bad')}
+ ${stat('Roster','Unconfirmed','Confirm to enable BAPP','bad')}
+</div>
+<div class="card"><h3>Master</h3>
+ <table><thead><tr><th>Name</th><th>Role</th><th>Area</th><th>Alias</th><th>Status</th><th></th></tr></thead><tbody>
+ ${D.people.map(p=>`<tr class="hv"><td style="font-weight:500">${p.n}</td><td>${p.r}</td><td style="color:var(--muted)">${p.a}</td>
+  <td>${p.al==='—'?'<span style="color:var(--faint)">—</span>':`<span class="pill ask"><b>?</b>${p.al}</span>`}</td>
+  <td>${p.st==='ok'?'<span class="pill good"><b>●</b>Active</span>':p.st==='alias'?'<span class="pill warn"><b>●</b>Merge?</span>':'<span class="pill crit"><b>●</b>No reports</span>'}</td>
+  <td class="num">${p.st==='alias'?'<button class="tbtn">Merge</button>':''}</td></tr>`).join('')}
+ </tbody></table></div>
+<div class="card"><h3>Contracted slots</h3>
+ <table><thead><tr><th>Area</th><th class="ctr">Shift 1</th><th class="ctr">Shift 2</th><th class="ctr">Shift 3</th></tr></thead><tbody>
+ <tr><td>External</td><td class="ctr">6</td><td class="ctr">5</td><td class="ctr">2</td></tr>
+ <tr><td>Ground floor</td><td class="ctr">8</td><td class="ctr">4</td><td class="ctr">—</td></tr>
+ <tr><td>Lantai 1</td><td class="ctr">3</td><td class="ctr">3</td><td class="ctr">—</td></tr>
+ <tr><td>Lantai 2</td><td class="ctr">7</td><td class="ctr">6</td><td class="ctr">—</td></tr>
+ <tr><td>Carpark</td><td class="ctr">—</td><td class="ctr">—</td><td class="ctr">4</td></tr>
+ </tbody></table></div>`;
+
+/* ---------------- wiring ---------------- */
+let cur='today';
+const $=i=>document.getElementById(i);
+function nav(){$('nav').innerHTML=V.map(v=>`<button data-v="${v.id}" aria-pressed="${v.id===cur}" class="${document.body.dataset.role==='client'&&!v.c?'hide':''}">${v.l}</button>`).join('');}
+function go(id){const v=V.find(x=>x.id===id)||V[0]; if(document.body.dataset.role==='client'&&!v.c)id='today';
+  cur=id;location.hash=id;nav();$('main').innerHTML=SC[id]();scrollTo(0,0);requestAnimationFrame(()=>draw(id));}
+
+function draw(id){
+ const sh=[{k:'Shift 1',f:ORD[0]},{k:'Shift 2',f:ORD[1]},{k:'Shift 3',f:ORD[2]}];
+ if(id==='today') hbars($('k-today'),{rows:D.slots.map(s=>({k:s.s,v:s.f[3],lab:'Filled',n:'Contracted '+s.c,f:s.f[3]<s.c?'var(--critical)':'var(--primary)'}))});
+
+ if(id==='comp'){
+  const f=[['Raised',75],['Answered',62],['Worked on',48],['Closed with photo',29]];
+  $('k-fun').innerHTML=f.map((r,i)=>`<div style="display:flex;align-items:center;gap:12px;height:62px">
+   <div style="width:132px;font-size:13px;color:var(--muted)">${r[0]}</div>
+   <div style="flex:1"><div style="height:42px;border-radius:7px;background:${SEQ[8-i*2]};width:${r[1]/75*100}%;min-width:52px;
+    display:flex;align-items:center;padding:0 13px;color:${i<=1?'#fff':'var(--ink)'};font-weight:700;font-family:var(--head);font-size:19px">${r[1]}</div></div>
+   <div class="fpct" style="width:118px;font-size:12px;color:var(--faint)">${i?Math.round(r[1]/f[i-1][1]*100)+'%':''}</div></div>`).join('');
+  const cz=D.causes.map(c=>({k:c.k,v:c.v,f:CAT(c.c)}));
+  $('k-causeL').innerHTML=leg(cz); stacked($('k-cause'),{g:DD,s:cz,h:196});
+  $('tv-cause').innerHTML=`<table><thead><tr><th>Cause</th>${DD.map(d=>`<th class="num">${d}</th>`).join('')}<th class="num">Total</th></tr></thead><tbody>
+   ${D.causes.map(c=>`<tr><td>${c.k}</td>${c.v.map(v=>`<td class="num">${v}</td>`).join('')}<td class="num" style="font-weight:700">${S(c.v)}</td></tr>`).join('')}</tbody></table>`;
+  heat($('k-h1'),{rows:D.areas,get:(r,i)=>({v:D.byArea[r][i]}),fmt:g=>g.v,ttl:(r,d,g)=>`${r}, ${d}: ${g.v}`});
+  heat($('k-h2'),{rows:D.areas,get:(r,i)=>{const x=D.closedArea[r][i];return x?{v:x[0],t:x[1]}:{v:null};},
+    fmt:g=>`${g.v}/${g.t}`,ttl:(r,d,g)=>`${r}, ${d}: ${g.v} of ${g.t} closed`});
+  const cs=[{k:'Shift 1',v:D.compShift[1],f:ORD[0]},{k:'Shift 2',v:D.compShift[2],f:ORD[1]},{k:'Shift 3',v:D.compShift[3],f:ORD[2]}];
+  $('k-csL').innerHTML=leg(cs); grouped($('k-cs'),{g:DD,s:cs});
+  const cd=[{k:'Raised',v:D.comps,f:ORD[0]},{k:'Answered',v:D.answered,f:ORD[1]},{k:'Closed',v:D.closed,f:ORD[2]}];
+  $('k-cdL').innerHTML=leg(cd); grouped($('k-cd'),{g:DD,s:cd});
+ }
+
+ if(id==='qa'){
+  const df=D.defects.map(d=>({k:d.k,v:d.v,f:CAT(d.c)}));
+  $('k-defL').innerHTML=leg(df); stacked($('k-def'),{g:DD,s:df,h:196});
+  $('tv-def').innerHTML=`<table><thead><tr><th>Defect</th>${DD.map(d=>`<th class="num">${d}</th>`).join('')}<th class="num">Total</th></tr></thead><tbody>
+   ${D.defects.map(d=>`<tr><td>${d.k}</td>${d.v.map(v=>`<td class="num">${v}</td>`).join('')}<td class="num" style="font-weight:700">${S(d.v)}</td></tr>`).join('')}</tbody></table>`;
+  const lt=[{k:'Over 1 hour',v:D.late1,f:ORD[2]},{k:'Over 3 hours',v:D.late3,f:ORD[0]}];
+  $('k-lateL').innerHTML=leg(lt); grouped($('k-late'),{g:DD,s:lt});
+  hbars($('k-ba'),{rows:D.ba.map(r=>({k:r.w,v:Math.round(r.b/r.t*100),lab:'Coverage',n:`${r.b} of ${r.t}`})),fmt:v=>v+'%'});
+  hbars($('k-lw'),{rows:D.lateWho.map(r=>({k:r.w,v:r.v,lab:'Photos over 1h'}))});
+ }
+
+ if(id==='month'){
+  const vl=[{k:'Messages',v:D.msgs,f:ORD[0]},{k:'Photos',v:D.photos,f:ORD[1]},{k:'Reports',v:D.reports,f:ORD[2]}];
+  $('k-volL').innerHTML=leg(vl); grouped($('k-vol'),{g:DD,s:vl,h:206,lab:0});
+  const rs=[{k:'Shift 1',v:D.repShift[1],f:ORD[0]},{k:'Shift 2',v:D.repShift[2],f:ORD[1]},{k:'Shift 3',v:D.repShift[3],f:ORD[2]}];
+  $('k-rsL').innerHTML=leg(rs); grouped($('k-rs'),{g:DD,s:rs,h:206});
+ }
+}
+
+const EV={
+ c1:`<h3>Toilet LT2 dekat Rockstar</h3>
+  <div class="msg"><div class="w">Cristian B. Suryanto</div><div class="b">Malam Pak @Rachmad Adi, info Pak ada nya komplain dari customer tentang kebersihan toilet. untuk toilet disable dan toilet wanita lt.2 (dekat tenant rockstar) sangat kotor dan tidak bersih dan juga Exhaust yang ada di toilet dis…</div>
+   <div class="ph">photo from the client</div><div class="m"><span>13 Sep 19:55</span></div></div>
+  <div class="msg"><div class="w">Faisal Hanafi</div><div class="b">Baik pak akan segera kami tindak lanjut.</div>
+   <div class="m"><span>13 Sep 19:57</span><span class="pill">2 min</span></div></div>
+  <div class="msg" style="border-color:#f2c3c3"><div class="w" style="color:var(--critical)">No closing photo</div>
+   <div class="b">Nothing further up to 23:59.</div><div class="m"><span class="pill crit"><b>●</b>Third day</span></div></div>
+  <div style="margin-top:16px;padding-top:14px;border-top:1px solid var(--line);font-size:13px;line-height:2">
+   <div>11 Sep · client</div><div>12 Sep · direksi</div><div style="color:var(--critical);font-weight:600">13 Sep · formal customer complaint</div></div>`,
+ c2:`<h3>Driveway depan pintu kaca</h3>
+  <div class="msg"><div class="w">Alexander Tarigan</div><div class="b">Driveway depan pintu kaca dengan tumpahan oli, minta tolong dibersihkan.</div>
+   <div class="ph">photo</div><div class="m"><span>13 Sep 16:15</span></div></div>
+  <div class="msg" style="border-style:dashed"><div class="w">Blocked</div><div class="b">Ahmad zamroni — "mohon maaf izin jawab untuk pipa P1A&amp;B belum ya pak di karenakan musti menggunakan scaffolding"</div>
+   <div class="m"><span>11 Sep 10:45</span><span class="pill blk"><b>◐</b>Clock paused</span></div></div>
+  <button class="tbtn renoonly" style="margin-top:14px">Override…</button>`,
+ rkb:`<h3>Dinding / Partisi · 12 Sep</h3>
+  <div class="msg"><div class="w">Amartha</div><div class="b">Washing manual koridor area LT 2</div>
+   <div class="ph two"><div>before</div><div>after</div></div>
+   <div class="m"><span>12 Sep 07:37</span><span>Captured 07:34</span><span class="pill good"><b>●</b>Validated</span></div></div>
+  <button class="tbtn renoonly" style="margin-top:14px">Override match…</button>`,
+ wo:`<h3>Take Out Kursi Area LDL &amp; West Lobby</h3>
+  <div class="msg"><div class="w">Desak Made Meyasni</div><div class="b">WO to HK — Take Out Kursi Area LDL &amp; West Lobby (10 September 2026).pdf</div>
+   <div class="m"><span>10 Sep 12:31</span><span class="pill info"><b>●</b>PDF</span></div></div>
+  <div class="msg"><div class="w">Acenk (Bontot)</div><div class="b">Done pak, kursi sudah di take out</div>
+   <div class="ph">photo</div><div class="m"><span>10 Sep 16:40</span><span class="pill good"><b>●</b>On time</span></div></div>`};
+
+const dw=$('dw');
+document.addEventListener('click',e=>{
+ const n=e.target.closest('#nav button'); if(n){go(n.dataset.v);return;}
+ const t=e.target.closest('[data-tv]'); if(t){const x=$(t.dataset.tv);x.classList.toggle('on');t.textContent=x.classList.contains('on')?'Hide':'Table';return;}
+ const v=e.target.closest('[data-ev]'); if(v){$('dwb').innerHTML=EV[v.dataset.ev]||'';dw.classList.add('on');return;}
+ if(e.target.dataset.x!==undefined){dw.classList.remove('on');}
+});
+addEventListener('keydown',e=>{if(e.key==='Escape')dw.classList.remove('on');});
+const setRole=r=>{document.body.dataset.role=r;rReno.setAttribute('aria-pressed',r==='reno');rClient.setAttribute('aria-pressed',r==='client');go(cur);};
+rReno.onclick=()=>setRole('reno'); rClient.onclick=()=>setRole('client');
+let rz;addEventListener('resize',()=>{clearTimeout(rz);rz=setTimeout(()=>draw(cur),140);});
+go((location.hash||'#today').slice(1));
+addEventListener('hashchange',()=>{const h=location.hash.slice(1);if(h&&h!==cur)go(h);});
+</script>
+</body>
+</html>
