@@ -517,20 +517,45 @@ loosening anything.
 
 ---
 
-## 8. The one thing we still need from you
+## 8. Transport — decided
 
-**Transport.** This document specifies the record *shape*; it does not specify how the records
-reach us. We have no preference strong enough to impose, so tell us which of these is least
-work on your side:
+**You push to us.** We expose one endpoint; you call it as you extract. We are not polling and
+we are not reading your database.
 
-1. **A database we read** — you write to Postgres, we read. Simplest for us, needs credentials and a stable schema.
-2. **A REST endpoint we poll** — `GET /records?site=lwas&since=<cursor>`, returning a page of records. Needs a cursor that is stable across restarts.
-3. **A webhook you push** — you POST batches to us as they are extracted. Lowest latency, needs a retry policy and idempotency on `record_id`.
+```
+POST https://<host>/api/records
+Authorization: Bearer <token we give you>
+Content-Type: application/json
 
-Whichever it is, we need **near real time, not a nightly batch** — the complaint SLA countdown
-is the most-used thing on the operational screen and is worthless on day-old data.
+{ "records": [ { "type": "complaint", "payload": { ... } }, ... ] }
+```
 
-We also need to know whether you can **backfill** the period already in the group, or whether
+| | |
+|---|---|
+| **Batch size** | Up to 1000 records per request. Over that we answer `413` and state the limit. |
+| **All or nothing** | If any record in a batch fails validation we store none of it and answer `422` with the index and the field. Fix that record and resend the batch. |
+| **Retries are safe** | Send the same batch again after a timeout you never saw the answer to. A record whose content has not changed is a no-op; nothing is duplicated. |
+| **Corrections** | Re-send the same `record_id` with new content. It replaces the old one, and we keep the old payload so a disputed figure can still be traced to what you said at the time. |
+| **Withdrawals** | `DELETE /api/records/<record_id>` when you emitted something that should never have existed — a caption you read as a complaint. Do not fake a closing state to hide it. |
+| **Token** | One per site, scoped to that site. A record whose `site_id` does not match the token is refused with `403`. Never put it in a URL or a log line; we never echo it back. |
+
+### Responses
+
+| Status | Meaning | What to do |
+|---|---|---|
+| `200` | Stored. Body: `{ "accepted": n, "written": n }` | Nothing. `written` may be lower than `accepted`; that means those records had not changed. |
+| `400` | Body was not the shape above | Fix the request. |
+| `401` | Token missing, unknown or revoked | Stop and talk to us. Do not retry in a loop. |
+| `403` | A record is for a site this token does not serve | Check `site_id`. |
+| `413` | Batch over the limit | Split it. |
+| `422` | A record failed validation. Body: `{ "error": "...", "index": n }` | Fix that record; the rest of the batch was not stored. |
+| `503` | We are up but our database is not | Retry with backoff. |
+
+**Timing.** Near real time, not a nightly batch — the complaint SLA countdown is the most-used
+figure on the operational screen and is worthless on day-old data. Anything from per-message to
+every few minutes is fine.
+
+**Still to tell us:** whether you can **backfill** the period already in the group, or whether
 records begin from the day you switch on.
 
 ---
@@ -544,7 +569,7 @@ records begin from the day you switch on.
 - [ ] Photos carry both `captured_at` (or explicit null) and `received_at`
 - [ ] Photos carry a perceptual hash that matches visually identical images
 - [ ] `confidence` is a real score, not a constant
-- [ ] Transport agreed and reachable from our environment
+- [ ] You can reach our endpoint from wherever the agent runs, and hold the token securely
 - [ ] Re-emitting the same fact reuses the same `record_id`
 
 ---

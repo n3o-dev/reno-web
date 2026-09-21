@@ -56,6 +56,15 @@
       "rules": {
         "no-console": "off"
       }
+    },
+    {
+      "files": [
+        "src/db/**",
+        "tests/ingest/**"
+      ],
+      "rules": {
+        "no-await-in-loop": "off"
+      }
     }
   ]
 }

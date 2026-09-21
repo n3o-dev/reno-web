@@ -1,5 +1,7 @@
 import { cache } from 'react'
 import { createRecordSource, loadFixtureSource, type RecordSource } from '@/contract/source'
+import { loadSource } from '@/db/records-store'
+import { getDatabase } from './database'
 import type { RecordType } from '@/contract/schemas'
 
 /**
@@ -13,7 +15,17 @@ import type { RecordType } from '@/contract/schemas'
  * Server-only. A Client Component that imports this will fail to build, which
  * is the intended outcome: records reach the browser as props, not as reads.
  */
-const loadAll = cache(async (): Promise<RecordSource> => loadFixtureSource())
+/**
+ * Postgres when there is one, the committed fixture set otherwise.
+ *
+ * The fallback is not a convenience: it is what keeps every screen runnable
+ * and testable without a server, and it stops a missing DATABASE_URL from
+ * rendering as a site with no activity.
+ */
+const loadAll = cache(async (): Promise<RecordSource> => {
+  const db = getDatabase()
+  return db === null ? loadFixtureSource() : loadSource(db.sql)
+})
 
 /**
  * Records for one site, or every site when `siteId` is undefined.
