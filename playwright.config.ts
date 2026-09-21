@@ -21,9 +21,14 @@ export default defineConfig({
   fullyParallel: true,
   forbidOnly: Boolean(process.env['CI']),
   reporter: process.env['CI'] === undefined ? [['list']] : [['github'], ['list']],
-  // The first navigations after a cold `next start` can take several seconds
-  // to paint; 5s was enough to make the suite flake on the run that builds.
-  expect: { timeout: 10_000 },
+  /*
+   * A cold `next start` gets hit by ten workers at once on the run that
+   * builds first, and the first paint can take a while. A high ceiling costs
+   * nothing once warm. One retry, so a straggler is reported as flaky rather
+   * than passing silently or failing the run.
+   */
+  expect: { timeout: 20_000 },
+  retries: 1,
   use: { baseURL: BASE_URL, trace: 'on-first-retry' },
   projects: [
     { name: 'desktop', use: { ...devices['Desktop Chrome'], launchOptions } },

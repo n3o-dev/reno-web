@@ -1,4 +1,5 @@
 import type { Evidence } from '@/services/evidence'
+import { overridesFor } from '@/services/overrides'
 
 interface FigureProps {
   /** Stable name the tests walk: `complaints.raised`. */
@@ -54,8 +55,10 @@ function Item({ item }: { readonly item: Evidence }) {
  * opens, so the panel ships with every figure and `pnpm test:evidence` fails
  * on any that resolves to nothing.
  */
-export function Figure({ name, children, evidence, total, className, kind }: FigureProps) {
+export async function Figure({ name, children, evidence, total, className, kind }: FigureProps) {
   const shown = evidence.length
+  const chain = await overridesFor(name)
+  const inForce = chain.at(-1)
   return (
     <span className="inline-flex items-baseline gap-1.5">
       <span
@@ -64,8 +67,16 @@ export function Figure({ name, children, evidence, total, className, kind }: Fig
         {...(kind === undefined ? {} : { 'data-figure-kind': kind })}
         className={className}
       >
-        {children}
+        {inForce === undefined ? children : inForce.value}
       </span>
+      {inForce !== undefined && (
+        <span
+          data-overridden={name}
+          className="rounded-[var(--radius-pill,999px)] border border-line px-2 py-0.5 text-[11.5px] text-muted"
+        >
+          corrected
+        </span>
+      )}
       <details className="group relative inline-block">
         <summary
           aria-label={`Evidence for ${name}`}
@@ -82,6 +93,26 @@ export function Figure({ name, children, evidence, total, className, kind }: Fig
               ? 'No source'
               : `${total} source${total === 1 ? '' : 's'}${shown < total ? `, showing ${shown}` : ''}`}
           </p>
+          {inForce !== undefined && (
+            <div className="mb-2 border-b border-line pb-2">
+              <p className="text-[11.5px] tracking-[0.10em] text-faint uppercase">
+                Corrected from {children}
+              </p>
+              <ol>
+                {chain.map((step) => (
+                  <li key={step.at} className="py-1 text-[13px]">
+                    <span className="block">
+                      → {step.value} · {step.by} ·{' '}
+                      <span className="text-faint tabular-nums">
+                        {STAMP.format(new Date(step.at))}
+                      </span>
+                    </span>
+                    <span className="block text-muted">{step.reason}</span>
+                  </li>
+                ))}
+              </ol>
+            </div>
+          )}
           <ul>
             {evidence.map((item, index) => (
               <Item key={item.kind === 'message' ? item.messageId : `${item.kind}-${index}`} item={item} />

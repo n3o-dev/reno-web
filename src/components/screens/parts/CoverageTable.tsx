@@ -48,8 +48,8 @@ export function CoverageTable({ rows, evidence }: CoverageTableProps) {
                 total={evidence.total}
               >
                 {row.filled}
-                <span className="text-faint"> / {row.contractedSlotDays}</span>
               </Figure>
+              <span className="text-faint"> / {row.contractedSlotDays}</span>
             </td>
           </tr>
         ))}
