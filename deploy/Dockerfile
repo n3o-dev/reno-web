@@ -35,12 +35,15 @@ RUN addgroup -g 1001 -S nodejs && adduser -S -u 1001 -G nodejs nextjs
 
 COPY --from=build --chown=nextjs:nodejs /app/.next/standalone ./
 COPY --from=build --chown=nextjs:nodejs /app/.next/static ./.next/static
-COPY --from=build --chown=nextjs:nodejs /app/public ./public
 
 # Read at runtime, not bundled: the RKB workbook the realisation screen
 # mirrors, and the site's own configuration.
 COPY --from=build --chown=nextjs:nodejs /app/fixtures ./fixtures
 COPY --from=build --chown=nextjs:nodejs /app/src/db/migrations ./src/db/migrations
+
+# The committed client link is a fixture. The deployed one is mounted here,
+# so it never enters the image or the repository.
+ENV CLIENT_TOKENS_FILE=/run/secrets/client-tokens.json
 
 USER nextjs
 EXPOSE 3000

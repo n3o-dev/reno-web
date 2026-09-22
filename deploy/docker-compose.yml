@@ -37,6 +37,10 @@ services:
       DATABASE_URL: postgres://reno:${POSTGRES_PASSWORD}@db:5432/reno
       INGEST_TOKENS: ${INGEST_TOKENS:?set INGEST_TOKENS in .env}
       NODE_ENV: production
+    volumes:
+      # The live client link, read-only and never in the image. Create it
+      # beside this file; deploy/client-tokens.example.json is the shape.
+      - ./client-tokens.json:/run/secrets/client-tokens.json:ro
     depends_on:
       db:
         condition: service_healthy

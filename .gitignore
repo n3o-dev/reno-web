@@ -24,3 +24,6 @@ test-results/
 playwright-report/
 .pglite-e2e/
 e2e/.auth/
+
+# deployment secrets, never committed
+deploy/client-tokens.json

@@ -1,0 +1,8 @@
+[
+  {
+    "token": "lwas-<openssl rand -hex 16>",
+    "site_id": "lwas",
+    "label": "Living World Alam Sutera",
+    "revoked": false
+  }
+]

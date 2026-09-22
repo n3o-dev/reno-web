@@ -24,8 +24,19 @@ export type ClientToken = z.infer<typeof clientToken>
 
 const TOKENS_FILE = 'fixtures/site/client-tokens.json'
 
+/**
+ * The deployed link is not the committed one. The file in the repository is a
+ * fixture — anyone who can read the repository can read it — so a deployment
+ * points `CLIENT_TOKENS_FILE` at a file mounted beside the container and the
+ * committed token stops working the moment it does.
+ */
+function tokensFile(): string {
+  const named = process.env['CLIENT_TOKENS_FILE']
+  return named === undefined || named.trim() === '' ? TOKENS_FILE : named
+}
+
 const loadTokens = cache(async (): Promise<readonly ClientToken[]> => {
-  const raw: unknown = JSON.parse(await readFile(TOKENS_FILE, 'utf8'))
+  const raw: unknown = JSON.parse(await readFile(tokensFile(), 'utf8'))
   return z.array(clientToken).parse(raw)
 })
 
