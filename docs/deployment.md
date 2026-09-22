@@ -69,6 +69,18 @@ docker run --rm --network reno_reno -e DATABASE_URL="postgres://reno:$PW@db:5432
 `user:add` prints the password once and runs migrations itself. Running it again on the same
 address issues a new password; there is no reset-by-email because there is no mail service.
 
+To put the concept deck's month into the database — a populated dashboard to walk someone
+through before the agent emits anything:
+
+```bash
+docker run --rm --network reno_reno -e DATABASE_URL="postgres://reno:$PW@db:5432/reno" \
+  reno-tools:latest pnpm seed:demo --yes
+```
+
+It upserts, so it is safe to repeat, and it seeds records only — no accounts, and no month
+confirmation, because the roster gate is a person's signature and seeding one would forge it.
+Records the agent later sends under the same `record_id` replace the seeded ones.
+
 Finally attach Caddy and route the hostname:
 
 ```bash

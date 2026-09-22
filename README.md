@@ -42,6 +42,7 @@ pnpm test           # vitest
 pnpm test:e2e       # playwright
 pnpm schema:emit    # regenerate contract/*.schema.json and the agent document
 pnpm contract:check <file>   # validate an agent payload against the real schemas
+pnpm seed:demo --yes         # load the fixture month into DATABASE_URL
 ```
 
 ## Shape
