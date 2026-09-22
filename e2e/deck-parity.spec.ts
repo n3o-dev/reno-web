@@ -138,11 +138,11 @@ test.describe('Manpower & Billing', () => {
   })
 
   test('slot-day coverage comes off the line-ups', async ({ page }) => {
-    // 37 people across 8 areas, two shifts, four days is 296 claimed — less
-    // the one slot-day a person corrected away, which the invoice also
-    // deducts for.
-    await expect(page.locator(figure('manpower.filled_slot_days'))).toHaveText('295')
-    await expect(page.locator(figure('manpower.filled.gf.1'))).toContainText('32')
+    // 37 people across 8 areas, two shifts, thirty days is 2220 claimed —
+    // less the one slot-day a person corrected away, which the invoice
+    // also deducts for.
+    await expect(page.locator(figure('manpower.filled_slot_days'))).toHaveText('2219')
+    await expect(page.locator(figure('manpower.filled.gf.1'))).toContainText('240')
   })
 
   test('attendance is claimed, never verified (AC-9)', async ({ page }) => {
@@ -156,13 +156,13 @@ test.describe('Manpower & Billing', () => {
     await expect(page.locator('[data-reno-only="true"]')).toHaveCount(1)
   })
 
-  test('refuses to invoice a month it has only four days of roster for', async ({ page }) => {
-    // The rate and the slot table are both loaded, but September has
-    // line-ups for four days out of thirty. A month is invoiced in full and
-    // deducted from, so billing it on four days would charge for 26 days
-    // nobody reported.
-    await expect(page.locator('[data-status="manpower.payable"]')).toHaveText('Not yet stated')
-    await expect(page.getByText(/contracted slot-days have no line-up/)).toBeVisible()
+  test('states the amount, and that the headcount behind it is assumed', async ({ page }) => {
+    // Rp 5.000.000 against 74 contracted slots, less a thirtieth for the
+    // one slot-day a person corrected away.
+    await expect(page.locator('[data-status="manpower.payable"]')).toHaveText('Rp 369.833.333')
+    await expect(page.locator('[data-provisional="manpower.payable"]')).toContainText(
+      /assumed from the line-ups/,
+    )
   })
 })
 
@@ -171,8 +171,17 @@ test.describe('RKB Realisation', () => {
     await page.goto('/rkb')
     // 533 planned job-row days across the six sheets of RKB Juli 2026.
     await expect(page.locator(figure('rkb.planned'))).toHaveText('533')
+    /*
+     * Net excludes the blocked façade day, gross counts it against Reno.
+     * Across 533 job-row days one block moves the whole-book figure by
+     * 0.1pp, so both still read 50% — the divergence is visible on the
+     * sheet that carries the block, and exact in tests/rkb/read.test.ts.
+     */
     await expect(page.locator(figure('rkb.net'))).toHaveText('50%')
     await expect(page.locator(figure('rkb.gross'))).toHaveText('50%')
+    await expect(page.locator(figure('rkb.blocked'))).toHaveText('1')
+    // Facade: 27 planned, one blocked, 26 done — 100% net against 96% gross.
+    await expect(page.locator(figure('rkb.realisation.facade'))).toHaveText('100%')
     await expect(page.locator(figure('rkb.realisation.facade'))).toHaveText('100%')
     await expect(page.locator(figure('rkb.realisation.car-park'))).toHaveText('0%')
   })

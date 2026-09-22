@@ -27,6 +27,7 @@ function withLineups(lineups: readonly LineupRecord[]): RecordSource {
     work_order: [...fixtures.workOrders],
     lineup: [...lineups],
     rkb_match: [...fixtures.rkbMatches],
+    rkb_block: [],
     photo: [...fixtures.photos],
     person: [...fixtures.people],
   })
@@ -130,6 +131,7 @@ describe('AC-7 · the citation gate', () => {
       work_order: [],
       lineup: [...fixtures.lineups],
       rkb_match: [],
+      rkb_block: [],
       photo: [],
       person: [...fixtures.people],
     })

@@ -268,7 +268,7 @@ export function buildReportPack(input: BuildInput): ReportPack {
     ? workbook.sheets.map((sheet) => ({
         name: sheet.name.trim(),
         slug: sheetSlug(sheet.name),
-        realisation: computeRealisation(planCells(sheet, month, source.rkbMatches)),
+        realisation: computeRealisation(planCells(sheet, month, source.rkbMatches, source.rkbBlocks)),
       }))
     : []
 
@@ -285,7 +285,7 @@ export function buildReportPack(input: BuildInput): ReportPack {
       coversThisMonth,
       whole: computeRealisation(
         coversThisMonth
-          ? workbook.sheets.flatMap((sheet) => planCells(sheet, month, source.rkbMatches))
+          ? workbook.sheets.flatMap((sheet) => planCells(sheet, month, source.rkbMatches, source.rkbBlocks))
           : [],
       ),
       sheets,

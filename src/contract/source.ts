@@ -6,6 +6,7 @@ import type {
   PersonRecord,
   PhotoRecord,
   RecordType,
+  RkbBlockRecord,
   RkbMatchRecord,
   WorkOrderRecord,
   WorkReportRecord,
@@ -29,6 +30,7 @@ export interface RecordsByType {
   work_order: WorkOrderRecord
   lineup: LineupRecord
   rkb_match: RkbMatchRecord
+  rkb_block: RkbBlockRecord
   photo: PhotoRecord
   person: PersonRecord
 }
@@ -41,6 +43,7 @@ export interface RecordSource {
   readonly workOrders: readonly WorkOrderRecord[]
   readonly lineups: readonly LineupRecord[]
   readonly rkbMatches: readonly RkbMatchRecord[]
+  readonly rkbBlocks: readonly RkbBlockRecord[]
   readonly photos: readonly PhotoRecord[]
   readonly people: readonly PersonRecord[]
 }
@@ -56,6 +59,7 @@ export function createRecordSource(store: Store): RecordSource {
     workOrders: store.work_order,
     lineups: store.lineup,
     rkbMatches: store.rkb_match,
+    rkbBlocks: store.rkb_block,
     photos: store.photo,
     people: store.person,
   }

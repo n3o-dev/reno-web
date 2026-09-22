@@ -22,6 +22,8 @@ export const EXAMPLE_NOTES: Record<RecordType, string> = {
     'The shift-1 line-up. This is the only source of claimed attendance in the group, so the absence counts matter as much as the names.',
   rkb_match:
     'Links a work report to one RKB job row on one date. `matched_by` records whether the agent or a human made the link.',
+  rkb_block:
+    'A job row that could not proceed. There is no unblocked variant and no state field: a block either happened or no record exists, and the envelope already requires the message that justifies it.',
   photo:
     'Captured 07:34, received 07:37. Both instants are required and separate. The hash is what makes duplicate detection possible.',
   person:
@@ -137,6 +139,19 @@ export const EXAMPLES: Record<RecordType, Record<string, unknown>> = {
     date: '2026-09-12',
     work_report_id: 'wr_20260912_0737_014',
     matched_by: 'agent',
+  },
+  rkb_block: {
+    record_id: 'rbl_0',
+    site_id: 'lwas',
+    source_message_id: 'msg_20260711_0902_118',
+    sent_at: '2026-07-11T09:02:00+07:00',
+    sender_raw: '🥀Amartha🥀',
+    sender_person_id: 'amartha',
+    confidence: 0.95,
+    job_row_id: 'facade:FACADE:1',
+    date: '2026-07-11',
+    reason: 'car gondola not on site, ditahan vendor',
+    cause: 'engineering_equipment',
   },
   photo: {
     record_id: 'ph_20260912_0737_a',

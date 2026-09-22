@@ -13,6 +13,7 @@ import {
 import { SheetRealisation, type SheetSummary } from '@/components/screens/parts/SheetRealisation'
 import { SITE_ID } from '@/services/report'
 import { getRecords } from '@/services/records'
+import { bundleEvidence } from '@/services/evidence'
 
 const percent = (value: number | null): string =>
   value === null ? '—' : `${Math.round(value * 100)}%`
@@ -41,12 +42,18 @@ export async function RkbScreen({ basePath = '/rkb', siteId }: RkbScreenProps = 
 
   const [book, records] = await Promise.all([getWorkbook(), getRecords(siteId)])
   const matches = records.rkbMatches
+  const blocks = records.rkbBlocks
+  const blockEvidence = bundleEvidence(
+    records,
+    blocks.map((b) => b.source_message_id),
+    'No job row was blocked in this period.',
+  )
   const sheets: SheetSummary[] = book.sheets.map((sheet) => ({
     name: sheet.name,
     slug: sheetSlug(sheet.name),
     sections: sheet.sections.length,
     rows: sheet.sections.reduce((n, s) => n + s.rows.length, 0),
-    realisation: computeRealisation(planCells(sheet, WORKBOOK_MONTH, matches)),
+    realisation: computeRealisation(planCells(sheet, WORKBOOK_MONTH, matches, blocks)),
     evidence: workbookEvidence(
       sheet.name,
       sheet.sections.flatMap((s) => s.rows.map((r) => r.rowNumber)),
@@ -59,7 +66,7 @@ export async function RkbScreen({ basePath = '/rkb', siteId }: RkbScreenProps = 
     ),
   )
   const whole = computeRealisation(
-    book.sheets.flatMap((sheet) => planCells(sheet, WORKBOOK_MONTH, matches)),
+    book.sheets.flatMap((sheet) => planCells(sheet, WORKBOOK_MONTH, matches, blocks)),
   )
 
   return (
@@ -98,19 +105,13 @@ export async function RkbScreen({ basePath = '/rkb', siteId }: RkbScreenProps = 
         </Card>
         <Card
           title="Blocked"
-          info="A job row that could not proceed for a reason outside Reno's control. This reads zero for a structural reason, not a happy one: no record type in the agent contract can mark a job row blocked, so nothing can ever set it. Net realisation is therefore arithmetically identical to gross until that record exists. Complaints and work orders do carry a blocked state and are shown as paused on their own screens."
+          info="A job row that could not proceed for a reason outside Reno's control — the gondola that never arrived, an area the client's own contractor was still working in. Net realisation excludes these; gross counts them against Reno, and the client sees both. Every block cites the message that justifies it, and the contract makes an uncited one unrepresentable."
         >
           <p className="font-[family-name:var(--font-display)] text-[38px] leading-[1.15] tabular-nums">
             <Figure
               name="rkb.blocked"
-              evidence={[
-                {
-                  kind: 'absent',
-                  reason:
-                    'No record type can mark an RKB job row blocked, so this cannot yet be anything but zero. Raised with the agent team.',
-                },
-              ]}
-              total={0}
+              evidence={blockEvidence.items}
+              total={blockEvidence.total}
             >
               {whole.blocked}
             </Figure>

@@ -1,0 +1,15 @@
+[
+  {
+    "record_id": "rbl_0",
+    "site_id": "lwas",
+    "source_message_id": "msg_1_74",
+    "sent_at": "2026-09-11T09:02:00+07:00",
+    "sender_raw": "Amartha",
+    "sender_person_id": null,
+    "confidence": 0.9,
+    "job_row_id": "facade:FACADE:2",
+    "date": "2026-07-11",
+    "reason": "Car gondola belum datang, masih ditahan vendor.",
+    "cause": "engineering_equipment"
+  }
+]

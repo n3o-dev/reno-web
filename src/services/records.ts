@@ -58,6 +58,7 @@ export const getRecords = cache(
       work_order: here(all.workOrders),
       lineup: here(all.lineups),
       rkb_match: here(all.rkbMatches),
+      rkb_block: here(all.rkbBlocks),
       photo: here(all.photos),
       person: here(all.people),
     })

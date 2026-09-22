@@ -27,7 +27,7 @@ is a null or an omitted record — never a guess.
 
 ---
 
-## 2. The eight record types
+## 2. The nine record types
 
 | Type | One per | Purpose |
 |---|---|---|
@@ -97,6 +97,16 @@ client-set `due_date`. Do not put a `due_date` on a complaint.
 **4.6 — `state_history` is required, even when empty.**
 We compute two medians from it — time to first reply, and time to a closing photo — and they
 tell opposite stories. Each entry needs its own `source_message_id`.
+
+**4.8 — A job row that could not proceed is an `rkb_block`, not a silence.**
+Until this record existed there was no way to say it, so a blocked façade day
+looked identical to one Reno simply never did — and the client's net
+realisation could never differ from its gross. Send one per job row per day
+that was planned and could not start, with the reason in the words it was said
+in. There is no `state` field and no unblocked variant: a block either
+happened or no record exists. The envelope's `source_message_id` is the
+citation, so rule 4.1 is structural here — an uncited block cannot be
+expressed.
 
 **4.7 — Never guess an area.**
 `area_id` is nullable on work reports and complaints. In the sample period, 36 of 639 reports
@@ -225,6 +235,22 @@ value may be `null`.
 | `date` | string (date) | yes | no | — |
 | `work_report_id` | string | yes | no | — |
 | `matched_by` | string | yes | no | `agent`, `human_override` |
+
+### `rkb_block`
+
+| Field | Type | Required | Nullable | Allowed values |
+|---|---|---|---|---|
+| `record_id` | string | yes | no | — |
+| `site_id` | string | yes | no | — |
+| `source_message_id` | string | yes | no | — |
+| `sent_at` | string (date-time) | yes | no | — |
+| `sender_raw` | string | yes | no | — |
+| `sender_person_id` | string | yes | yes | — |
+| `confidence` | number | yes | no | — |
+| `job_row_id` | string | yes | no | — |
+| `date` | string (date) | yes | no | — |
+| `reason` | string | yes | no | — |
+| `cause` | string | yes | no | `hk_standard`, `tenant_project_event`, `engineering_equipment`, `spill`, `external_other` |
 
 ### `photo`
 
@@ -441,6 +467,26 @@ Links a work report to one RKB job row on one date. `matched_by` records whether
   "date": "2026-09-12",
   "work_report_id": "wr_20260912_0737_014",
   "matched_by": "agent"
+}
+```
+
+### `rkb_block`
+
+A job row that could not proceed. There is no unblocked variant and no state field: a block either happened or no record exists, and the envelope already requires the message that justifies it.
+
+```json
+{
+  "record_id": "rbl_0",
+  "site_id": "lwas",
+  "source_message_id": "msg_20260711_0902_118",
+  "sent_at": "2026-07-11T09:02:00+07:00",
+  "sender_raw": "🥀Amartha🥀",
+  "sender_person_id": "amartha",
+  "confidence": 0.95,
+  "job_row_id": "facade:FACADE:1",
+  "date": "2026-07-11",
+  "reason": "car gondola not on site, ditahan vendor",
+  "cause": "engineering_equipment"
 }
 ```
 

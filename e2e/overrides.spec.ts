@@ -19,8 +19,8 @@ for (const [surface, path] of [
     await page.goto(path)
 
     // The corrected count, not the claimed one: the line-up named someone
-    // for all four days, and one of those was corrected away.
-    await expect(page.locator(`[data-figure="${FIGURE}"]`)).toHaveText('3')
+    // on all thirty days, and one of those was corrected away.
+    await expect(page.locator(`[data-figure="${FIGURE}"]`)).toHaveText('29')
     await expect(page.locator(`[data-overridden="${FIGURE}"]`)).toContainText(REASON)
     await expect(page.locator(`[data-overridden="${FIGURE}"]`)).toContainText('Sarwedi')
   })
@@ -42,5 +42,5 @@ test('the rows still sum to the headline', async ({ page }) => {
 test('a figure nobody corrected carries no marker', async ({ page }) => {
   await page.goto('/manpower')
   await expect(page.locator('[data-overridden]')).toHaveCount(1)
-  await expect(page.locator('[data-figure="manpower.filled.gf.1"]')).toHaveText('32')
+  await expect(page.locator('[data-figure="manpower.filled.gf.1"]')).toHaveText('240')
 })

@@ -3,7 +3,7 @@ import { cache } from 'react'
 import { parseWorkbook, type Sheet, type Workbook } from '@/rkb/read'
 import type { PlanCell } from '@/rules/realisation'
 import type { Evidence } from '@/services/evidence'
-import type { RkbMatchRecord } from '@/contract/schemas'
+import type { RkbBlockRecord, RkbMatchRecord } from '@/contract/schemas'
 
 /**
  * The RKB workbook behind the realisation screen.
@@ -41,12 +41,14 @@ export function planCells(
   sheet: Sheet,
   month: string,
   matches: readonly RkbMatchRecord[] = [],
+  blocks: readonly RkbBlockRecord[] = [],
 ): readonly PlanCell[] {
   // `rkb_match` is the record that links a work report to a job row on a
   // date. It existed in the contract and fed nothing, so a cell was "done"
   // only if Reno had already typed it into the workbook, and no RKB figure
   // could cite a message.
   const matched = new Map(matches.map((m) => [`${m.job_row_id}|${m.date}`, m]))
+  const blocked = new Map(blocks.map((b) => [`${b.job_row_id}|${b.date}`, b]))
 
   const cells: PlanCell[] = []
   for (const section of sheet.sections) {
@@ -56,30 +58,40 @@ export function planCells(
         const id = jobRowId(sheet.name, section.name, row.no)
         const date = `${month}-${String(day.day).padStart(2, '0')}`
         const match = matched.get(`${id}|${date}`)
+        const block = blocked.get(`${id}|${date}`)
         cells.push({
           job_row_id: id,
           date,
           planned: true,
-          done: match !== undefined || (day.actual !== null && day.actual > 0),
           /*
-           * Always false, and it cannot yet be anything else: no record type
-           * in the agent contract can mark an RKB job row blocked. Complaints
-           * and work orders carry a blocked state; job rows have no such
-           * record, so net realisation is arithmetically identical to gross
-           * until one exists. The screens say so rather than implying the two
-           * figures can diverge.
+           * A blocked cell is never done. The workbook can disagree — Reno's
+           * July Facade sheet is filled in for the day the gondola never
+           * arrived — and when it does, the block wins: someone said in
+           * writing that the work could not start, and net is
+           * done / (planned - blocked), so counting a cell as both put
+           * Facade at 104%.
            */
-          blocked: false,
-          source_message_id: match?.source_message_id ?? null,
+          done:
+            block === undefined &&
+            (match !== undefined || (day.actual !== null && day.actual > 0)),
+          /*
+           * From an `rkb_block` record, which is the ninth record type and
+           * exists for this: until it did, nothing the agent could emit
+           * would set this, so net realisation was arithmetically identical
+           * to gross and the client saw two figures that could not diverge.
+           *
+           * A block's own message is the citation. The envelope requires
+           * one, so an uncited block is unrepresentable rather than
+           * rejected.
+           */
+          blocked: block !== undefined,
+          source_message_id: block?.source_message_id ?? match?.source_message_id ?? null,
         })
       }
     }
   }
   return cells
 }
-
-/** True while nothing can mark an RKB job row blocked. */
-export const RKB_BLOCKS_HAVE_NO_SOURCE = true
 
 /** The month the loaded workbook covers. Named in the file, not inferred. */
 export const WORKBOOK_MONTH = '2026-07'

@@ -18,7 +18,7 @@ export async function ScorecardScreen({ siteId }: ScreenProps) {
   const [records, book] = await Promise.all([getRecords(siteId), getWorkbook()])
   const realisation = computeRealisation(
     // A.1 is the Pimpro's realisation score; it must count matched work.
-    book.sheets.flatMap((sheet) => planCells(sheet, WORKBOOK_MONTH, records.rkbMatches)),
+    book.sheets.flatMap((sheet) => planCells(sheet, WORKBOOK_MONTH, records.rkbMatches, records.rkbBlocks)),
   )
   const complaints = closureStats(records.complaints)
   // Both of these used to be literals typed into the call, which meant the

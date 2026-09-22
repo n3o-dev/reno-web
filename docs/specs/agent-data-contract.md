@@ -145,6 +145,22 @@ A contract test fails if this section drifts from the schemas.
 | `work_report_id` | string | yes | no | — |
 | `matched_by` | string | yes | no | `agent`, `human_override` |
 
+### `rkb_block`
+
+| Field | Type | Required | Nullable | Allowed values |
+|---|---|---|---|---|
+| `record_id` | string | yes | no | — |
+| `site_id` | string | yes | no | — |
+| `source_message_id` | string | yes | no | — |
+| `sent_at` | string (date-time) | yes | no | — |
+| `sender_raw` | string | yes | no | — |
+| `sender_person_id` | string | yes | yes | — |
+| `confidence` | number | yes | no | — |
+| `job_row_id` | string | yes | no | — |
+| `date` | string (date) | yes | no | — |
+| `reason` | string | yes | no | — |
+| `cause` | string | yes | no | `hk_standard`, `tenant_project_event`, `engineering_equipment`, `spill`, `external_other` |
+
 ### `photo`
 
 | Field | Type | Required | Nullable | Allowed values |

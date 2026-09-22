@@ -139,3 +139,48 @@ describe('a matched report counts as done', () => {
     expect(done[0]?.source_message_id).toBe('msg_0_1')
   })
 })
+
+describe('a blocked cell is never also done', () => {
+  it('never lets realisation exceed 100%', async () => {
+    const { planCells, jobRowId } = await import('@/services/rkb')
+    const { computeRealisation } = await import('@/rules/realisation')
+    const sheet = book.sheets.find((s) => s.name === 'RKB FACADE')
+    const section = sheet?.sections[0]
+    const row = section?.rows[1]
+    if (sheet === undefined || section === undefined || row === undefined) {
+      throw new Error('no facade row')
+    }
+    const day = row.days.find((d) => (d.planned ?? 0) > 0 && (d.actual ?? 0) > 0)
+    if (day === undefined) throw new Error('facade row has no completed planned day')
+
+    /*
+     * Reno's workbook says this day was done; the block says it could not
+     * start. The block wins — net is done / (planned - blocked), so
+     * counting the cell in both put Facade at 104%.
+     */
+    const cells = planCells(sheet, '2026-07', [], [
+      {
+        record_id: 'rbl_x',
+        site_id: 'lwas',
+        source_message_id: 'msg_0_1',
+        sent_at: '2026-07-11T09:00:00+07:00',
+        sender_raw: 'Amartha',
+        sender_person_id: null,
+        confidence: 0.9,
+        job_row_id: jobRowId(sheet.name, section.name, row.no),
+        date: `2026-07-${String(day.day).padStart(2, '0')}`,
+        reason: 'car gondola not on site',
+        cause: 'engineering_equipment',
+      },
+    ])
+
+    const blocked = cells.filter((c) => c.blocked)
+    expect(blocked).toHaveLength(1)
+    expect(blocked[0]?.done).toBe(false)
+
+    const realisation = computeRealisation(cells)
+    expect(realisation.net).not.toBeNull()
+    expect(realisation.net ?? 0).toBeLessThanOrEqual(1)
+    expect(realisation.gross).toBeLessThanOrEqual(1)
+  })
+})

@@ -193,6 +193,31 @@ export const rkbMatchRecord = z.strictObject({
 })
 
 /**
+ * A job row that could not proceed on a given day.
+ *
+ * The ninth record type, added because there was no way to say this at all:
+ * complaints and work orders carry `state: "blocked"` with a citation, and
+ * a job row had nothing, so net realisation was arithmetically identical to
+ * gross and the client was shown two figures that could not diverge.
+ *
+ * There is no `state` field and no unblocked variant. A block either
+ * happened or no record exists — and because every record carries
+ * `source_message_id`, a block cannot be expressed without citing the
+ * message that justifies it. Rule 4.1 is structural here rather than
+ * enforced by a union: the envelope already makes an uncited block
+ * unrepresentable.
+ */
+export const rkbBlockRecord = z.strictObject({
+  ...envelope,
+  job_row_id: z.string().min(1),
+  date: z.iso.date(),
+  /** Why, in the words of whoever said it. Never blank. */
+  reason: z.string().min(1),
+  /** Whose fault, from the same closed set complaints use. */
+  cause: z.enum(CAUSES),
+})
+
+/**
  * `captured_at` and `received_at` are separate on purpose: the gap between
  * them is the late-photo metric and cannot be recovered later. The hash is
  * what makes duplicate detection possible at all.
@@ -224,6 +249,7 @@ export const RECORD_TYPES = [
   'work_order',
   'lineup',
   'rkb_match',
+  'rkb_block',
   'photo',
   'person',
 ] as const
@@ -236,6 +262,7 @@ export const zodSchemas = {
   work_order: workOrderRecord,
   lineup: lineupRecord,
   rkb_match: rkbMatchRecord,
+  rkb_block: rkbBlockRecord,
   photo: photoRecord,
   person: personRecord,
 } satisfies Record<RecordType, z.ZodType>
@@ -246,6 +273,7 @@ export type WorkOrderRecord = z.infer<typeof workOrderRecord>
 export type WorkReportRecord = z.infer<typeof workReportRecord>
 export type LineupRecord = z.infer<typeof lineupRecord>
 export type RkbMatchRecord = z.infer<typeof rkbMatchRecord>
+export type RkbBlockRecord = z.infer<typeof rkbBlockRecord>
 export type PhotoRecord = z.infer<typeof photoRecord>
 export type PersonRecord = z.infer<typeof personRecord>
 export type Defect = (typeof DEFECTS)[number]
@@ -263,6 +291,7 @@ export const JSON_SCHEMAS = {
   work_order: z.toJSONSchema(workOrderRecord, TARGET),
   lineup: z.toJSONSchema(lineupRecord, TARGET),
   rkb_match: z.toJSONSchema(rkbMatchRecord, TARGET),
+  rkb_block: z.toJSONSchema(rkbBlockRecord, TARGET),
   photo: z.toJSONSchema(photoRecord, TARGET),
   person: z.toJSONSchema(personRecord, TARGET),
 }

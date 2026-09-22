@@ -21,8 +21,9 @@ export default async function SheetPage({ params }: SheetPageProps) {
   const sheet = book.sheets.find((s) => sheetSlug(s.name) === slug)
   if (sheet === undefined) notFound()
 
-  const matches = (await getRecords()).rkbMatches
-  const realisation = computeRealisation(planCells(sheet, WORKBOOK_MONTH, matches))
+  const records = await getRecords()
+  const { rkbMatches: matches, rkbBlocks: blocks } = records
+  const realisation = computeRealisation(planCells(sheet, WORKBOOK_MONTH, matches, blocks))
 
   return (
     <>
@@ -36,7 +37,7 @@ export default async function SheetPage({ params }: SheetPageProps) {
       />
       <div className="flex flex-col gap-6">
         {sheet.sections.map((section) => (
-          <DayGrid matches={matches} sheetName={sheet.name} key={`${section.name}-${section.rows[0]?.rowNumber ?? 0}`} section={section} />
+          <DayGrid matches={matches} blocks={blocks} sheetName={sheet.name} key={`${section.name}-${section.rows[0]?.rowNumber ?? 0}`} section={section} />
         ))}
       </div>
     </>

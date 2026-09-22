@@ -75,6 +75,14 @@ const SAMPLES: Record<RecordType, () => Record<string, unknown>> = {
     work_report_id: 'rec_009',
     matched_by: 'agent',
   }),
+  rkb_block: () => ({
+    ...envelope,
+    record_id: 'rbl_1',
+    job_row_id: 'facade:FACADE:1',
+    date: '2026-07-11',
+    reason: 'car gondola not on site',
+    cause: 'engineering_equipment',
+  }),
   photo: () => ({
     ...envelope,
     captured_at: '2026-09-12T07:34:00+07:00',

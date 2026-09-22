@@ -141,6 +141,7 @@ describe('AC-3 · complaints never touch the billing figure', () => {
         work_order: [...source.workOrders],
         lineup: [...source.lineups],
         rkb_match: [...source.rkbMatches],
+        rkb_block: [],
         photo: [...source.photos],
         person: [...source.people],
       }),
@@ -197,6 +198,7 @@ const fullMonth = createRecordSource({
   work_order: [...source.workOrders],
   lineup: everyDay,
   rkb_match: [...source.rkbMatches],
+  rkb_block: [],
   photo: [...source.photos],
   person: [...source.people],
 })
@@ -214,12 +216,40 @@ const buildFull = (over = contract): ReportPack =>
   })
 
 describe('a month missing its line-ups is not invoiced', () => {
-  it('names the days rather than billing them as covered', () => {
-    const { payable } = pack.manpower
+  it('names the slot-days rather than billing them as covered', () => {
+    /*
+     * The fixtures now carry a roster for every day of September, so the
+     * month itself is complete. A month with a gap still refuses: drop one
+     * area's line-up entries and the slot-days it contracted go unreported.
+     */
+    const gappy = buildReportPack({
+      source: createRecordSource({
+        message: [...source.messages],
+        work_report: [...source.workReports],
+        complaint: [...source.complaints],
+        work_order: [...source.workOrders],
+        lineup: source.lineups.map((l) => ({
+          ...l,
+          entries: l.entries.filter((e) => e.area_id !== 'gondola'),
+        })),
+        rkb_match: [...source.rkbMatches],
+        rkb_block: [],
+        photo: [...source.photos],
+        person: [...source.people],
+      }),
+      workbook,
+      month: '2026-09',
+      workbookLabel: 'RKB Juli 2026',
+      siteId: 'lwas',
+      siteLabel: 'Living World Alam Sutera',
+      contract,
+      workbookMonth: '2026-07',
+    })
+    const { payable } = gappy.manpower
     expect(payable.state).toBe('incomplete')
     if (payable.state !== 'incomplete') throw new Error('expected an incomplete figure')
     expect(payable.missing[0]).toMatch(/contracted slot-days have no line-up/)
-    expect(payable.missing[0]).toMatch(/across 26 of 30 days/)
+    expect(payable.missing[0]).toMatch(/gondola/)
   })
 })
 
@@ -432,6 +462,7 @@ describe('a record is filed by the date it is about', () => {
       work_order: [],
       lineup: [lateFiled],
       rkb_match: [],
+      rkb_block: [],
       photo: [],
       person: [...source.people],
     })

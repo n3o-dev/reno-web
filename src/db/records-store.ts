@@ -237,6 +237,7 @@ export async function loadSource(sql: Sql, siteId?: string): Promise<RecordSourc
     work_order: parseAll('work_order', zodSchemas.work_order),
     lineup: parseAll('lineup', zodSchemas.lineup),
     rkb_match: parseAll('rkb_match', zodSchemas.rkb_match),
+    rkb_block: parseAll('rkb_block', zodSchemas.rkb_block),
     photo: parseAll('photo', zodSchemas.photo),
     person: parseAll('person', zodSchemas.person),
   })

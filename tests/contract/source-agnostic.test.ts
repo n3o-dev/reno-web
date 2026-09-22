@@ -21,6 +21,7 @@ const paged = createPagedRecordSource({
   work_order: paginate(fromDisk.workOrders, 2),
   lineup: paginate(fromDisk.lineups, 5),
   rkb_match: paginate(fromDisk.rkbMatches, 1),
+  rkb_block: paginate(fromDisk.rkbBlocks, 1),
   photo: paginate(fromDisk.photos, 250),
   person: paginate(fromDisk.people, 3),
 })
@@ -31,8 +32,9 @@ const EXPECTED: Record<string, number> = {
   work_report: 639,
   complaint: 75,
   work_order: 4,
-  lineup: 8,
+  lineup: 60,
   rkb_match: 1,
+  rkb_block: 1,
   photo: 1052,
   person: 45,
 }
@@ -61,6 +63,7 @@ describe('the rules layer cannot tell which source it is holding', () => {
       work_order: paginate(fromDisk.workOrders, 1),
       lineup: paginate(fromDisk.lineups, 4),
       rkb_match: paginate(fromDisk.rkbMatches, 1),
+      rkb_block: paginate(fromDisk.rkbBlocks, 1),
       photo: paginate(fromDisk.photos, 13),
       person: paginate(fromDisk.people, 2),
     })

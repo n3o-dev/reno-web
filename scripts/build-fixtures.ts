@@ -105,6 +105,7 @@ const out: { [K in RecordType]: unknown[] } = {
   work_order: [],
   lineup: [],
   rkb_match: [],
+  rkb_block: [],
   photo: [],
   person: [],
 }
@@ -298,13 +299,37 @@ const rosterEntries = Object.entries(LINEUP_BY_AREA).flatMap(([areaId, names]) =
  * Shift 1 and shift 2 only. The group posts a roster for each of those; there
  * is no shift-3 message anywhere in the export, and copying the day roster
  * onto a night shift would invent 37 people's attendance.
+ *
+ * The four days the export actually covers carry the rosters as posted. The
+ * rest of the month is filled in so the billing path can run end to end:
+ * a month is invoiced in full and deducted from, so a month missing 26 of
+ * its 30 rosters states no amount at all — correct, and useless as a
+ * demonstration. These are placeholders, not observations, and they are
+ * generated from the same roster rather than invented per day.
  */
-DAYS.forEach((_, d) => {
+const MONTH = '2026-09'
+const DAYS_IN_MONTH = new Date(Date.UTC(2026, 9, 0)).getUTCDate()
+const ALL_DATES = Array.from(
+  { length: DAYS_IN_MONTH },
+  (_, i) => `${MONTH}-${String(i + 1).padStart(2, '0')}`,
+)
+
+ALL_DATES.forEach((date, index) => {
+  const reportedDay = (DAYS as readonly string[]).indexOf(date)
+  const observed = reportedDay !== -1
   for (const shift of [1, 2] as const) {
     out.lineup.push({
-      ...envelope(`lu_${d}_${shift}`, d, shift === 1 ? 7 * 60 : 15 * 60, 'Amartha'),
+      ...envelope(
+        `lu_${date}_${shift}`,
+        observed ? reportedDay : 0,
+        shift === 1 ? 7 * 60 : 15 * 60,
+        'Amartha',
+      ),
+      // The envelope dates by reporting day; the line-up's own date is the
+      // day it covers, and that is what billing keys on.
+      sent_at: `${date}T${shift === 1 ? '07' : '15'}:00:00+07:00`,
       shift,
-      date: DAYS[d] as string,
+      date,
       entries: rosterEntries,
       /**
        * The group's shift-1 line-up states "Total mp : 34". This roster is the
@@ -319,6 +344,7 @@ DAYS.forEach((_, d) => {
       izin: 0,
     })
   }
+  void index
 })
 
 REPORTERS.forEach((name, n) => {
@@ -469,6 +495,25 @@ WORK_ORDERS.forEach((wo, n) => {
  * every RKB figure cited the workbook alone — the wiring was correct and
  * provably dead.
  */
+/*
+ * The façade work that could not start because the car gondola never
+ * arrived — the same real block the writer tests and the blocked complaint
+ * both cite, and the case CONTEXT.md records verbatim: "the façade work on
+ * the 11th did not happen because the gondola was not on site". FACADE row 2
+ * is the row the workbook plans on the 11th.
+ *
+ * With this record net realisation can finally differ from gross. Without
+ * one, nothing the agent could emit would ever set `blocked`, so the two
+ * figures were the same number by construction.
+ */
+out.rkb_block.push({
+  ...envelope('rbl_0', 1, 9 * 60 + 2, 'Amartha'),
+  job_row_id: 'facade:FACADE:2',
+  date: '2026-07-11',
+  reason: 'Car gondola belum datang, masih ditahan vendor.',
+  cause: 'engineering_equipment',
+})
+
 out.rkb_match.push({
   ...envelope('rm_0', 2, 7 * 60 + 37, 'Amartha'),
   job_row_id: 'toilet:TOILET LT 2:3',

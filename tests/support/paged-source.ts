@@ -43,6 +43,9 @@ export function createPagedRecordSource(pages: Pages): RecordSource {
     get rkbMatches() {
       return materialise('rkb_match')
     },
+    get rkbBlocks() {
+      return materialise('rkb_block')
+    },
     get photos() {
       return materialise('photo')
     },

@@ -1,5 +1,5 @@
 import type { Section } from '@/rkb/read'
-import type { RkbMatchRecord } from '@/contract/schemas'
+import type { RkbBlockRecord, RkbMatchRecord } from '@/contract/schemas'
 import { jobRowId, workbookEvidence, WORKBOOK_MONTH } from '@/services/rkb'
 import { Figure } from '@/components/common/Figure'
 
@@ -9,6 +9,8 @@ interface DayGridProps {
   readonly sheetName: string
   /** Matched reports, so a cell the agent matched reads done here too. */
   readonly matches: readonly RkbMatchRecord[]
+  /** Blocked job-row days, each carrying the message that justifies it. */
+  readonly blocks: readonly RkbBlockRecord[]
 }
 
 /**
@@ -17,8 +19,13 @@ interface DayGridProps {
  * than read out of the file, so a stale total in the spreadsheet shows up as a
  * disagreement instead of being repeated.
  */
-export function DayGrid({ section, sheetName, matches }: DayGridProps) {
+export function DayGrid({ section, sheetName, matches, blocks }: DayGridProps) {
   const matched = new Set(matches.map((m) => `${m.job_row_id}|${m.date}`))
+  const blocked = new Map(blocks.map((b) => [`${b.job_row_id}|${b.date}`, b]))
+  const blockAt = (no: number, day: number): RkbBlockRecord | undefined =>
+    blocked.get(
+      `${jobRowId(sheetName, section.name, no)}|${WORKBOOK_MONTH}-${String(day).padStart(2, '0')}`,
+    )
   const isMatched = (no: number, day: number): boolean =>
     matched.has(
       `${jobRowId(sheetName, section.name, no)}|${WORKBOOK_MONTH}-${String(day).padStart(2, '0')}`,
@@ -81,20 +88,32 @@ export function DayGrid({ section, sheetName, matches }: DayGridProps) {
               </th>
               {row.days.map((day) => {
                 const isPlanned = (day.planned ?? 0) > 0
+                const block = blockAt(row.no, day.day)
                 const isDone = (day.actual ?? 0) > 0 || isMatched(row.no, day.day)
                 return (
                   <td key={day.day} className="px-1 py-1.5 text-center">
                     <span
+                      {...(block === undefined ? {} : { 'data-blocked-cell': block.record_id })}
+                      title={block === undefined ? undefined : `Blocked: ${block.reason}`}
                       aria-label={
-                        isPlanned ? (isDone ? 'done' : 'planned, not done') : 'not planned'
+                        block !== undefined
+                          ? `blocked: ${block.reason}`
+                          : isPlanned
+                            ? isDone
+                              ? 'done'
+                              : 'planned, not done'
+                            : 'not planned'
                       }
                       className="inline-block size-2.5 rounded-[2px]"
                       style={{
-                        background: isDone
-                          ? 'var(--color-ordinal-3)'
-                          : isPlanned
-                            ? 'var(--color-ordinal-1)'
-                            : 'var(--color-plane)',
+                        background:
+                          block !== undefined
+                            ? 'var(--color-warning)'
+                            : isDone
+                              ? 'var(--color-ordinal-3)'
+                              : isPlanned
+                                ? 'var(--color-ordinal-1)'
+                                : 'var(--color-plane)',
                       }}
                     />
                   </td>
@@ -114,6 +133,10 @@ export function DayGrid({ section, sheetName, matches }: DayGridProps) {
         </span>
         <span className="flex items-center gap-1.5">
           <span className="inline-block size-2.5 rounded-[2px] bg-plane" /> Not planned
+        </span>
+        <span className="flex items-center gap-1.5">
+          <span className="inline-block size-2.5 rounded-[2px] bg-[var(--color-warning)]" />
+          Blocked
         </span>
       </p>
     </section>
