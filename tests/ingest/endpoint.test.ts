@@ -161,3 +161,42 @@ describe('AC-6 · a retraction hides without destroying', () => {
     expect((await loadSource(db.sql)).messages).toHaveLength(1)
   })
 })
+
+describe('input Postgres cannot store', () => {
+  it('refuses a NUL byte as invalid input rather than crashing on the insert', async () => {
+    const person = fixtures.people[0]
+    if (person === undefined) throw new Error('no person fixture')
+    const result = await ingest(
+      db,
+      {
+        ...auth,
+        json: {
+          records: [{ type: 'person', payload: { ...person, canonical_name: 'Ali\u0000ce' } }],
+        },
+      },
+      ENV,
+    )
+    expect(result.status).toBe(422)
+    expect(String(result.body['error'])).toContain('NUL byte')
+    expect((await loadSource(db.sql)).people).toEqual([])
+  })
+
+  it('names which record in the batch carried it', async () => {
+    const [a, b] = [fixtures.people[0], fixtures.people[1]]
+    if (a === undefined || b === undefined) throw new Error('need two people')
+    const result = await ingest(
+      db,
+      {
+        ...auth,
+        json: {
+          records: [
+            { type: 'person', payload: a },
+            { type: 'person', payload: { ...b, canonical_name: 'x\u0000y' } },
+          ],
+        },
+      },
+      ENV,
+    )
+    expect(result.body['index']).toBe(1)
+  })
+})

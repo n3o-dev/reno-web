@@ -1,13 +1,15 @@
 import { Figure } from '@/components/common/Figure'
 import type { Coverage } from '@/rules/manpower'
 import type { FigureEvidence } from './ComplaintFunnel'
-import type { SlotDayOverride } from '@/services/overrides'
+import { overridesForSlot, type SlotDayOverride } from '@/services/overrides'
 
 interface CoverageTableProps {
   readonly rows: readonly Coverage[]
   readonly evidence: FigureEvidence
   readonly corrections: readonly SlotDayOverride[]
 }
+
+const STAMP = new Intl.DateTimeFormat('en-GB', { day: 'numeric', month: 'short' })
 
 const AREA_LABEL: Record<string, string> = {
   external: 'External',
@@ -34,9 +36,9 @@ export function CoverageTable({ rows, evidence, corrections }: CoverageTableProp
       </thead>
       <tbody>
         {rows.map((row) => {
-          const corrected = corrections.filter(
-            (c) => c.slot_id === `${row.area_id}:${row.shift}`,
-          )
+          // The whole chain, oldest first: AC-10 asks for the chain, and a
+          // figure corrected twice has to show both or it hides one.
+          const corrected = overridesForSlot(corrections, `${row.area_id}:${row.shift}`)
           return (
           <tr
             key={`${row.area_id}:${row.shift}`}
@@ -57,13 +59,14 @@ export function CoverageTable({ rows, evidence, corrections }: CoverageTableProp
               </Figure>
               <span className="text-faint"> / {row.contractedSlotDays}</span>
               {corrected.length > 0 && (
-                <span
-                  data-overridden={`manpower.filled.${row.area_id}.${row.shift}`}
-                  className="block text-[13px] font-normal text-muted"
-                >
-                  Corrected by {corrected[corrected.length - 1]?.by}:{' '}
-                  {corrected[corrected.length - 1]?.reason}
-                </span>
+                <ol data-overridden={`manpower.filled.${row.area_id}.${row.shift}`}>
+                  {corrected.map((step) => (
+                    <li key={step.at} className="block text-[13px] font-normal text-muted">
+                      {STAMP.format(new Date(step.at))} · corrected to {step.filled} by {step.by}:{' '}
+                      {step.reason}
+                    </li>
+                  ))}
+                </ol>
               )}
             </td>
           </tr>

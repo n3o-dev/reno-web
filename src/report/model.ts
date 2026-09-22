@@ -158,7 +158,7 @@ function computePayable(input: BuildInput, days: readonly SlotDay[]): Payable {
     return {
       state: 'incomplete',
       currency: contract.currency,
-      monthlyRatePerMp: contract.monthly_rate_per_mp,
+      monthlyRatePerMp: contract.monthly_rate_per_mp > 0 ? contract.monthly_rate_per_mp : null,
       missing: [
         'How many people the contract requires in each area on each shift. The roster cannot stand in for it: the same people appear on more than one shift, so a headcount derived from it counts them twice.',
       ],
@@ -178,7 +178,7 @@ function computePayable(input: BuildInput, days: readonly SlotDay[]): Payable {
     return {
       state: 'incomplete',
       currency: contract.currency,
-      monthlyRatePerMp: contract.monthly_rate_per_mp,
+      monthlyRatePerMp: contract.monthly_rate_per_mp > 0 ? contract.monthly_rate_per_mp : null,
       missing: [
         `${unreported.length} of ${daysInMonth(input.month).length} days have no line-up: ${unreported.slice(0, 5).join(', ')}${unreported.length > 5 ? ', …' : ''}. A month is invoiced in full and deducted from, so a day nobody reported would otherwise be billed as covered.`,
       ],
@@ -199,7 +199,7 @@ function computePayable(input: BuildInput, days: readonly SlotDay[]): Payable {
     return {
       state: 'incomplete',
       currency: contract.currency,
-      monthlyRatePerMp: contract.monthly_rate_per_mp,
+      monthlyRatePerMp: contract.monthly_rate_per_mp > 0 ? contract.monthly_rate_per_mp : null,
       missing: [
         `The roster lists ${uncontracted.length} area-shift(s) the contract does not cover: ${uncontracted.join(', ')}. Either the slot table is incomplete or people are working somewhere unbilled.`,
       ],
@@ -281,7 +281,9 @@ export function buildReportPack(input: BuildInput): ReportPack {
                 reason: `The loaded workbook covers ${input.workbookMonth}, not ${month}. Upload this month's RKB to report its realisation.`,
               },
             ],
-            total: 1,
+            // Zero, like every other stated absence. A section that cites
+            // nothing must not count as citing one thing.
+            total: 0,
           },
     },
 

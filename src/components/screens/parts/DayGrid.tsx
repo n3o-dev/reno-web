@@ -1,7 +1,13 @@
 import type { Section } from '@/rkb/read'
+import type { RkbMatchRecord } from '@/contract/schemas'
+import { jobRowId, WORKBOOK_MONTH } from '@/services/rkb'
 
 interface DayGridProps {
   readonly section: Section
+  /** The sheet this section belongs to; job row ids are built from it. */
+  readonly sheetName: string
+  /** Matched reports, so a cell the agent matched reads done here too. */
+  readonly matches: readonly RkbMatchRecord[]
 }
 
 /**
@@ -10,10 +16,18 @@ interface DayGridProps {
  * than read out of the file, so a stale total in the spreadsheet shows up as a
  * disagreement instead of being repeated.
  */
-export function DayGrid({ section }: DayGridProps) {
+export function DayGrid({ section, sheetName, matches }: DayGridProps) {
+  const matched = new Set(matches.map((m) => `${m.job_row_id}|${m.date}`))
+  const isMatched = (no: number, day: number): boolean =>
+    matched.has(
+      `${jobRowId(sheetName, section.name, no)}|${WORKBOOK_MONTH}-${String(day).padStart(2, '0')}`,
+    )
   const days = section.rows[0]?.days ?? []
-  const planned = section.rows.flatMap((r) => r.days).filter((d) => (d.planned ?? 0) > 0)
-  const done = planned.filter((d) => (d.actual ?? 0) > 0)
+  const cells = section.rows.flatMap((row) =>
+    row.days.map((day) => ({ no: row.no, day })),
+  )
+  const planned = cells.filter((c) => (c.day.planned ?? 0) > 0)
+  const done = planned.filter((c) => (c.day.actual ?? 0) > 0 || isMatched(c.no, c.day.day))
   const share = planned.length === 0 ? 0 : Math.round((done.length / planned.length) * 100)
 
   return (
@@ -60,7 +74,7 @@ export function DayGrid({ section }: DayGridProps) {
               </th>
               {row.days.map((day) => {
                 const isPlanned = (day.planned ?? 0) > 0
-                const isDone = (day.actual ?? 0) > 0
+                const isDone = (day.actual ?? 0) > 0 || isMatched(row.no, day.day)
                 return (
                   <td key={day.day} className="px-1 py-1.5 text-center">
                     <span

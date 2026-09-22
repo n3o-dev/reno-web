@@ -97,9 +97,15 @@ test.describe('signing in', () => {
     const setCookie = response.headers()['set-cookie'] ?? ''
     expect(setCookie).toContain('HttpOnly')
     expect(setCookie).toContain('SameSite=lax')
-    // Not Secure here because the suite runs over http; on the VPS the
-    // reverse proxy sets x-forwarded-proto and it is.
-    expect(setCookie).not.toContain('Secure')
+    /*
+     * Secure, and asserted present rather than absent. The suite runs the
+     * production build, and in production the flag is set regardless of any
+     * header — a proxy that forgets x-forwarded-proto, or forwards a
+     * client-supplied one, must not be able to strip it. The previous
+     * version of this line asserted its absence, which pinned the insecure
+     * case in place.
+     */
+    expect(setCookie).toContain('Secure')
     expect(setCookie).not.toContain(E2E_EMAIL)
     expect(setCookie).not.toContain('Sarwedi')
     expect(setCookie).not.toContain(E2E_PASSWORD)

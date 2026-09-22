@@ -28,16 +28,30 @@ export function connect(url: string): Database {
     },
     transaction: async (work) => {
       const client = await pool.connect()
+      let poisoned: Error | undefined
       try {
         await client.query('BEGIN')
         const out = await work(run((text, params) => client.query(text, [...params])))
         await client.query('COMMIT')
         return out
       } catch (error) {
-        await client.query('ROLLBACK')
+        /*
+         * If ROLLBACK itself throws — a dead socket, a terminated backend —
+         * the original error must survive. It did not: the rollback failure
+         * replaced it, so a CrossSiteRecord became an unrecognised 500
+         * instead of the 403 the caller checks for, exactly when the
+         * connection was unhealthy.
+         */
+        try {
+          await client.query('ROLLBACK')
+        } catch (rollbackFailed) {
+          // The client is still inside a transaction. Releasing it with the
+          // error tells the pool to destroy it rather than hand it on.
+          poisoned = rollbackFailed instanceof Error ? rollbackFailed : new Error('rollback failed')
+        }
         throw error
       } finally {
-        client.release()
+        client.release(poisoned)
       }
     },
     close: () => pool.end(),

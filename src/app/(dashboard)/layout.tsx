@@ -1,5 +1,7 @@
 import { AppNav } from '@/components/common/AppNav'
 import { SignOutButton } from '@/components/common/SignOutButton'
+import type { Metadata } from 'next'
+import { SITE_LABEL } from '@/config/site'
 import { requireAccount } from '@/services/current-account'
 
 /*
@@ -8,6 +10,9 @@ import { requireAccount } from '@/services/current-account'
  * every request bounced to /login however good its session was.
  */
 export const dynamic = 'force-dynamic'
+
+/** The Reno surface may name the site; the client link may not name another's. */
+export const metadata: Metadata = { title: `Reno · ${SITE_LABEL}` }
 
 interface DashboardLayoutProps {
   readonly children: React.ReactNode
@@ -22,9 +27,7 @@ export default async function DashboardLayout({ children }: DashboardLayoutProps
       <header className="bg-ink text-surface">
         <div className="mx-auto flex max-w-6xl items-baseline gap-3 px-4 py-3">
           <span className="font-[family-name:var(--font-display)] text-[17px]">Reno</span>
-          <span className="text-[13px] tracking-[0.04em] text-[#cfc7bd]">
-            Living World Alam Sutera
-          </span>
+          <span className="text-[13px] tracking-[0.04em] text-[#cfc7bd]">{SITE_LABEL}</span>
           <span className="ml-auto flex items-center gap-3 text-[13px] text-[#cfc7bd]">
             <span data-signed-in-as>{account.display_name}</span>
             <SignOutButton />

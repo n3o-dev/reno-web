@@ -54,12 +54,16 @@ test('the print view saves as PDF, and a draft says so on paper', async ({ page 
 })
 
 test('the workbook refuses to generate while a gate is open', async ({ page }) => {
-  // page.request, not the request fixture: this needs the signed-in cookie.
-  const response = await page.request.get(`/api/report/rkb?month=${MONTH}`)
-  expect(response.status()).toBe(409)
-  const body: { error: string; gates: string[] } = await response.json()
-  expect(body.gates).toEqual(['roster_confirmed'])
-  expect(body.error).toContain('claimed attendance alone')
+  /*
+   * Navigated, not fetched through the API context. The session cookie is
+   * Secure in the production build these tests run, and an API context will
+   * not send a Secure cookie over http while a browser will for localhost.
+   */
+  const response = await page.goto(`/api/report/rkb?month=${MONTH}`)
+  expect(response?.status()).toBe(409)
+  const body: unknown = JSON.parse(await page.locator('pre').innerText())
+  expect(body).toMatchObject({ gates: ['roster_confirmed'] })
+  expect(JSON.stringify(body)).toContain('claimed attendance alone')
 })
 
 test('confirming the roster records who did it and opens the gate', async ({ page }) => {
@@ -71,12 +75,14 @@ test('confirming the roster records who did it and opens the gate', async ({ pag
 })
 
 test('the workbook downloads once every gate passes', async ({ page }) => {
-  const response = await page.request.get(`/api/report/rkb?month=${MONTH}`)
-  expect(response.status()).toBe(200)
-  expect(response.headers()['content-type']).toContain('spreadsheetml')
-  expect(response.headers()['content-disposition']).toContain('RKB_2026-09_realisasi.xlsx')
+  const download = page.waitForEvent('download')
+  await page.goto(`/api/report/rkb?month=${MONTH}`).catch(() => undefined)
+  const file = await download
+  expect(file.suggestedFilename()).toBe('RKB_2026-09_realisasi.xlsx')
 
-  const bytes = await response.body()
+  const path = await file.path()
+  const { readFile } = await import('node:fs/promises')
+  const bytes = await readFile(path)
   // A real xlsx is a zip: "PK".
   expect(bytes.subarray(0, 2).toString()).toBe('PK')
   expect(bytes.byteLength).toBeGreaterThan(50_000)

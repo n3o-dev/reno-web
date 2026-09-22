@@ -4,7 +4,7 @@
  * Reads DATABASE_URL and nothing else, so the same command works against a
  * local database and the VPS without a flag to get wrong.
  */
-import { connect } from '@/db/postgres'
+import { connectTo } from '@/db/connect'
 import { migrate } from '@/db/migrate'
 
 const url = process.env['DATABASE_URL']
@@ -13,7 +13,7 @@ if (url === undefined || url.trim() === '') {
   process.exit(1)
 }
 
-const db = connect(url)
+const db = connectTo(url)
 try {
   const applied = await migrate(db.sql, db.exec)
   console.log(applied.length === 0 ? 'already up to date' : `applied ${applied.join(', ')}`)

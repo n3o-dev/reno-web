@@ -49,8 +49,14 @@ describe('every section cites its sources', () => {
     ['manpower', pack.manpower.evidence],
     ['evidence gallery', pack.evidenceGallery.evidence],
   ])('%s', (_name, evidence) => {
-    expect(evidence.total).toBeGreaterThan(0)
+    // Always at least one item — a citation or a stated reason there is
+    // none. `total` may legitimately be 0: a section that cites nothing
+    // must not report one source, which is the anti-pattern the evidence
+    // gate exists to catch.
     expect(evidence.items.length).toBeGreaterThan(0)
+    for (const item of evidence.items) {
+      if (item.kind === 'absent') expect(evidence.total).toBe(0)
+    }
     for (const item of evidence.items) {
       // Never an empty citation: a message, a workbook cell, or a stated
       // reason there is nothing to cite.
@@ -356,5 +362,49 @@ describe('AC-10 · a correction moves every figure that depends on it', () => {
     const untouched = after.manpower.coverage.filter((r) => r.area_id !== 'garbage')
     const same = before.manpower.coverage.filter((r) => r.area_id !== 'garbage')
     expect(untouched).toEqual(same)
+  })
+})
+
+describe('a correction can raise a count, not only lower it', () => {
+  /*
+   * Truncating alone meant an override saying "there were more people than
+   * the line-up listed" was a silent no-op that still printed its reason
+   * beside an unchanged number. Observable on the deduction: coverage
+   * clamps at the contracted headcount, so a raise only shows where the
+   * contract asks for more than the line-up recorded.
+   */
+  const short = [
+    { area_id: 'garbage', shift: 1 as const, contracted: 3 },
+    ...['external', 'gf', 'ug', 'lt1', 'lt2', 'lk', 'gondola'].flatMap((area_id) =>
+      ([1, 2] as const).map((shift) => ({ area_id, shift, contracted: 1 })),
+    ),
+    { area_id: 'garbage', shift: 2 as const, contracted: 1 },
+  ]
+
+  const buildShort = (corrections: { slot_id: string; date: string; filled: number }[]) =>
+    buildReportPack({
+      source: fullMonth,
+      workbook,
+      month: '2026-09',
+      workbookLabel: 'RKB Juli 2026',
+      siteId: 'lwas',
+      siteLabel: 'Living World Alam Sutera',
+      contract: { ...contract, slots_source: 'contract', slots: short },
+      workbookMonth: '2026-07',
+      corrections,
+    })
+
+  it('reduces the shortfall when someone confirms more people were there', () => {
+    const base = buildShort([])
+    const raised = buildShort([{ slot_id: 'garbage:1', date: '2026-09-12', filled: 3 }])
+
+    const a = base.manpower.payable
+    const b = raised.manpower.payable
+    if (a.state !== 'computed' || b.state !== 'computed') throw new Error('expected computed')
+
+    // One person listed against three required leaves two short that day;
+    // correcting it to three closes both.
+    expect(a.billing.unfilledSlotDays - b.billing.unfilledSlotDays).toBe(2)
+    expect(b.billing.payable).toBeGreaterThan(a.billing.payable)
   })
 })

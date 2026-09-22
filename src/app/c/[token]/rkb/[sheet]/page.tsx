@@ -3,6 +3,7 @@ import Link from 'next/link'
 import { ScreenHeader } from '@/components/common/ScreenHeader'
 import { computeRealisation } from '@/rules/realisation'
 import { WORKBOOK_LABEL, WORKBOOK_MONTH, getWorkbook, planCells, sheetSlug } from '@/services/rkb'
+import { getRecords } from '@/services/records'
 import { DayGrid } from '@/components/screens/parts/DayGrid'
 import { resolveToken } from '@/services/tokens'
 import { SITE_ID } from '@/services/report'
@@ -22,7 +23,8 @@ export default async function SheetPage({ params }: SheetPageProps) {
   const sheet = book.sheets.find((s) => sheetSlug(s.name) === slug)
   if (sheet === undefined) notFound()
 
-  const realisation = computeRealisation(planCells(sheet, WORKBOOK_MONTH))
+  const matches = (await getRecords()).rkbMatches
+  const realisation = computeRealisation(planCells(sheet, WORKBOOK_MONTH, matches))
 
   return (
     <>
@@ -35,7 +37,7 @@ export default async function SheetPage({ params }: SheetPageProps) {
       />
       <div className="flex flex-col gap-6">
         {sheet.sections.map((section) => (
-          <DayGrid key={`${section.name}-${section.rows[0]?.rowNumber ?? 0}`} section={section} />
+          <DayGrid matches={matches} sheetName={sheet.name} key={`${section.name}-${section.rows[0]?.rowNumber ?? 0}`} section={section} />
         ))}
       </div>
     </>

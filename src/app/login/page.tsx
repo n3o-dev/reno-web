@@ -18,7 +18,15 @@ function safePath(next: string | undefined): string {
   if (next === undefined) return '/'
   const resolved = URL.parse(next, 'https://reno.invalid')
   if (resolved === null || resolved.origin !== 'https://reno.invalid') return '/'
-  return `${resolved.pathname}${resolved.search}`
+  /*
+   * Parsing is not enough on its own. `/.//evil.com` and `/a/..//evil.com`
+   * normalise to a pathname of `//evil.com`, which keeps the dummy origin
+   * here and then reads as protocol-relative in the browser — so the value
+   * leaves the site after a successful sign-in on the genuine login page.
+   * Collapsing the leading slashes is what actually closes it.
+   */
+  const path = `/${resolved.pathname.replace(/^\/+/, '')}`
+  return `${path}${resolved.search}`
 }
 
 interface LoginPageProps {

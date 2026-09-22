@@ -10,8 +10,14 @@ const spaceGrotesk = Space_Grotesk({
 
 const dmSans = DM_Sans({ subsets: ['latin'], variable: '--font-dm-sans', display: 'swap' })
 
+/*
+ * No site name here. The root layout wraps the client link too, and a
+ * tokenised page for one site must not carry another's name in its title.
+ * The dashboard sets the fuller title for the Reno surface; the client
+ * layout shows the label its own token carries.
+ */
 export const metadata: Metadata = {
-  title: 'Reno · Living World Alam Sutera',
+  title: 'Reno',
   description: 'Cleaning operations, reported from the site WhatsApp group.',
 }
 

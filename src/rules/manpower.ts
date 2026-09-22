@@ -195,6 +195,21 @@ export function applySlotCorrections(
   return days.map((day) => {
     const correction = byKey.get(`${day.slot_id}|${day.date}`)
     if (correction === undefined) return day
-    return { ...day, names: day.names.slice(0, correction.filled) }
+
+    /*
+     * A correction can raise a count as well as lower it. Truncating alone
+     * meant an override saying "there were more people than the line-up
+     * listed" was a silent no-op that still printed its reason beside an
+     * unchanged number — the same lie as applying it at render time.
+     * Names beyond what the line-up recorded are marked as such rather
+     * than invented.
+     */
+    const kept = day.names.slice(0, correction.filled)
+    const missing = correction.filled - kept.length
+    const names = [
+      ...kept,
+      ...Array.from({ length: missing }, (_, i) => `(unnamed, corrected ${i + 1})`),
+    ]
+    return { ...day, names }
   })
 }

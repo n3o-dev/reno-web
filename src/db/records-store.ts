@@ -49,6 +49,17 @@ export function parseBatch(records: readonly IncomingRecord[]): readonly ParsedR
     if (!RECORD_TYPES.includes(record.type)) {
       throw new RecordRejected(index, `unknown record type "${record.type}"`)
     }
+    /*
+     * A NUL byte passes `z.string()` and then kills the insert: Postgres
+     * rejects 0x00 in text and jsonb. Uncaught, it was a 500 the contract
+     * does not document, and the server log dumped the whole statement with
+     * every bound parameter. It belongs here, at the boundary, as a 422
+     * naming the record like any other invalid input.
+     */
+    if (JSON.stringify(record.payload)?.includes('\\u0000') === true) {
+      throw new RecordRejected(index, 'contains a NUL byte, which cannot be stored')
+    }
+
     const result = zodSchemas[record.type].safeParse(record.payload)
     if (!result.success) {
       const [first] = result.error.issues
@@ -122,6 +133,22 @@ export async function upsertBatch(
         JSON.stringify(payload),
       ],
     )
+    if (changed.length === 0) {
+      /*
+       * No row came back, which means either the payload was unchanged — the
+       * idempotent repost this is designed for — or the site predicate on
+       * the conflict clause refused it. The pre-flight check catches the
+       * second case for anything already present, but two sites posting the
+       * same new id concurrently both pass it and one loses here. Answering
+       * 200 to a write that did not happen would have the agent move on.
+       */
+      const owner = await sql<{ site_id: string }>(
+        'SELECT site_id FROM records WHERE record_id = $1',
+        [payload.record_id],
+      )
+      const site = owner[0]?.site_id
+      if (site !== undefined && site !== siteId) throw new CrossSiteRecord([payload.record_id])
+    }
     if (changed.length > 0) {
       written += 1
       await sql(

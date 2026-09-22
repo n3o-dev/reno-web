@@ -46,16 +46,24 @@ export async function monthReport(month: string, siteId?: string): Promise<Month
   // Another site's token gets this site's records narrowed to nothing; it
   // must also get no workbook and no contract.
   const ours = siteId === undefined || siteId === SITE_ID
+  /*
+   * Everything this site knows is withheld from another site's token, not
+   * just its records: the contracted rate is the most commercially
+   * sensitive number in the file, and the workbook's name and the site's
+   * own label identify the client.
+   */
   const pack = buildReportPack({
     source,
     workbook,
     month,
-    workbookLabel: WORKBOOK_LABEL,
+    workbookLabel: ours ? WORKBOOK_LABEL : 'No workbook for this site',
     siteId: siteId ?? SITE_ID,
-    siteLabel: SITE_LABEL,
+    siteLabel: ours ? SITE_LABEL : 'This site',
     corrections: ours ? corrections : [],
     workbookMonth: ours ? WORKBOOK_MONTH : 'no workbook for this site',
-    contract: ours ? contract : { ...contract, slots: null },
+    contract: ours
+      ? contract
+      : { ...contract, slots: null, monthly_rate_per_mp: 0 },
   })
   const gates = checkGates({ source, confirmation, month })
 

@@ -5,7 +5,8 @@ import { Figure } from '@/components/common/Figure'
 import { countEvidence, resolveEvidence, type Evidence } from '@/services/evidence'
 import { closureStats } from '@/rules/clock'
 import { repeatAreas } from '@/rules/causes'
-import { coverage, provisionalContracts, slotDays } from '@/rules/manpower'
+import { applySlotCorrections, coverage, provisionalContracts, slotDays } from '@/rules/manpower'
+import { getSlotOverrides } from '@/services/overrides'
 import { computeRapor, AUTO_FILLED, RAPOR_INDICATORS, type Indicator } from '@/rules/rapor'
 import { computeRealisation } from '@/rules/realisation'
 import { countBeforeAfter, findDuplicatePhotos, validationPassRate } from '@/rules/quality'
@@ -16,12 +17,19 @@ import { IndicatorTable } from '@/components/screens/parts/IndicatorTable'
 export async function ScorecardScreen({ siteId }: ScreenProps) {
   const [records, book] = await Promise.all([getRecords(siteId), getWorkbook()])
   const realisation = computeRealisation(
-    book.sheets.flatMap((sheet) => planCells(sheet, WORKBOOK_MONTH)),
+    // A.1 is the Pimpro's realisation score; it must count matched work.
+    book.sheets.flatMap((sheet) => planCells(sheet, WORKBOOK_MONTH, records.rkbMatches)),
   )
   const complaints = closureStats(records.complaints)
   // Both of these used to be literals typed into the call, which meant the
   // Pimpro's score did not move when the thing it scores did.
-  const days = slotDays(records.lineups)
+  /*
+   * The same corrected slot-days the invoice is built from. Deriving these
+   * from the raw line-ups had /manpower deducting for a slot a person
+   * corrected away while /scorecard scored attendance discipline as
+   * flawless — a contradiction between two screens reading the same month.
+   */
+  const days = applySlotCorrections(slotDays(records.lineups), await getSlotOverrides())
   const unfilledSlotDays = coverage(provisionalContracts(records.lineups), days).reduce(
     (short, row) => short + (row.contractedSlotDays - row.filled),
     0,

@@ -442,10 +442,17 @@ WORK_ORDERS.forEach((wo, n) => {
   })
 })
 
+/*
+ * Dated to a day the workbook actually plans this job row: TOILET LT 2 row
+ * 3 runs on the 1st, 8th, 15th, 22nd and 29th. It used to carry a September
+ * date against a July workbook, so the match resolved against nothing and
+ * every RKB figure cited the workbook alone — the wiring was correct and
+ * provably dead.
+ */
 out.rkb_match.push({
   ...envelope('rm_0', 2, 7 * 60 + 37, 'Amartha'),
   job_row_id: 'toilet:TOILET LT 2:3',
-  date: '2026-09-12',
+  date: '2026-07-08',
   work_report_id: 'wr_0',
   matched_by: 'agent',
 })
