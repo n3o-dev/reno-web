@@ -37,8 +37,10 @@ is a null or an omitted record — never a guess.
 | `work_order` | client request | Usually a PDF. Runs to a client-set due date. |
 | `lineup` | shift | The line-up. The only source of claimed attendance that exists. |
 | `rkb_match` | matched job | Links a work report to one RKB job row on one date. |
+| `rkb_block` | blocked job-day | A planned job that could not proceed, and why. No state field: a block either happened or no record exists. |
 | `photo` | photo | Capture time, receive time, and a perceptual hash. |
 | `person` | person | The personnel master, including confirmed aliases. |
+| `area` | place | The places the group names, with the label a person would write and the zone it sits in. |
 
 You emit records. The dashboard never asks you to compute a percentage, a median, or a score —
 all of that is ours. Your job is to turn messages into facts.
@@ -612,7 +614,7 @@ Schema files are draft 2020-12 and work in any validator.
 **Then post it:**
 
 ```bash
-curl -X POST https://<host>/api/records \
+curl -X POST https://reno.devmgd.com/api/records \
   -H "Authorization: Bearer $RENO_INGEST_TOKEN" \
   -H 'Content-Type: application/json' \
   --data @your-output.json
@@ -648,7 +650,7 @@ loosening anything.
 we are not reading your database.
 
 ```
-POST https://<host>/api/records
+POST https://reno.devmgd.com/api/records
 Authorization: Bearer <token we give you>
 Content-Type: application/json
 
@@ -661,7 +663,7 @@ Content-Type: application/json
 | **All or nothing** | If any record in a batch fails validation we store none of it and answer `422` with the index and the field. Fix that record and resend the batch. |
 | **Retries are safe** | Send the same batch again after a timeout you never saw the answer to. A record whose content has not changed is a no-op; nothing is duplicated. |
 | **Corrections** | Re-send the same `record_id` with new content. It replaces the old one, and we keep the old payload so a disputed figure can still be traced to what you said at the time. |
-| **Withdrawals** | `DELETE /api/records/<record_id>` when you emitted something that should never have existed — a caption you read as a complaint. Do not fake a closing state to hide it. |
+| **Withdrawals** | `DELETE https://reno.devmgd.com/api/records/<record_id>` when you emitted something that should never have existed — a caption you read as a complaint. Do not fake a closing state to hide it. |
 | **Token** | One per site, scoped to that site. A record whose `site_id` does not match the token is refused with `403`. Never put it in a URL or a log line; we never echo it back. |
 
 ### Responses
@@ -687,7 +689,7 @@ records begin from the day you switch on.
 
 ## 9. Definition of done
 
-- [ ] All eight record types emit, and every record validates against its schema
+- [ ] All ten record types emit, and every record validates against its schema
 - [ ] Every record carries a real `source_message_id` that resolves to a message we also receive
 - [ ] `sent_at` carries the `+07:00` offset
 - [ ] No blocked record is emitted without a citation
