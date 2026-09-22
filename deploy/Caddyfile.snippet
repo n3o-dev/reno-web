@@ -7,7 +7,10 @@
 # network, and a service name is an alias on every network it joins. Reno's
 # service is called `app` for the same reason.
 
-reno.devmgd.com {
+# The sslip.io name is interim: it resolves any hostname containing an IP to
+# that IP, so Let's Encrypt can validate it with no access to the DNS zone.
+# Drop it once reno.devmgd.com has its A record.
+reno.devmgd.com, reno.103.63.24.52.sslip.io {
 	encode gzip
 	reverse_proxy reno-app-1:3000
 

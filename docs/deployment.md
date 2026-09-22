@@ -6,7 +6,7 @@ deliberately conservative about it.
 | | |
 |---|---|
 | Host | `103.63.24.52`, Ubuntu 20.04, 2 cores, 981 MB RAM + 2 GB swap |
-| Address | https://reno.devmgd.com |
+| Address | https://reno.devmgd.com once its `A` record exists; https://reno.103.63.24.52.sslip.io meanwhile |
 | TLS | The Caddy already on the box, shared with the secondbrain app |
 | Checkout | `/opt/reno/repo` |
 | Compose project | `reno` (separate from `secondbrain-deploy`) |
@@ -95,6 +95,15 @@ docker compose -f /opt/secondbrain/secondbrain-deploy/docker-compose.yml exec ca
 Validate before reloading. A reload is atomic and does not drop connections; a restart would
 take secondbrain down with it.
 
+**Never edit a bind-mounted file with `sed -i`.** `sed -i` writes a new file and renames it
+over the old one, which changes the inode. A Docker bind mount of a single *file* binds the
+inode, so the container keeps seeing the old content: the host file and
+`/etc/caddy/Caddyfile` silently diverge, `caddy reload` reports `config is unchanged`, and
+the running proxy keeps a config nobody can see in the repository. Edit in place — `cp`
+over it, or a `python write_text` — or restart the container to re-bind. To recover without
+a restart: `docker cp` the correct file to a writable path inside the container and
+`caddy reload --config <that path> --adapter caddyfile`, which applies it with no downtime.
+
 **Never route to a bare service name from a Caddy that sits on more than one compose
 network.** A compose service name is a DNS alias on every network the container joins, so
 two projects that both call a service `web` make `web` ambiguous for that proxy — and the
@@ -139,6 +148,14 @@ docker run --rm -v reno_reno-db:/data -v /root/backups:/out alpine \
 
 Records are re-sendable by the agent, so the irreplaceable rows are the accounts, the month
 confirmations and the slot corrections — small, but the ones with a person's name on them.
+
+## Reaching it before DNS exists
+
+`devmgd.com` is registered and DNS-hosted at idcloudhost.com, so adding a subdomain needs
+that panel. Until `reno` has its `A` record, the site block also answers on
+`reno.103.63.24.52.sslip.io` — `sslip.io` resolves any name containing an IP to that IP, so
+Let's Encrypt validates it and Caddy issues a normal certificate with no zone access at
+all. Delete that name from the site block once the real record exists.
 
 ## Health
 
