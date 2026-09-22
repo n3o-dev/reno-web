@@ -59,6 +59,14 @@ function Section({ title, children }: { title: string; children: React.ReactNode
 export function PrintableReport({ report }: PrintableReportProps) {
   const { pack } = report
   const open = report.gates.filter((gate) => !gate.passed).length
+  /*
+   * A draft may print — previewing one is the point — but the amount
+   * payable may not. The spec's own reason: BAPP cannot generate against
+   * claimed attendance alone. The rest of the report is narrative and safe
+   * to read early; the money is the thing the gate exists to hold.
+   */
+  const rosterUnconfirmed =
+    report.gates.find((gate) => gate.id === 'roster_confirmed')?.passed !== true
 
   return (
     <main className="report px-6 py-8">
@@ -171,7 +179,13 @@ export function PrintableReport({ report }: PrintableReportProps) {
         <Row label="Sakit" value={String(pack.manpower.absences.sakit)} />
         <Row label="Izin" value={String(pack.manpower.absences.izin)} />
         <Row label="Alfa" value={String(pack.manpower.absences.alfa)} />
-        {pack.manpower.payable.state === 'computed' ? (
+        {rosterUnconfirmed ? (
+          <Row
+            label="Amount payable"
+            value="Withheld"
+            note="The roster for this month has not been confirmed by anyone. BAPP cannot be generated against claimed attendance alone, so this draft prints the manpower it read and no money."
+          />
+        ) : pack.manpower.payable.state === 'computed' ? (
           <>
             <Row
               label="Gross"

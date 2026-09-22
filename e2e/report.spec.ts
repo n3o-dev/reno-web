@@ -32,6 +32,15 @@ test('the gates are shown, and the unconfirmed roster holds the pack', async ({ 
   await expect(page.getByText(/Nobody has confirmed the roster for 2026-09/)).toBeVisible()
 })
 
+test('a draft prints the report but withholds the money', async ({ page }) => {
+  await page.goto(`/print/${MONTH}`)
+  // The narrative sections are useful early; the amount payable is what the
+  // roster gate exists to hold back.
+  await expect(page.locator('.report')).toContainText('Withheld')
+  await expect(page.locator('.report')).toContainText('cannot be generated against claimed')
+  await expect(page.locator('.report')).toContainText('Raised')
+})
+
 test('the print view saves as PDF, and a draft says so on paper', async ({ page }) => {
   await page.goto(`/print/${MONTH}`)
   const save = page.getByRole('button', { name: 'Save as PDF' })
