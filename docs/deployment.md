@@ -10,7 +10,7 @@ deliberately conservative about it.
 | TLS | The Caddy already on the box, shared with the secondbrain app |
 | Checkout | `/opt/reno/repo` |
 | Compose project | `reno` (separate from `secondbrain-deploy`) |
-| Containers | `reno-web-1`, `reno-db-1` |
+| Containers | `reno-app-1`, `reno-db-1` |
 | Volume | `reno_reno-db` |
 | DNS | `devmgd.com` is hosted at cloudhost.id. `reno` is an `A` record to `103.63.24.52`. |
 
@@ -95,12 +95,21 @@ docker compose -f /opt/secondbrain/secondbrain-deploy/docker-compose.yml exec ca
 Validate before reloading. A reload is atomic and does not drop connections; a restart would
 take secondbrain down with it.
 
+**Never route to a bare service name from a Caddy that sits on more than one compose
+network.** A compose service name is a DNS alias on every network the container joins, so
+two projects that both call a service `web` make `web` ambiguous for that proxy — and the
+neighbour's site block starts serving the wrong app on the neighbour's hostname, with no
+error anywhere. Reno's service is called `app` so the collision cannot arise, and the site
+block names the container, `reno-app-1`. When checking afterwards, compare the page, not the
+status code: both apps answer a signed-out request with a redirect, so the status codes are
+identical when it is broken.
+
 ## Updating
 
 ```bash
 cd /opt/reno/repo && git pull
 docker build --memory=900m --memory-swap=2500m -f deploy/Dockerfile -t reno-web:latest .
-docker compose -f deploy/docker-compose.yml up -d web
+docker compose -f deploy/docker-compose.yml up -d app
 docker run --rm --network reno_reno -e DATABASE_URL=... reno-tools:latest pnpm db:migrate
 ```
 
@@ -113,8 +122,8 @@ both cores. Do it when nobody is depending on secondbrain being fast.
 
 | Credential | How |
 |---|---|
-| Client link | Set `revoked: true` on the old entry in `deploy/client-tokens.json`, add a new one, `docker compose up -d web`. The old link stops working immediately. |
-| Agent token | Change `INGEST_TOKENS` in `.env`, `docker compose up -d web`, tell the agent team. |
+| Client link | Set `revoked: true` on the old entry in `deploy/client-tokens.json`, add a new one, `docker compose up -d app`. The old link stops working immediately. |
+| Agent token | Change `INGEST_TOKENS` in `.env`, `docker compose up -d app`, tell the agent team. |
 | A person's password | `pnpm user:add <their email> "<their name>"` again. |
 | Database password | Change it in Postgres and in `.env` together, then recreate both services. |
 

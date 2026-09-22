@@ -3,12 +3,13 @@
 #
 #   docker network connect reno-proxy <caddy container>
 #
-# `reno-web-1` rather than `web`: Caddy is on more than one compose network and
-# `web` is ambiguous across them.
+# `reno-app-1` and never a bare `web`: Caddy sits on more than one compose
+# network, and a service name is an alias on every network it joins. Reno's
+# service is called `app` for the same reason.
 
 reno.devmgd.com {
 	encode gzip
-	reverse_proxy reno-web-1:3000
+	reverse_proxy reno-app-1:3000
 
 	header {
 		Strict-Transport-Security "max-age=31536000; includeSubDomains"

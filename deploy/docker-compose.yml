@@ -31,7 +31,12 @@ services:
     restart: unless-stopped
     networks: [reno]
 
-  web:
+  # Named `app`, not `web`: this container joins a network shared with another
+  # compose project, and Docker resolves a service name as an alias on every
+  # network it joins. Two projects both called `web` make the name ambiguous
+  # there, and the neighbour's reverse proxy silently starts serving this app
+  # on the neighbour's hostname. It is not a hypothetical — it happened.
+  app:
     image: reno-web:latest
     environment:
       DATABASE_URL: postgres://reno:${POSTGRES_PASSWORD}@db:5432/reno
