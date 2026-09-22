@@ -36,7 +36,9 @@ cd /opt/reno/repo
 docker network create reno-proxy          # once; Caddy joins this
 ```
 
-Write `/opt/reno/repo/.env` — **not committed, exists only on the server**:
+Write `/opt/reno/repo/deploy/.env` — **not committed, exists only on the server**.
+It sits beside the compose file, not at the repository root: Compose reads `.env`
+from the compose file's own directory.
 
 ```
 POSTGRES_PASSWORD=<openssl rand -hex 18>
