@@ -6,7 +6,7 @@ deliberately conservative about it.
 | | |
 |---|---|
 | Host | `103.63.24.52`, Ubuntu 20.04, 2 cores, 981 MB RAM + 2 GB swap |
-| Address | https://reno.devmgd.com once its `A` record exists; https://reno.103.63.24.52.sslip.io meanwhile |
+| Address | https://reno.devmgd.com |
 | TLS | The Caddy already on the box, shared with the secondbrain app |
 | Checkout | `/opt/reno/repo` |
 | Compose project | `reno` (separate from `secondbrain-deploy`) |
@@ -149,13 +149,17 @@ docker run --rm -v reno_reno-db:/data -v /root/backups:/out alpine \
 Records are re-sendable by the agent, so the irreplaceable rows are the accounts, the month
 confirmations and the slot corrections — small, but the ones with a person's name on them.
 
-## Reaching it before DNS exists
+## DNS
 
-`devmgd.com` is registered and DNS-hosted at idcloudhost.com, so adding a subdomain needs
-that panel. Until `reno` has its `A` record, the site block also answers on
-`reno.103.63.24.52.sslip.io` — `sslip.io` resolves any name containing an IP to that IP, so
-Let's Encrypt validates it and Caddy issues a normal certificate with no zone access at
-all. Delete that name from the site block once the real record exists.
+`devmgd.com` is registered **and** DNS-hosted at idcloudhost.com — nameservers
+`bromo.cloudhost.id` and `rinjani.cloudhost.id`. A new subdomain is one `A` record to
+`103.63.24.52` in that panel, and nothing on the server can add it.
+
+If a name has to be served before its record exists, put it on `sslip.io`:
+`<label>.103.63.24.52.sslip.io` resolves to that IP for anyone, so Let's Encrypt validates
+it and Caddy issues a normal certificate with no zone access at all. Remove the name again
+once the real record is live. Caddy backs off after repeated NXDOMAIN failures and drops to
+the staging endpoint, so after adding the record, reload rather than waiting it out.
 
 ## Health
 
