@@ -1,10 +1,12 @@
 import type { DoubleListing, HeadcountMismatch } from '@/rules/manpower'
 import type { PersonRecord } from '@/contract/schemas'
+import type { UnreportedResult } from '@/rules/unreported-areas'
 
 interface SignalsPanelProps {
   readonly doubles: readonly DoubleListing[]
   readonly mismatches: readonly HeadcountMismatch[]
   readonly aliasCandidates: readonly PersonRecord[]
+  readonly unreported: UnreportedResult
 }
 
 interface SignalProps {
@@ -32,7 +34,12 @@ function Signal({ label, count, detail }: SignalProps) {
  * one of these has an innocent explanation available, and the screen never
  * asserts otherwise — a person opens the line-up and decides.
  */
-export function SignalsPanel({ doubles, mismatches, aliasCandidates }: SignalsPanelProps) {
+export function SignalsPanel({
+  doubles,
+  mismatches,
+  aliasCandidates,
+  unreported,
+}: SignalsPanelProps) {
   return (
     <section
       data-reno-only="true"
@@ -58,7 +65,19 @@ export function SignalsPanel({ doubles, mismatches, aliasCandidates }: SignalsPa
           count={aliasCandidates.length}
           detail="Two spellings that may be one person"
         />
+        <Signal
+          label="Rostered area with no work reported"
+          count={unreported.areas.length}
+          detail="People assigned, nothing reported there that shift"
+        />
       </ul>
+      {unreported.unplaceable > 0 && (
+        <p data-unplaceable className="mt-3 border-t border-line pt-3 text-[13px] text-muted">
+          {unreported.unplaceable} reports name a place whose zone nobody has stated, so they
+          could not be credited to an area. Until the area master carries zones, the signal
+          above is incomplete rather than clean.
+        </p>
+      )}
     </section>
   )
 }

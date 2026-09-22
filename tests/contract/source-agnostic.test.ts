@@ -15,6 +15,7 @@ import { createPagedRecordSource, paginate } from '../support/paged-source'
 const fromDisk = await loadFixtureSource()
 
 const paged = createPagedRecordSource({
+  area: paginate(fromDisk.areas, 9),
   message: paginate(fromDisk.messages, 100),
   work_report: paginate(fromDisk.workReports, 64),
   complaint: paginate(fromDisk.complaints, 7),
@@ -37,6 +38,7 @@ const EXPECTED: Record<string, number> = {
   rkb_block: 1,
   photo: 1052,
   person: 45,
+  area: 66,
 }
 
 describe('the rules layer cannot tell which source it is holding', () => {
@@ -66,6 +68,7 @@ describe('the rules layer cannot tell which source it is holding', () => {
       rkb_block: paginate(fromDisk.rkbBlocks, 1),
       photo: paginate(fromDisk.photos, 13),
       person: paginate(fromDisk.people, 2),
+      area: paginate(fromDisk.areas, 2),
     })
     expect(cold.all('photo')).toHaveLength(1052)
     expect(cold.complaints).toEqual(paged.complaints)

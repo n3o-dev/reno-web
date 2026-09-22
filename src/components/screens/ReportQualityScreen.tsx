@@ -17,6 +17,9 @@ import { getRecords } from '@/services/records'
 import { DefectBreakdown } from '@/components/screens/parts/DefectBreakdown'
 import { EvidenceQuality } from '@/components/screens/parts/EvidenceQuality'
 import { GroupActivity } from '@/components/screens/parts/GroupActivity'
+import { ReporterScorecard } from '@/components/screens/parts/ReporterScorecard'
+import { DuplicatePhotos } from '@/components/screens/parts/DuplicatePhotos'
+import { scoreReporters } from '@/rules/reporters'
 import type { FigureEvidence } from '@/components/screens/parts/ComplaintFunnel'
 
 const bundle = (source: RecordSource, ids: readonly string[]): FigureEvidence =>
@@ -30,6 +33,15 @@ export async function ReportQualityScreen({ siteId }: ScreenProps) {
   const clean = reports.filter((r) => r.defects.length === 0)
   const duplicates = findDuplicatePhotos(photos)
   const duplicateIds = new Set(duplicates.flatMap((d) => d.photoIds))
+
+  const scores = scoreReporters(reports)
+  const reporterEvidence: Record<string, FigureEvidence> = {}
+  for (const score of scores) {
+    reporterEvidence[score.reporter] = bundle(
+      records,
+      reports.filter((r) => r.sender_raw === score.reporter).map((r) => r.source_message_id),
+    )
+  }
 
   const defects = countDefects(reports)
   const defectEvidence: Record<string, FigureEvidence> = {}
@@ -93,6 +105,12 @@ export async function ReportQualityScreen({ siteId }: ScreenProps) {
           reportCount={reports.length}
           evidence={defectEvidence}
         />
+        <div className="md:col-span-2">
+          <ReporterScorecard scores={scores} evidence={reporterEvidence} />
+        </div>
+        <div className="md:col-span-2">
+          <DuplicatePhotos groups={duplicates} photos={photos} />
+        </div>
         <GroupActivity
           series={[
             {

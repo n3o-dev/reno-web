@@ -30,6 +30,7 @@ function withLineups(lineups: readonly LineupRecord[]): RecordSource {
     rkb_block: [],
     photo: [...fixtures.photos],
     person: [...fixtures.people],
+    area: [...fixtures.areas],
   })
 }
 
@@ -134,6 +135,7 @@ describe('AC-7 · the citation gate', () => {
       rkb_block: [],
       photo: [],
       person: [...fixtures.people],
+    area: [...fixtures.areas],
     })
 
     expect(uncitedBlocks(source)).toEqual([blocked.record_id])

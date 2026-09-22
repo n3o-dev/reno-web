@@ -240,5 +240,6 @@ export async function loadSource(sql: Sql, siteId?: string): Promise<RecordSourc
     rkb_block: parseAll('rkb_block', zodSchemas.rkb_block),
     photo: parseAll('photo', zodSchemas.photo),
     person: parseAll('person', zodSchemas.person),
+    area: parseAll('area', zodSchemas.area),
   })
 }

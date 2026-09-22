@@ -274,3 +274,48 @@ test.describe('AC-8 · a blocked work order', () => {
     await expect(page.locator(figure('work_orders.open'))).toHaveText('1')
   })
 })
+
+test.describe('the sections the spec describes in prose', () => {
+  test('Complaints shows the cause split, the ladder and the heatmap', async ({ page }) => {
+    await page.goto('/complaints')
+    // 67 within Reno's control, 8 outside, and every cause itemised.
+    await expect(page.locator(figure('complaints.cause.within'))).toHaveText('67')
+    await expect(page.locator(figure('complaints.cause.outside'))).toHaveText('8')
+    await expect(page.locator(figure('complaints.cause.hk_standard'))).toHaveText('67')
+
+    // The escalation ladder, as a visible state rather than a count.
+    await expect(page.locator('[data-escalation]')).toHaveCount(7)
+    await expect(page.locator('[data-escalation="escalating"]')).toHaveCount(2)
+
+    // And the area-by-day grid, using the master's labels.
+    await expect(page.getByRole('heading', { name: 'Where, day by day' })).toBeVisible()
+    await expect(page.getByText('Toilet LT2 dekat Rockstar').first()).toBeVisible()
+  })
+
+  test('Report Quality shows every reporter and the duplicate pairs', async ({ page }) => {
+    await page.goto('/report-quality')
+    await expect(page.locator('[data-figure^="quality.reporter."]')).toHaveCount(8)
+    await expect(page.locator('[data-duplicate-pair]')).toHaveCount(3)
+  })
+
+  test('Today shows coverage, what is planned, and work orders in the queue', async ({ page }) => {
+    await page.goto('/')
+    await expect(page.locator('[data-area-coverage]')).toHaveCount(16)
+    await expect(page.locator('[data-open-work-order]')).toHaveCount(2)
+    // The workbook is July's and the latest reported day is in September,
+    // so nothing may be listed as planned for it.
+    await expect(page.getByText(/does not cover this day/)).toBeVisible()
+  })
+
+  test('Manpower carries the quiet-area signal and says when it is incomplete', async ({ page }) => {
+    await page.goto('/manpower')
+    await expect(page.getByText('Rostered area with no work reported')).toBeVisible()
+    await expect(page.locator('[data-unplaceable]')).toContainText(/zone nobody has stated/)
+  })
+
+  test('every chart offers a table view (AC-11)', async ({ page }) => {
+    await page.goto('/complaints')
+    const tables = page.getByRole('group').filter({ hasText: 'Table view' })
+    expect(await tables.count()).toBeGreaterThan(0)
+  })
+})

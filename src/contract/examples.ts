@@ -26,6 +26,8 @@ export const EXAMPLE_NOTES: Record<RecordType, string> = {
     'A job row that could not proceed. There is no unblocked variant and no state field: a block either happened or no record exists, and the envelope already requires the message that justifies it.',
   photo:
     'Captured 07:34, received 07:37. Both instants are required and separate. The hash is what makes duplicate detection possible.',
+  area:
+    'A place the group names, with the label a person would write and the zone it sits in. `zone` is null until someone states it: work reports name places and line-ups name zones, and nothing else can bridge the two.',
   person:
     'A cleaner with a confirmed alias. The agent proposes aliases; a human confirms them before they count.',
 }
@@ -181,5 +183,17 @@ export const EXAMPLES: Record<RecordType, Record<string, unknown>> = {
     area_default: 'ug',
     active_from: '2026-01-01',
     active_to: null,
+  },
+  area: {
+    record_id: 'ar_0',
+    site_id: 'lwas',
+    source_message_id: 'msg_20260911_0831_204',
+    sent_at: '2026-09-11T08:31:00+07:00',
+    sender_raw: '🥀Amartha🥀',
+    sender_person_id: 'amartha',
+    confidence: 0.9,
+    area_id: 'toilet_lt2',
+    label: 'Toilet LT2 dekat Rockstar',
+    zone: 'lt2',
   },
 }

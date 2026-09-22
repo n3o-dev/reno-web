@@ -15,6 +15,8 @@ import {
 } from '@/rules/manpower'
 import { getRecords } from '@/services/records'
 import { monthReport } from '@/services/report'
+import { unreportedAreas } from '@/rules/unreported-areas'
+import { zoneLookup } from '@/rules/area'
 import { contractSlots } from '@/services/contract'
 import { rupiah } from '@/report/money'
 import { CoverageTable } from '@/components/screens/parts/CoverageTable'
@@ -175,6 +177,7 @@ export async function ManpowerScreen({ siteId, showSignals = true }: ManpowerScr
             doubles={doubleListings(lineups)}
             mismatches={headcountMismatches(lineups)}
             aliasCandidates={records.people.filter((p) => p.aliases.length > 0)}
+          unreported={unreportedAreas(lineups, records.workReports, zoneLookup(records.areas))}
           />
         )}
       </div>

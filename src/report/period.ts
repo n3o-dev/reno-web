@@ -34,6 +34,8 @@ export function narrowToMonth(source: RecordSource, month: string): RecordSource
     rkb_match: inMonth(source.rkbMatches, month),
     rkb_block: inMonth(source.rkbBlocks, month),
     photo: inMonth(source.photos, month),
+    // Masters, not monthly records — same reason as `person`.
+    area: [...source.areas],
     // The personnel master is not a monthly record: a person employed in
     // September is still the person a September line-up names.
     person: [...source.people],

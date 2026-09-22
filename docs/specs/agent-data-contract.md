@@ -196,6 +196,21 @@ A contract test fails if this section drifts from the schemas.
 | `active_from` | string (date) | yes | no | — |
 | `active_to` | string (date) | yes | yes | — |
 
+### `area`
+
+| Field | Type | Required | Nullable | Allowed values |
+|---|---|---|---|---|
+| `record_id` | string | yes | no | — |
+| `site_id` | string | yes | no | — |
+| `source_message_id` | string | yes | no | — |
+| `sent_at` | string (date-time) | yes | no | — |
+| `sender_raw` | string | yes | no | — |
+| `sender_person_id` | string | yes | yes | — |
+| `confidence` | number | yes | no | — |
+| `area_id` | string | yes | no | — |
+| `label` | string | yes | no | — |
+| `zone` | string | yes | yes | — |
+
 <!-- FIELDS:END -->
 
 ### Fields that carry unusual weight

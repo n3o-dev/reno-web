@@ -6,9 +6,16 @@ import { bundleEvidence } from '@/services/evidence'
 import type { FigureEvidence } from '@/components/screens/parts/ComplaintFunnel'
 import type { RecordSource } from '@/contract/source'
 import { countByDay } from '@/rules/daily'
+import { areaLabeller } from '@/rules/area'
 import { deliveryOf } from '@/rules/work-orders'
 import { getRecords } from '@/services/records'
 import { OpenItems } from '@/components/screens/parts/OpenItems'
+import { AreaCoverage } from '@/components/screens/parts/AreaCoverage'
+import { DueToday, type DueRow } from '@/components/screens/parts/DueToday'
+import { applySlotCorrections, coverage, provisionalContracts, slotDays } from '@/rules/manpower'
+import { contractSlots, getContract } from '@/services/contract'
+import { getSlotOverrides } from '@/services/overrides'
+import { getWorkbook, jobRowId, WORKBOOK_MONTH, WORKBOOK_LABEL } from '@/services/rkb'
 
 const bundle = (source: RecordSource, ids: readonly string[]): FigureEvidence =>
   bundleEvidence(source, ids, 'Nothing on the latest reported day matched.')
@@ -38,7 +45,52 @@ export async function TodayScreen({ siteId }: ScreenProps) {
   const blocked = complaints.filter((c) => c.state === 'blocked')
   const lineups = latest === null ? [] : records.lineups.filter((l) => l.date === latest)
   const onSite = lineups.reduce((n, l) => n + l.entries.length, 0)
-  const orders = records.workOrders.map(deliveryOf).filter((d) => d.state === 'open')
+  const orders = records.workOrders
+    .map(deliveryOf)
+    .filter((d) => d.state === 'open' || d.state === 'blocked')
+
+  const [contract, corrections, book] = await Promise.all([
+    getContract(),
+    getSlotOverrides(),
+    getWorkbook(),
+  ])
+  const contracts = contractSlots(contract) ?? provisionalContracts(lineups)
+  const todaysSlots = applySlotCorrections(slotDays(lineups), corrections)
+  const areaRows = coverage(contracts, todaysSlots)
+
+  /*
+   * Only from a workbook that covers this day. The loaded plan is July's
+   * and the latest reported day is in September; relabelling one month's
+   * rows as another's is the lie the pack already refuses to tell.
+   */
+  const dayOfMonth = latest === null ? null : Number(latest.slice(8, 10))
+  const coversToday =
+    latest !== null && latest.startsWith(WORKBOOK_MONTH)
+      ? null
+      : `${WORKBOOK_LABEL} does not cover this day, so nothing can be listed as planned for it.`
+
+  const matched = new Set(records.rkbMatches.map((m) => `${m.job_row_id}|${m.date}`))
+  const blockedRows = new Set(records.rkbBlocks.map((b) => `${b.job_row_id}|${b.date}`))
+  const dueRows: DueRow[] =
+    coversToday !== null || dayOfMonth === null
+      ? []
+      : book.sheets.flatMap((sheet) =>
+          sheet.sections.flatMap((section) =>
+            section.rows
+              .filter((row) => (row.days[dayOfMonth - 1]?.planned ?? 0) > 0)
+              .map((row) => {
+                const key = `${jobRowId(sheet.name, section.name, row.no)}|${latest}`
+                return {
+                  sheet: sheet.name,
+                  section: section.name,
+                  no: row.no,
+                  subject: row.subject,
+                  done: matched.has(key) || (row.days[dayOfMonth - 1]?.actual ?? 0) > 0,
+                  blocked: blockedRows.has(key),
+                }
+              }),
+          ),
+        )
 
   return (
     <>
@@ -108,9 +160,14 @@ export async function TodayScreen({ siteId }: ScreenProps) {
           </p>
         </Card>
       </div>
+      <div className="mt-4 grid gap-4 md:grid-cols-2">
+        <AreaCoverage rows={areaRows} days={new Set(todaysSlots.map((d) => d.date)).size} />
+        <DueToday rows={dueRows} coversToday={coversToday} />
+      </div>
+
       <section className="mt-4 rounded-[var(--radius-card)] border border-line bg-surface p-5">
         <h2 className="mb-2 font-[family-name:var(--font-display)] text-[17px]">Still open</h2>
-        <OpenItems complaints={open} />
+        <OpenItems complaints={open} orders={orders} labelOf={areaLabeller(records.areas)} />
       </section>
     </>
   )

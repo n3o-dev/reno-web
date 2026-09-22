@@ -10,6 +10,12 @@ import { ComplaintsByDay } from '@/components/screens/parts/ComplaintsByDay'
 import { ResponseTimes } from '@/components/screens/parts/ResponseTimes'
 import { LowConfidence } from '@/components/screens/parts/LowConfidence'
 import { BlockedItems } from '@/components/screens/parts/BlockedItems'
+import { CauseSplit } from '@/components/screens/parts/CauseSplit'
+import { AreaHeatmap } from '@/components/screens/parts/AreaHeatmap'
+import { RepeatTracker } from '@/components/screens/parts/RepeatTracker'
+import { causeSplit, repeatAreas, WITHIN_RENO_CONTROL } from '@/rules/causes'
+import { complaintHeatmap } from '@/rules/heatmap'
+import { areaLabeller } from '@/rules/area'
 import type { RecordSource } from '@/contract/source'
 
 /** A complaint's own message, plus the messages of the states it passed through. */
@@ -35,6 +41,32 @@ export async function ComplaintsScreen({ siteId }: ScreenProps) {
     // The union's blocked arm guarantees this is a string, never null.
     const [cited] = resolveEvidence(records, [complaint.blocked_reason_message_id ?? ''])
     citations[complaint.record_id] = cited
+  }
+
+  const labelOf = areaLabeller(records.areas)
+  const split = causeSplit(complaints)
+  const heatmap = complaintHeatmap(complaints, days.map((d) => d.date))
+  const repeats = repeatAreas(complaints)
+
+  const causeEvidence: Record<string, FigureEvidence> = {
+    within: bundle(
+      records,
+      complaints
+        .filter((c) => WITHIN_RENO_CONTROL.includes(c.cause))
+        .map((c) => c.source_message_id),
+    ),
+    outside: bundle(
+      records,
+      complaints
+        .filter((c) => !WITHIN_RENO_CONTROL.includes(c.cause))
+        .map((c) => c.source_message_id),
+    ),
+  }
+  for (const item of split.items) {
+    causeEvidence[item.cause] = bundle(
+      records,
+      complaints.filter((c) => c.cause === item.cause).map((c) => c.source_message_id),
+    )
   }
 
   const byDay: Record<string, FigureEvidence> = {}
@@ -74,7 +106,12 @@ export async function ComplaintsScreen({ siteId }: ScreenProps) {
             messagesBehind(reached(complaints, 'closed_with_photo')),
           )}
         />
-        <BlockedItems complaints={blocked} citations={citations} />
+        <CauseSplit split={split} evidence={causeEvidence} />
+        <RepeatTracker repeats={repeats} labelOf={labelOf} />
+        <div className="md:col-span-2">
+          <AreaHeatmap heatmap={heatmap} labelOf={labelOf} />
+        </div>
+        <BlockedItems complaints={blocked} citations={citations} labelOf={labelOf} />
         <LowConfidence
           complaints={unsure}
           evidence={bundle(records, unsure.map((c) => c.source_message_id))}

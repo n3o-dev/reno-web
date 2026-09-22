@@ -61,6 +61,7 @@ export const getRecords = cache(
       rkb_block: here(all.rkbBlocks),
       photo: here(all.photos),
       person: here(all.people),
+      area: here(all.areas),
     })
   },
 )

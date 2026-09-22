@@ -27,7 +27,7 @@ is a null or an omitted record — never a guess.
 
 ---
 
-## 2. The nine record types
+## 2. The ten record types
 
 | Type | One per | Purpose |
 |---|---|---|
@@ -107,6 +107,15 @@ in. There is no `state` field and no unblocked variant: a block either
 happened or no record exists. The envelope's `source_message_id` is the
 citation, so rule 4.1 is structural here — an uncited block cannot be
 expressed.
+
+**4.9 — Send the area master, and leave `zone` null until someone states it.**
+Work reports name places (`carpark_p7_separator_ramp_spiral`); line-ups name
+zones (`external`, `lt2`). Nothing bridges the two, so without an `area`
+record nobody can ask whether a zone was reported on at all — and the screens
+un-slug the id and show a client `Carpark P7 Separator Ramp Spiral`. Send the
+label as a person would write it. Where nobody has stated which zone a place
+sits in, send null: 44% of them can be guessed from the name and two zones map
+to nothing, which relocates the wrong answers rather than removing them.
 
 **4.7 — Never guess an area.**
 `area_id` is nullable on work reports and complaints. In the sample period, 36 of 639 reports
@@ -286,6 +295,21 @@ value may be `null`.
 | `area_default` | string | yes | yes | — |
 | `active_from` | string (date) | yes | no | — |
 | `active_to` | string (date) | yes | yes | — |
+
+### `area`
+
+| Field | Type | Required | Nullable | Allowed values |
+|---|---|---|---|---|
+| `record_id` | string | yes | no | — |
+| `site_id` | string | yes | no | — |
+| `source_message_id` | string | yes | no | — |
+| `sent_at` | string (date-time) | yes | no | — |
+| `sender_raw` | string | yes | no | — |
+| `sender_person_id` | string | yes | yes | — |
+| `confidence` | number | yes | no | — |
+| `area_id` | string | yes | no | — |
+| `label` | string | yes | no | — |
+| `zone` | string | yes | yes | — |
 
 <!-- FIELDS:END -->
 
@@ -535,11 +559,66 @@ A cleaner with a confirmed alias. The agent proposes aliases; a human confirms t
 }
 ```
 
+### `area`
+
+A place the group names, with the label a person would write and the zone it sits in. `zone` is null until someone states it: work reports name places and line-ups name zones, and nothing else can bridge the two.
+
+```json
+{
+  "record_id": "ar_0",
+  "site_id": "lwas",
+  "source_message_id": "msg_20260911_0831_204",
+  "sent_at": "2026-09-11T08:31:00+07:00",
+  "sender_raw": "🥀Amartha🥀",
+  "sender_person_id": "amartha",
+  "confidence": 0.9,
+  "area_id": "toilet_lt2",
+  "label": "Toilet LT2 dekat Rockstar",
+  "zone": "lt2"
+}
+```
+
 <!-- EXAMPLES:END -->
 
 ---
 
 ## 7. How to check your output
+
+**Run our checker against your own file, before you send anything.**
+
+```bash
+git clone https://github.com/n3o-dev/reno-web && cd reno-web && pnpm install
+pnpm contract:check your-output.json
+```
+
+The file is either `[{ "type": "complaint", "payload": { … } }, …]` or the
+exact body the endpoint takes, `{ "records": [ … ] }`. It reports every record
+the endpoint would reject, with the index and the field:
+
+```
+3 records: complaint 1, area 1, rkb_block 1
+every record matches the contract.
+
+2 problem(s):
+  [0] complaint.confidence: Too big: expected number to be <=1
+  [1] area.label: Too small: expected string to have >=1 characters
+```
+
+It validates against the same schemas the endpoint uses — `contract/*.schema.json`
+in this repo, emitted from the source of truth — so a file that passes here is
+a file the endpoint accepts. If you would rather not clone anything, those JSON
+Schema files are draft 2020-12 and work in any validator.
+
+**Then post it:**
+
+```bash
+curl -X POST https://<host>/api/records \
+  -H "Authorization: Bearer $RENO_INGEST_TOKEN" \
+  -H 'Content-Type: application/json' \
+  --data @your-output.json
+```
+
+
 
 The JSON Schema files in `contract/` are draft 2020-12 and work with any standard validator.
 

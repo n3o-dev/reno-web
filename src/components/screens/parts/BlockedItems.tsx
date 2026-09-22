@@ -1,5 +1,4 @@
 import { Card } from '@/components/styled/Card'
-import { areaLabel } from '@/rules/area'
 import type { ComplaintRecord } from '@/contract/schemas'
 import type { Evidence } from '@/services/evidence'
 
@@ -7,6 +6,7 @@ interface BlockedItemsProps {
   readonly complaints: readonly ComplaintRecord[]
   /** Keyed by record id: the message that justifies the block. */
   readonly citations: Readonly<Record<string, Evidence | undefined>>
+  readonly labelOf: (areaId: string | null) => string | null
 }
 
 const STAMP = new Intl.DateTimeFormat('en-GB', {
@@ -26,7 +26,7 @@ const STAMP = new Intl.DateTimeFormat('en-GB', {
  * this shows the citation next to the claim, so the client can read the
  * message that justifies the pause rather than taking Reno's word (AC-8).
  */
-export function BlockedItems({ complaints, citations }: BlockedItemsProps) {
+export function BlockedItems({ complaints, citations, labelOf }: BlockedItemsProps) {
   if (complaints.length === 0) return null
   return (
     <Card
@@ -44,7 +44,7 @@ export function BlockedItems({ complaints, citations }: BlockedItemsProps) {
             >
               <div className="flex items-baseline justify-between gap-3 text-[14px]">
                 <span>
-                  {areaLabel(complaint.area_id) ?? (
+                  {labelOf(complaint.area_id) ?? (
                     <span className="text-faint">No area named</span>
                   )}
                 </span>

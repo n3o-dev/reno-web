@@ -1,5 +1,6 @@
 import { readFile } from 'node:fs/promises'
 import type {
+  AreaRecord,
   ComplaintRecord,
   LineupRecord,
   MessageRecord,
@@ -33,6 +34,7 @@ export interface RecordsByType {
   rkb_block: RkbBlockRecord
   photo: PhotoRecord
   person: PersonRecord
+  area: AreaRecord
 }
 
 export interface RecordSource {
@@ -46,6 +48,7 @@ export interface RecordSource {
   readonly rkbBlocks: readonly RkbBlockRecord[]
   readonly photos: readonly PhotoRecord[]
   readonly people: readonly PersonRecord[]
+  readonly areas: readonly AreaRecord[]
 }
 
 type Store = { [K in RecordType]: RecordsByType[K][] }
@@ -62,6 +65,7 @@ export function createRecordSource(store: Store): RecordSource {
     rkbBlocks: store.rkb_block,
     photos: store.photo,
     people: store.person,
+    areas: store.area,
   }
 }
 

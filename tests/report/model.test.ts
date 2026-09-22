@@ -144,6 +144,7 @@ describe('AC-3 · complaints never touch the billing figure', () => {
         rkb_block: [],
         photo: [...source.photos],
         person: [...source.people],
+        area: [...source.areas],
       }),
       workbook,
       month: '2026-09',
@@ -201,6 +202,7 @@ const fullMonth = createRecordSource({
   rkb_block: [],
   photo: [...source.photos],
   person: [...source.people],
+        area: [...source.areas],
 })
 
 const buildFull = (over = contract): ReportPack =>
@@ -236,6 +238,7 @@ describe('a month missing its line-ups is not invoiced', () => {
         rkb_block: [],
         photo: [...source.photos],
         person: [...source.people],
+        area: [...source.areas],
       }),
       workbook,
       month: '2026-09',
@@ -465,6 +468,7 @@ describe('a record is filed by the date it is about', () => {
       rkb_block: [],
       photo: [],
       person: [...source.people],
+        area: [...source.areas],
     })
 
     const september = buildReportPack({

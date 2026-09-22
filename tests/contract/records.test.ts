@@ -6,9 +6,10 @@ import { sampleRecord } from '../support/samples'
 
 const ajv = addFormats(new Ajv2020({ strict: true, allErrors: true }))
 
-describe('all nine record types', () => {
+describe('all ten record types', () => {
   it('publishes a draft 2020-12 schema for each', () => {
     expect([...RECORD_TYPES].sort()).toEqual([
+      'area',
       'complaint',
       'lineup',
       'message',

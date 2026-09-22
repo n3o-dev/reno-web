@@ -230,6 +230,29 @@ export const photoRecord = z.strictObject({
   storage_ref: z.string().min(1),
 })
 
+/**
+ * A place, its human name, and the zone it sits in.
+ *
+ * The tenth record type, and it closes two gaps at once. Work reports name
+ * specific places (`carpark_p7_separator_ramp_spiral`); line-ups name zones
+ * (`external`, `lt2`). The two vocabularies share nothing, so nobody could
+ * ask "was this zone reported on at all this shift" — the question the
+ * anti-fraud panel exists to ask. And with no label anywhere, the screens
+ * un-slug the id and show a client `Carpark P7 Separator Ramp Spiral`.
+ *
+ * `zone` is nullable on purpose. A place whose zone nobody has stated is a
+ * place we cannot answer coverage questions about, and saying so beats
+ * inferring it from the name — rule 4.7 pointed the other way.
+ */
+export const areaRecord = z.strictObject({
+  ...envelope,
+  area_id: z.string().min(1),
+  /** As a person would write it, not as a slug. */
+  label: z.string().min(1),
+  /** The line-up zone this place belongs to, or null if nobody has said. */
+  zone: z.string().min(1).nullable(),
+})
+
 /** The personnel master entry, including the aliases a human has confirmed. */
 export const personRecord = z.strictObject({
   ...envelope,
@@ -252,6 +275,7 @@ export const RECORD_TYPES = [
   'rkb_block',
   'photo',
   'person',
+  'area',
 ] as const
 export type RecordType = (typeof RECORD_TYPES)[number]
 
@@ -265,6 +289,7 @@ export const zodSchemas = {
   rkb_block: rkbBlockRecord,
   photo: photoRecord,
   person: personRecord,
+  area: areaRecord,
 } satisfies Record<RecordType, z.ZodType>
 
 export type MessageRecord = z.infer<typeof messageRecord>
@@ -276,6 +301,7 @@ export type RkbMatchRecord = z.infer<typeof rkbMatchRecord>
 export type RkbBlockRecord = z.infer<typeof rkbBlockRecord>
 export type PhotoRecord = z.infer<typeof photoRecord>
 export type PersonRecord = z.infer<typeof personRecord>
+export type AreaRecord = z.infer<typeof areaRecord>
 export type Defect = (typeof DEFECTS)[number]
 export type Shift = z.infer<typeof shift>
 export type Cause = (typeof CAUSES)[number]
@@ -294,4 +320,5 @@ export const JSON_SCHEMAS = {
   rkb_block: z.toJSONSchema(rkbBlockRecord, TARGET),
   photo: z.toJSONSchema(photoRecord, TARGET),
   person: z.toJSONSchema(personRecord, TARGET),
+  area: z.toJSONSchema(areaRecord, TARGET),
 }

@@ -108,6 +108,7 @@ const out: { [K in RecordType]: unknown[] } = {
   rkb_block: [],
   photo: [],
   person: [],
+  area: [],
 }
 
 // ---- messages -------------------------------------------------------------
@@ -346,6 +347,32 @@ ALL_DATES.forEach((date, index) => {
   }
   void index
 })
+
+/*
+ * The area master, built from the labels the sources actually carry: the
+ * seven recurring areas name themselves, and every one-off is transcribed
+ * from the deck's evidence appendix.
+ *
+ * `zone` is null throughout. Work reports name places and line-ups name
+ * zones, and nothing in either source says which place sits in which zone —
+ * 44% of them could be guessed from the name and two zones would map to
+ * nothing at all, which would relocate the false alarms rather than remove
+ * them. Reno states the zones or the coverage question stays unanswered.
+ */
+const areaLabels = new Map<string, string>()
+for (const area of REPEAT_AREAS) areaLabels.set(area.id, area.label)
+for (const labels of ONE_OFF_AREAS) for (const label of labels) areaLabels.set(slug(label), label)
+
+let areaN = 0
+for (const [areaId, label] of [...areaLabels].sort(([a], [b]) => a.localeCompare(b))) {
+  out.area.push({
+    ...envelope(`ar_${areaN}`, 0, 7 * 60 + (areaN % 60), 'Amartha'),
+    area_id: areaId,
+    label,
+    zone: null,
+  })
+  areaN++
+}
 
 REPORTERS.forEach((name, n) => {
   out.person.push({

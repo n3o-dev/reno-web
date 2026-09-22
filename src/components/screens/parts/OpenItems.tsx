@@ -1,8 +1,11 @@
 import type { ComplaintRecord } from '@/contract/schemas'
-import { areaLabel } from '@/rules/area'
+import type { Delivery } from '@/rules/work-orders'
 
 interface OpenItemsProps {
   readonly complaints: readonly ComplaintRecord[]
+  /** Work orders still open or blocked — they sit in the same queue. */
+  readonly orders: readonly Delivery[]
+  readonly labelOf: (areaId: string | null) => string | null
 }
 
 const TIME = new Intl.DateTimeFormat('en-GB', {
@@ -20,22 +23,40 @@ const STATE_LABEL: Record<string, string> = {
 }
 
 /** Oldest first: the longest-running complaint is the one most worth seeing. */
-export function OpenItems({ complaints }: OpenItemsProps) {
+export function OpenItems({ complaints, orders, labelOf }: OpenItemsProps) {
   const ordered = [...complaints].sort((a, b) => a.raised_at.localeCompare(b.raised_at))
 
-  if (ordered.length === 0) {
+  if (ordered.length === 0 && orders.length === 0) {
     return <p className="text-[14px] text-muted">Nothing open on the latest reported day.</p>
   }
 
   return (
     <ul className="flex flex-col">
+      {/* Work orders run to the client's own date, not the 24-hour clock,
+          so they carry their due date rather than a time raised. */}
+      {orders.map(({ order, state }) => (
+        <li
+          key={order.record_id}
+          data-open-work-order={order.record_id}
+          className="flex items-baseline justify-between gap-4 border-b border-line py-3 text-[14px] last:border-0"
+        >
+          <span className="min-w-0">
+            {order.title}
+            <span className="block text-[13px] text-faint">Work order</span>
+          </span>
+          <span className="shrink-0 text-right text-muted">
+            <span className="block">{state === 'blocked' ? 'Blocked — clock paused' : 'Open'}</span>
+            <span className="block text-[13px] text-faint tabular-nums">due {order.due_date}</span>
+          </span>
+        </li>
+      ))}
       {ordered.map((complaint) => (
         <li
           key={complaint.record_id}
           className="flex items-baseline justify-between gap-4 border-b border-line py-3 text-[14px] last:border-0"
         >
           <span className="min-w-0">
-            {areaLabel(complaint.area_id) ?? <span className="text-faint">No area named</span>}
+            {labelOf(complaint.area_id) ?? <span className="text-faint">No area named</span>}
             {complaint.confidence < 0.6 && (
               <span
                 data-marker="low-confidence"

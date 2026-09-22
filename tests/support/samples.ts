@@ -100,6 +100,13 @@ const SAMPLES: Record<RecordType, () => Record<string, unknown>> = {
     active_from: '2026-01-01',
     active_to: null,
   }),
+  area: () => ({
+    ...envelope,
+    record_id: 'ar_1',
+    area_id: 'toilet_lt2',
+    label: 'Toilet LT2 dekat Rockstar',
+    zone: 'lt2',
+  }),
 }
 
 export function sampleRecord(type: RecordType): Record<string, unknown> {

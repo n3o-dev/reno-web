@@ -49,6 +49,9 @@ export function createPagedRecordSource(pages: Pages): RecordSource {
     get photos() {
       return materialise('photo')
     },
+    get areas() {
+      return materialise('area')
+    },
     get people() {
       return materialise('person')
     },

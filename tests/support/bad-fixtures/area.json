@@ -1,0 +1,38 @@
+[
+  {
+    "record_id": "ar_0",
+    "site_id": "lwas",
+    "source_message_id": "msg_0_20",
+    "sent_at": "2026-09-10T07:00:00+07:00",
+    "sender_raw": "Amartha",
+    "sender_person_id": null,
+    "confidence": 0.9,
+    "area_id": "air_curtain_stainless_pintu_masuk",
+    "label": "Air curtain stainless pintu masuk",
+    "zone": null
+  },
+  {
+    "record_id": "ar_1",
+    "site_id": "lwas",
+    "source_message_id": "msg_0_20",
+    "sent_at": "2026-09-10T07:01:00+07:00",
+    "sender_raw": "Amartha",
+    "sender_person_id": null,
+    "confidence": 0.9,
+    "area_id": "area_apong",
+    "label": "Area APONG",
+    "zone": null
+  },
+  {
+    "record_id": "ar_2",
+    "site_id": "lwas",
+    "source_message_id": "msg_0_21",
+    "sent_at": "2026-09-10T07:02:00+07:00",
+    "sender_raw": "Amartha",
+    "sender_person_id": null,
+    "confidence": 0.9,
+    "area_id": "area_depan_kantor_cs",
+    "label": "Area depan kantor CS",
+    "zone": null
+  }
+]

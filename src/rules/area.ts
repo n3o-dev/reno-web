@@ -1,11 +1,12 @@
+import type { AreaRecord } from '@/contract/schemas'
+
 /**
  * Turns an `area_id` into something a person reads.
  *
- * A stopgap. The agent emits `area_id` and nothing emits the area's name, so
- * there is no area master to look a label up in — the id is all the dashboard
- * has. Un-slugging it is better than printing `koridor_lt1_timur_sudut_plafon`
- * at a client, and worse than the real thing. When an area master exists this
- * becomes a lookup with this as the fallback.
+ * The area master carries the label a person would write; this is the
+ * fallback for an id the master does not know yet. Un-slugging is better
+ * than printing `koridor_lt1_timur_sudut_plafon` at a client, and worse
+ * than the real thing.
  */
 
 /** Tokens the general rule would get wrong. */
@@ -27,4 +28,24 @@ export function areaLabel(areaId: string | null): string | null {
       return capitalise(word)
     })
     .join(' ')
+}
+
+/** A lookup over the area master, falling back to un-slugging the id. */
+export function areaLabeller(
+  areas: readonly AreaRecord[],
+): (areaId: string | null) => string | null {
+  const labels = new Map(areas.map((area) => [area.area_id, area.label]))
+  return (areaId) => {
+    if (areaId === null) return null
+    return labels.get(areaId) ?? areaLabel(areaId)
+  }
+}
+
+/** The zone a place sits in, for the areas whose zone someone has stated. */
+export function zoneLookup(areas: readonly AreaRecord[]): ReadonlyMap<string, string> {
+  const zones = new Map<string, string>()
+  for (const area of areas) {
+    if (area.zone !== null) zones.set(area.area_id, area.zone)
+  }
+  return zones
 }
