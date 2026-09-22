@@ -9,7 +9,13 @@ interface ComplaintsByDayProps {
   readonly evidence: Readonly<Record<string, FigureEvidence>>
 }
 
-const WEEKDAY = new Intl.DateTimeFormat('en-GB', { weekday: 'short', day: 'numeric' })
+/*
+ * timeZone: 'UTC' because the value is a date, not an instant: an ISO date
+ * parses to UTC midnight, so formatting it in the server's own zone printed
+ * the previous day — and the previous month on the 1st — anywhere west of
+ * UTC. The heading would then disagree with the data under it.
+ */
+const WEEKDAY = new Intl.DateTimeFormat('en-GB', { weekday: 'short', day: 'numeric', timeZone: 'UTC' })
 
 export function ComplaintsByDay({ days, evidence }: ComplaintsByDayProps) {
   const peak = Math.max(1, ...days.map((d) => d.count))

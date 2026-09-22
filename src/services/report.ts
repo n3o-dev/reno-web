@@ -6,6 +6,7 @@ import { getDatabase } from '@/services/database'
 import { WORKBOOK_LABEL, WORKBOOK_MONTH, getWorkbook } from '@/services/rkb'
 import { getContract } from '@/services/contract'
 import { getSlotOverrides } from '@/services/overrides'
+import { narrowToMonth } from '@/report/period'
 
 /**
  * Assembles the month's pack and checks whether it may be generated.
@@ -65,7 +66,13 @@ export async function monthReport(month: string, siteId?: string): Promise<Month
       ? contract
       : { ...contract, slots: null, monthly_rate_per_mp: 0 },
   })
-  const gates = checkGates({ source, confirmation, month })
+  /*
+   * The same month the pack reads. Gating on the whole record set meant one
+   * uncited block in September blocked generation for every month
+   * including 2099, and the refusal named a record outside the month it
+   * refused.
+   */
+  const gates = checkGates({ source: narrowToMonth(source, month), confirmation, month })
 
   return {
     pack,

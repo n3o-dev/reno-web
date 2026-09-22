@@ -28,6 +28,8 @@ export interface ExportPlan {
   readonly edits: readonly ActualEdit[]
   readonly planned: number
   readonly done: number
+  /** Cells Reno had already filled in, left untouched. */
+  readonly preserved: number
 }
 
 export function planExport(
@@ -37,6 +39,7 @@ export function planExport(
 ): ExportPlan {
   const edits: ActualEdit[] = []
   let done = 0
+  let preserved = 0
 
   for (const sheet of workbook.sheets) {
     for (const section of sheet.sections) {
@@ -45,8 +48,24 @@ export function planExport(
         for (const day of row.days) {
           if (day.planned === null || day.planned <= 0) continue
           const date = `${month}-${String(day.day).padStart(2, '0')}`
-          const isDone = matched.has(key(id, date))
+            const isDone = matched.has(key(id, date))
           if (isDone) done += 1
+
+          /*
+           * A cell Reno already filled in by hand is left alone unless the
+           * agent has something to say about it. Writing 0 over every
+           * unmatched planned cell destroyed all 268 values typed into the
+           * July workbook — the agent has one match, so the export replaced
+           * a month of realisation with a single 1 and 532 zeroes.
+           *
+           * Blank still becomes 0: that is the ambiguity worth removing,
+           * and it destroys nothing.
+           */
+          const alreadyFilled = day.actual !== null
+          if (!isDone && alreadyFilled) {
+            preserved += 1
+            continue
+          }
           edits.push({
             sheet: sheet.name,
             rowNumber: row.rowNumber,
@@ -58,7 +77,7 @@ export function planExport(
     }
   }
 
-  return { edits, planned: edits.length, done }
+  return { edits, planned: edits.length + preserved, done, preserved }
 }
 
 /**

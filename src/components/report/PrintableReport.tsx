@@ -8,7 +8,13 @@ interface PrintableReportProps {
   readonly report: MonthReport
 }
 
-const DATE = new Intl.DateTimeFormat('en-GB', { day: 'numeric', month: 'short' })
+/*
+ * timeZone: 'UTC' because the value is a date, not an instant: an ISO date
+ * parses to UTC midnight, so formatting it in the server's own zone printed
+ * the previous day — and the previous month on the 1st — anywhere west of
+ * UTC. The heading would then disagree with the data under it.
+ */
+const DATE = new Intl.DateTimeFormat('en-GB', { day: 'numeric', month: 'short', timeZone: 'UTC' })
 const day = (iso: string): string => DATE.format(new Date(`${iso}T00:00:00Z`))
 const percent = (value: number | null): string =>
   value === null ? '—' : `${Math.round(value * 100)}%`
@@ -65,8 +71,13 @@ export function PrintableReport({ report }: PrintableReportProps) {
    * claimed attendance alone. The rest of the report is narrative and safe
    * to read early; the money is the thing the gate exists to hold.
    */
-  const rosterUnconfirmed =
-    report.gates.find((gate) => gate.id === 'roster_confirmed')?.passed !== true
+  /*
+   * Every gate, not just the roster. Gating on one id meant an undecided
+   * alias — the spec's own example of a headcount error — let the print
+   * view state an amount while the download route refused with 409. Two
+   * surfaces of one pack must not have two gate policies.
+   */
+  const moneyWithheld = !report.generatable
 
   return (
     <main className="report px-6 py-8">
@@ -179,11 +190,11 @@ export function PrintableReport({ report }: PrintableReportProps) {
         <Row label="Sakit" value={String(pack.manpower.absences.sakit)} />
         <Row label="Izin" value={String(pack.manpower.absences.izin)} />
         <Row label="Alfa" value={String(pack.manpower.absences.alfa)} />
-        {rosterUnconfirmed ? (
+        {moneyWithheld ? (
           <Row
             label="Amount payable"
             value="Withheld"
-            note="The roster for this month has not been confirmed by anyone. BAPP cannot be generated against claimed attendance alone, so this draft prints the manpower it read and no money."
+            note={`${report.gates.filter((g) => !g.passed).map((g) => g.detail).join(' ')} A pack generates no money until every check passes.`}
           />
         ) : pack.manpower.payable.state === 'computed' ? (
           <>

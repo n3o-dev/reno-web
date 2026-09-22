@@ -37,7 +37,8 @@ test('a draft prints the report but withholds the money', async ({ page }) => {
   // The narrative sections are useful early; the amount payable is what the
   // roster gate exists to hold back.
   await expect(page.locator('.report')).toContainText('Withheld')
-  await expect(page.locator('.report')).toContainText('cannot be generated against claimed')
+  await expect(page.locator('.report')).toContainText('Nobody has confirmed the roster')
+  await expect(page.locator('.report')).toContainText('no money until every check passes')
   await expect(page.locator('.report')).toContainText('Raised')
 })
 
@@ -53,17 +54,23 @@ test('the print view saves as PDF, and a draft says so on paper', async ({ page 
   await expect(page.getByText(/Draft\./)).toBeVisible()
 })
 
-test('the workbook refuses to generate while a gate is open', async ({ page }) => {
+test('the workbook refuses a month it does not cover', async ({ page }) => {
   /*
-   * Navigated, not fetched through the API context. The session cookie is
-   * Secure in the production build these tests run, and an API context will
-   * not send a Secure cookie over http while a browser will for localhost.
+   * The loaded workbook is July's. Exporting it as RKB_2026-09 handed Reno
+   * July's file under September's name with every actual zeroed — the
+   * relabelling the month narrowing was meant to close, still live in the
+   * download path until this check.
    */
   const response = await page.goto(`/api/report/rkb?month=${MONTH}`)
   expect(response?.status()).toBe(409)
+  expect(await page.locator('pre').innerText()).toContain('No RKB workbook is loaded for 2026-09')
+})
+
+test('and refuses a month it does cover while a gate is open', async ({ page }) => {
+  const response = await page.goto('/api/report/rkb?month=2026-07')
+  expect(response?.status()).toBe(409)
   const body: unknown = JSON.parse(await page.locator('pre').innerText())
   expect(body).toMatchObject({ gates: ['roster_confirmed'] })
-  expect(JSON.stringify(body)).toContain('claimed attendance alone')
 })
 
 test('confirming the roster records who did it and opens the gate', async ({ page }) => {
@@ -74,16 +81,29 @@ test('confirming the roster records who did it and opens the gate', async ({ pag
   await expect(page.getByText('Confirmed by Sarwedi')).toBeVisible()
 })
 
-test('the workbook downloads once every gate passes', async ({ page }) => {
+test('the workbook downloads once the month matches and every gate passes', async ({ page }) => {
+  // July is the month the workbook covers, so confirm that one. Fetched
+  // from inside the page: the session cookie is Secure in the production
+  // build and an API context will not send it over http.
+  await page.goto('/report')
+  const status = await page.evaluate(async () => {
+    const response = await fetch('/api/report/confirm', {
+      method: 'POST',
+      headers: { 'content-type': 'application/json' },
+      body: JSON.stringify({ month: '2026-07' }),
+    })
+    return response.status
+  })
+  expect(status).toBe(200)
+
   const download = page.waitForEvent('download')
-  await page.goto(`/api/report/rkb?month=${MONTH}`).catch(() => undefined)
+  await page.goto('/api/report/rkb?month=2026-07').catch(() => undefined)
   const file = await download
-  expect(file.suggestedFilename()).toBe('RKB_2026-09_realisasi.xlsx')
+  expect(file.suggestedFilename()).toBe('RKB_2026-07_realisasi.xlsx')
 
   const path = await file.path()
   const { readFile } = await import('node:fs/promises')
   const bytes = await readFile(path)
-  // A real xlsx is a zip: "PK".
   expect(bytes.subarray(0, 2).toString()).toBe('PK')
   expect(bytes.byteLength).toBeGreaterThan(50_000)
 })

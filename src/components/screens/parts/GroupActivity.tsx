@@ -14,7 +14,13 @@ interface GroupActivityProps {
   readonly series: readonly ActivitySeries[]
 }
 
-const DAY = new Intl.DateTimeFormat('en-GB', { weekday: 'short', day: 'numeric' })
+/*
+ * timeZone: 'UTC' because the value is a date, not an instant: an ISO date
+ * parses to UTC midnight, so formatting it in the server's own zone printed
+ * the previous day — and the previous month on the 1st — anywhere west of
+ * UTC. The heading would then disagree with the data under it.
+ */
+const DAY = new Intl.DateTimeFormat('en-GB', { weekday: 'short', day: 'numeric', timeZone: 'UTC' })
 const total = (days: readonly DayCount[]): number => days.reduce((sum, d) => sum + d.count, 0)
 
 /**

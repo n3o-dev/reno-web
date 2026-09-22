@@ -162,7 +162,7 @@ test.describe('Manpower & Billing', () => {
     // deducted from, so billing it on four days would charge for 26 days
     // nobody reported.
     await expect(page.locator('[data-status="manpower.payable"]')).toHaveText('Not yet stated')
-    await expect(page.getByText(/26 of 30 days have no line-up/)).toBeVisible()
+    await expect(page.getByText(/contracted slot-days have no line-up/)).toBeVisible()
   })
 })
 

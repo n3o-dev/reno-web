@@ -25,8 +25,25 @@ export async function GET(request: Request): Promise<NextResponse | Response> {
     return NextResponse.json({ error: 'month must look like 2026-09' }, { status: 400 })
   }
 
+  const report = await monthReport(month)
+
+  /*
+   * The screen says "the loaded workbook covers 2026-07, not 2026-09" while
+   * this route happily served July's file renamed RKB_2026-09_realisasi.xlsx
+   * with every actual zeroed — the exact relabelling the month fix was meant
+   * to close, still live in the download path.
+   */
+  if (!report.pack.rkb.coversThisMonth) {
+    return NextResponse.json(
+      {
+        error: `No RKB workbook is loaded for ${month}. The workbook on file covers a different month, and exporting it under this name would relabel one month's plan as another.`,
+      },
+      { status: 409 },
+    )
+  }
+
   try {
-    assertGatesPassed((await monthReport(month)).gates)
+    assertGatesPassed(report.gates)
   } catch (error) {
     if (error instanceof GenerationRefused) {
       return NextResponse.json(

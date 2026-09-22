@@ -58,7 +58,22 @@ describe('what gets written', () => {
     const plan = planExport(book, matchKeys(matchesFor(40)), MONTH)
     expect(plan.done).toBe(40)
     expect(plan.edits.filter((e) => e.value === 1)).toHaveLength(40)
-    expect(plan.edits.filter((e) => e.value === 0)).toHaveLength(533 - 40)
+    expect(plan.planned).toBe(533)
+  })
+
+  it('leaves a cell Reno already filled in alone', () => {
+    /*
+     * The July workbook holds 268 hand-entered actuals. Writing 0 over
+     * every unmatched planned cell replaced a month of realisation with
+     * the agent's single match — and the old test pinned the loss by
+     * asserting the resulting count.
+     */
+    const plan = planExport(book, new Set(), MONTH)
+    // 270 non-empty A cells: 268 non-zero, plus two someone typed 0 into.
+    // A typed 0 means "not done" and is preserved for the same reason.
+    expect(plan.preserved).toBe(270)
+    expect(plan.edits.filter((e) => e.value === 0)).toHaveLength(533 - 270)
+    expect(plan.planned).toBe(533)
   })
 
   it('never touches a day nobody planned', () => {
@@ -110,12 +125,15 @@ describe('what the workbook looks like afterwards', () => {
     expect(formulas(result.bytes)).toEqual(formulas(original))
   })
 
-  it('reads back the realisation it wrote', () => {
+  it('reads back what it wrote without losing what was there', () => {
     const done = after.sheets
       .flatMap((s) => s.sections.flatMap((x) => x.rows))
       .flatMap((r) => r.days)
       .filter((d) => (d.planned ?? 0) > 0 && (d.actual ?? 0) > 0)
-    expect(done).toHaveLength(120)
+    // The 120 matched cells, plus the hand-entered actuals that survived.
+    expect(done.length).toBeGreaterThanOrEqual(120)
+    expect(result.plan.preserved).toBeGreaterThan(0)
+    expect(result.plan.done).toBe(120)
   })
 
   it('says which totals it could not refresh rather than leaving them wrong quietly', () => {

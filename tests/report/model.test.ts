@@ -218,7 +218,8 @@ describe('a month missing its line-ups is not invoiced', () => {
     const { payable } = pack.manpower
     expect(payable.state).toBe('incomplete')
     if (payable.state !== 'incomplete') throw new Error('expected an incomplete figure')
-    expect(payable.missing[0]).toMatch(/26 of 30 days have no line-up/)
+    expect(payable.missing[0]).toMatch(/contracted slot-days have no line-up/)
+    expect(payable.missing[0]).toMatch(/across 26 of 30 days/)
   })
 })
 

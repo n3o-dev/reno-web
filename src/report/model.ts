@@ -172,15 +172,26 @@ function computePayable(input: BuildInput, days: readonly SlotDay[]): Payable {
    * nothing — a missing roster would be free. Rather than guess whether
    * nobody worked or nobody reported, the pack says which days are missing.
    */
-  const reported = new Set(days.map((d) => d.date))
-  const unreported = daysInMonth(input.month).filter((date) => !reported.has(date))
+  const calendar = daysInMonth(input.month)
+  const reported = new Set(days.map((d) => `${d.slot_id}|${d.date}`))
+  /*
+   * Slot by day, not day alone. Checking only the date meant that as long
+   * as something was posted each day the gate opened — so an entirely
+   * unreported shift 2 (37 people, Rp 185.000.000 a month) or a single
+   * unrostered area billed in full and deducted nothing. `gross` is
+   * computed per contracted slot, so the check has to be too.
+   */
+  const unreported = slots.flatMap((slot) =>
+    calendar.filter((date) => !reported.has(`${slot.slot_id}|${date}`)).map((date) => `${slot.slot_id} on ${date}`),
+  )
   if (unreported.length > 0) {
+    const affectedDays = new Set(unreported.map((u) => u.split(' on ')[1]))
     return {
       state: 'incomplete',
       currency: contract.currency,
       monthlyRatePerMp: contract.monthly_rate_per_mp > 0 ? contract.monthly_rate_per_mp : null,
       missing: [
-        `${unreported.length} of ${daysInMonth(input.month).length} days have no line-up: ${unreported.slice(0, 5).join(', ')}${unreported.length > 5 ? ', …' : ''}. A month is invoiced in full and deducted from, so a day nobody reported would otherwise be billed as covered.`,
+        `${unreported.length} contracted slot-days have no line-up, across ${affectedDays.size} of ${calendar.length} days: ${unreported.slice(0, 4).join(', ')}${unreported.length > 4 ? ', …' : ''}. A month is invoiced per contracted slot and deducted from, so a slot nobody reported would otherwise be billed as covered.`,
       ],
     }
   }
@@ -221,7 +232,13 @@ function computePayable(input: BuildInput, days: readonly SlotDay[]): Payable {
   }
 }
 
-const MONTH_LABEL = new Intl.DateTimeFormat('en-GB', { month: 'long', year: 'numeric' })
+/*
+ * timeZone: 'UTC' because the value is a date, not an instant: an ISO date
+ * parses to UTC midnight, so formatting it in the server's own zone printed
+ * the previous day — and the previous month on the 1st — anywhere west of
+ * UTC. The heading would then disagree with the data under it.
+ */
+const MONTH_LABEL = new Intl.DateTimeFormat('en-GB', { month: 'long', year: 'numeric', timeZone: 'UTC' })
 
 export function buildReportPack(input: BuildInput): ReportPack {
   const { workbook, month } = input

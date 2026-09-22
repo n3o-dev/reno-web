@@ -22,7 +22,13 @@ const STATE_COLOUR: Record<DeliveryState, string> = {
   closed_no_photo: 'var(--color-serious)',
 }
 
-const DATE = new Intl.DateTimeFormat('en-GB', { day: 'numeric', month: 'short' })
+/*
+ * timeZone: 'UTC' because the value is a date, not an instant: an ISO date
+ * parses to UTC midnight, so formatting it in the server's own zone printed
+ * the previous day — and the previous month on the 1st — anywhere west of
+ * UTC. The heading would then disagree with the data under it.
+ */
+const DATE = new Intl.DateTimeFormat('en-GB', { day: 'numeric', month: 'short', timeZone: 'UTC' })
 const format = (iso: string): string => DATE.format(new Date(`${iso}T00:00:00Z`))
 
 export function DeliveryTable({ deliveries, nameOf }: DeliveryTableProps) {

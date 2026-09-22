@@ -13,7 +13,14 @@ import { OpenItems } from '@/components/screens/parts/OpenItems'
 const bundle = (source: RecordSource, ids: readonly string[]): FigureEvidence =>
   bundleEvidence(source, ids, 'Nothing on the latest reported day matched.')
 
+/*
+ * timeZone: 'UTC' because the value is a date, not an instant: an ISO date
+ * parses to UTC midnight, so formatting it in the server's own zone printed
+ * the previous day — and the previous month on the 1st — anywhere west of
+ * UTC. The heading would then disagree with the data under it.
+ */
 const LONG_DATE = new Intl.DateTimeFormat('en-GB', {
+  timeZone: 'UTC',
   weekday: 'long',
   day: 'numeric',
   month: 'long',
