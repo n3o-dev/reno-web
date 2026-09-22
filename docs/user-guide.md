@@ -89,10 +89,14 @@ Billing is per slot-day: an area × a shift × a day. The contract rate is Rp 5,
 person per month, pro-rated at 1/30 per day. An unfilled slot-day is a deduction.
 
 **Corrections.** When the line-up in the group is wrong — someone worked but was not listed,
-or was listed and did not — a Reno user can correct that specific slot on that specific day.
-A correction requires a written reason, records who made it and when, and is visible to the
-client. Corrections move coverage, deduction and payable together; there is no way to change
-the payable figure alone.
+or was listed and did not — that slot on that day can be corrected. A correction requires a
+written reason, records who made it and when, and is visible to the client. Corrections move
+coverage, deduction and payable together; there is no way to change the payable figure alone.
+
+*Not yet editable from the screen.* Corrections are read and displayed, but the form that
+writes one has not been built. Until it is, a correction is added to
+`fixtures/site/overrides.json` and the app redeployed. The shape is fixed and the display
+side is finished, so adding the form is a small piece of work rather than a redesign.
 
 ### Monthly Report — *the pack, assembled*
 Shows what the client report will contain, which parts are automatic, which are waiting on a
