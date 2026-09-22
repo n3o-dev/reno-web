@@ -77,5 +77,28 @@
   ],
   "closing_photo_id": null,
   "blocked_reason_message_id": null
+ },
+ {
+  "record_id": "wo_3",
+  "site_id": "lwas",
+  "source_message_id": "msg_1_75",
+  "sent_at": "2026-09-11T09:05:00+07:00",
+  "sender_raw": "Desak Made Meyasni",
+  "sender_person_id": null,
+  "confidence": 0.9,
+  "title": "WO to HK — Glass cleaning canopy selasar timur",
+  "document_id": "doc_3",
+  "requested_by": "desak_made_meyasni",
+  "due_date": "2026-09-13",
+  "state": "blocked",
+  "state_history": [
+   {
+    "state": "raised",
+    "at": "2026-09-11T09:05:00+07:00",
+    "source_message_id": "msg_1_75"
+   }
+  ],
+  "closing_photo_id": null,
+  "blocked_reason_message_id": "msg_1_75"
  }
 ]

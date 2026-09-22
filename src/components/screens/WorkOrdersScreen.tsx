@@ -2,7 +2,7 @@ import type { ScreenProps } from '@/components/screens/props'
 import { ScreenHeader } from '@/components/common/ScreenHeader'
 import { Card } from '@/components/styled/Card'
 import { Figure } from '@/components/common/Figure'
-import { bundleEvidence } from '@/services/evidence'
+import { bundleEvidence, resolveEvidence, type Evidence } from '@/services/evidence'
 import { deliveryOf, summariseDeliveries } from '@/rules/work-orders'
 import { getRecords } from '@/services/records'
 import { DeliveryTable } from '@/components/screens/parts/DeliveryTable'
@@ -26,6 +26,13 @@ export async function WorkOrdersScreen({ siteId }: ScreenProps) {
     .map(deliveryOf)
 
   // The requester arrives as an id; the personnel master holds the name.
+  const citations: Record<string, Evidence | undefined> = {}
+  for (const order of orders) {
+    if (order.state !== 'blocked') continue
+    const [citation] = resolveEvidence(records, [order.blocked_reason_message_id ?? ''])
+    citations[order.record_id] = citation
+  }
+
   const names = new Map(records.people.map((p) => [p.person_id, p.canonical_name]))
   const nameOf = (personId: string): string => names.get(personId) ?? personId
 
@@ -82,7 +89,7 @@ export async function WorkOrdersScreen({ siteId }: ScreenProps) {
       </div>
       <section className="mt-4 rounded-[var(--radius-card)] border border-line bg-surface p-5">
         <h2 className="mb-2 font-[family-name:var(--font-display)] text-[17px]">Every request</h2>
-        <DeliveryTable deliveries={deliveries} nameOf={nameOf} />
+        <DeliveryTable deliveries={deliveries} nameOf={nameOf} citations={citations} />
       </section>
     </>
   )

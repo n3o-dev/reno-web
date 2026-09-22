@@ -26,8 +26,9 @@ import { contractSlots, type SiteContract } from '@/services/contract'
 /**
  * Everything the monthly pack says, computed once.
  *
- * The three artefacts — the RKB workbook, the client report, the BAPP pack —
- * all render from this rather than each recomputing. That is what stops the
+ * Both artefacts — the RKB workbook and the client report — render from
+ * this rather than each recomputing. There is no separate BAPP document;
+ * the amount payable is a section of the report. That is what stops the
  * pack and the screens disagreeing about a number, and it makes "every
  * figure traces to a message" one walk over a structure instead of a hunt
  * through a PDF.
@@ -250,7 +251,14 @@ export function buildReportPack(input: BuildInput): ReportPack {
   const reports = source.workReports
   const lineups = source.lineups
 
-  const contracts = provisionalContracts(lineups)
+  /*
+   * The contract's own slot table where there is one, the roster's peak
+   * only as a fallback. Printing coverage from one table and the invoice
+   * from another put "296 / 296" next to a deduction on the same page;
+   * they agreed only because contract.json was itself assumed from the
+   * line-ups, and a real contract would have made them unrelated.
+   */
+  const contracts = contractSlots(input.contract) ?? provisionalContracts(lineups)
   // Corrections apply to the data, so coverage and the invoice move with
   // them rather than only the figure being looked at.
   const days = applySlotCorrections(slotDays(lineups), input.corrections ?? [])

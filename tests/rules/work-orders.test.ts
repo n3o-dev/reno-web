@@ -41,15 +41,26 @@ describe('delivery against the date the client set', () => {
 })
 
 describe('the fixture period', () => {
-  it('has two orders delivered on time and one still open', () => {
+  it('has two delivered on time, one open and one blocked', () => {
     expect(summariseDeliveries(orders)).toEqual({
       on_time: 2,
       late: 0,
       open: 1,
-      blocked: 0,
+      blocked: 1,
       closed_no_photo: 0,
-      total: 3,
+      total: 4,
     })
+  })
+
+  it('counts the blocked one as blocked rather than as open or late', () => {
+    const blocked = orders.filter((o) => o.state === 'blocked')
+    expect(blocked).toHaveLength(1)
+    // The schema makes an uncited block unrepresentable; this confirms the
+    // fixture carries the citation the screen renders.
+    expect(blocked[0]?.blocked_reason_message_id).not.toBeNull()
+    const onlyBlocked = blocked[0]
+    if (onlyBlocked === undefined) throw new Error('expected a blocked order')
+    expect(deliveryOf(onlyBlocked).state).toBe('blocked')
   })
 
   it('every closed order names the photo that closed it', () => {

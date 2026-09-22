@@ -26,7 +26,8 @@ export default async function SheetPage({ params }: SheetPageProps) {
 
   return (
     <>
-      <Link href="/rkb" className="text-[13px] text-muted underline decoration-line">
+      <Link href="/rkb" // 44px tall: this is a client route and a thumb has to hit it (AC-12).
+        className="inline-flex min-h-11 items-center text-[13px] text-muted underline decoration-line">
         ← All sheets
       </Link>
       <ScreenHeader

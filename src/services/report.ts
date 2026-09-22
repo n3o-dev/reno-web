@@ -4,7 +4,7 @@ import { checkGates, monthConfirmation, type Confirmation, type Gate } from '@/r
 import { getRecords } from '@/services/records'
 import { getDatabase } from '@/services/database'
 import { WORKBOOK_LABEL, WORKBOOK_MONTH, getWorkbook } from '@/services/rkb'
-import { getContract } from '@/services/contract'
+import { getContract, type SiteContract } from '@/services/contract'
 import { getSlotOverrides } from '@/services/overrides'
 import { narrowToMonth } from '@/report/period'
 
@@ -17,6 +17,8 @@ import { narrowToMonth } from '@/report/period'
 export interface MonthReport {
   readonly pack: ReportPack
   readonly corrections: readonly SlotDayOverride[]
+  /** What the screens must read too, so no page shows two slot tables. */
+  readonly contract: SiteContract
   readonly gates: readonly Gate[]
   readonly confirmation: Confirmation | null
   readonly generatable: boolean
@@ -79,6 +81,7 @@ export async function monthReport(month: string, siteId?: string): Promise<Month
     gates,
     confirmation,
     corrections: ours ? corrections : [],
+    contract: ours ? contract : { ...contract, slots: null, monthly_rate_per_mp: 0 },
     generatable: gates.every((gate) => gate.passed),
   }
 }

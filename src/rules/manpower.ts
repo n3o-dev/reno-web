@@ -213,3 +213,18 @@ export function applySlotCorrections(
     return { ...day, names }
   })
 }
+
+/**
+ * Corrections that name a slot-day the month does not contain.
+ *
+ * A typo'd slot or a wrong date used to be dropped in silence while still
+ * printing its reason beside an unchanged number — the same failure the
+ * slot-day keying was introduced to remove, one level up.
+ */
+export function unmatchedCorrections(
+  days: readonly SlotDay[],
+  corrections: readonly SlotDayCorrection[],
+): readonly SlotDayCorrection[] {
+  const present = new Set(days.map((day) => `${day.slot_id}|${day.date}`))
+  return corrections.filter((c) => !present.has(`${c.slot_id}|${c.date}`))
+}

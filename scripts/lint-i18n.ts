@@ -27,11 +27,27 @@ const ALLOWED = new Set(
  * proper noun like "Alam Sutera" will not.
  */
 const INDONESIAN = new Set([
+  // Function words: a drifted sentence almost always carries one, and a
+  // proper noun like "Alam Sutera" does not.
   'yang', 'dan', 'dengan', 'untuk', 'dari', 'pada', 'adalah', 'tidak', 'belum',
   'sudah', 'akan', 'bisa', 'dapat', 'harus', 'atau', 'juga', 'agar', 'karena',
   'setiap', 'semua', 'lebih', 'kurang', 'saat', 'kepada', 'oleh', 'dalam',
-  'sedang', 'masih', 'telah', 'pekerjaan', 'kebersihan', 'laporan', 'keluhan',
-  'petugas', 'jumlah', 'kehadiran', 'catatan', 'tanggal', 'waktu', 'hari',
+  'sedang', 'masih', 'telah', 'ini', 'itu', 'ada', 'tanpa', 'sampai',
+  // Nouns this domain uses.
+  'pekerjaan', 'kebersihan', 'laporan', 'keluhan', 'petugas', 'kehadiran',
+  'catatan', 'tanggal', 'waktu', 'hari', 'bulan', 'minggu', 'tahun', 'nama',
+  'lengkap', 'gedung', 'lantai', 'ruang', 'sampah', 'kotor', 'bersih', 'foto',
+  'pesan', 'orang', 'absen',
+  /*
+   * Verbs and one-word button labels — the ones a list of function words
+   * cannot reach. "Simpan", "Hapus", "Tutup" are a single word each with
+   * nothing else to trip on, and a button is where an interface drifts
+   * first.
+   */
+  'simpan', 'hapus', 'tutup', 'batal', 'batalkan', 'selesai', 'kirim', 'cari',
+  'tambah', 'ubah', 'lihat', 'kembali', 'lanjut', 'lanjutkan', 'pilih',
+  'masuk', 'keluar', 'unduh', 'unggah', 'cetak', 'buka', 'perubahan',
+  'pengaturan', 'beranda', 'ringkasan', 'rincian',
 ])
 
 const BANNED = [
@@ -42,12 +58,15 @@ const BANNED = [
 ]
 
 /*
- * Interface strings live in the app and component trees. src/contract holds
- * example records, src/rules holds ids and area slugs — those are data, and
- * AC-5 exempts data values. The `verified` ban is not scoped this way: it is
+ * Interface strings live in the app and component trees, and also in
+ * src/report and src/services — the generation gates, the pack model and
+ * the workbook service all produce prose that reaches the client DOM, and
+ * scanning only app and components left them unchecked. src/contract holds
+ * example records and src/rules holds ids and area slugs: those are data,
+ * and AC-5 exempts data values. The `verified` ban is not scoped this way: it is
  * about what attendance is called anywhere in the code.
  */
-const uiFiles = globSync('src/{app,components}/**/*.{ts,tsx}')
+const uiFiles = globSync('src/{app,components,report,services}/**/*.{ts,tsx}')
 const allFiles = globSync('src/**/*.{ts,tsx}')
 const problems: string[] = []
 

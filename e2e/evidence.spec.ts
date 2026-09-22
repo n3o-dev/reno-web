@@ -18,6 +18,10 @@ const SCREENS = [
   '/scorecard',
   '/report',
   '/personnel',
+  // The sheet route was never walked, and it is where the day grid's own
+  // completion percentages live.
+  '/rkb/facade',
+  '/rkb/toilet',
 ]
 
 for (const path of SCREENS) {
@@ -60,4 +64,22 @@ test('an evidence panel names a sender and a time', async ({ page }) => {
   await expect(panel).toContainText(/\d+ sources/)
   // WhatsApp display names, exactly as the group shows them.
   await expect(panel).toContainText(/Amartha|Acenk|Sarwedi|Sofyan|Cristian|Rachmad|Desak|Alexander/)
+})
+
+test.describe('the client surface cites its figures too', () => {
+  const LIVE = 'lwas-2f8c41d6a9b34e07'
+  for (const path of ['', '/complaints', '/work-orders', '/rkb', '/rkb/facade', '/manpower', '/report']) {
+    test(`/c/<token>${path}`, async ({ page }) => {
+      await page.goto(`/c/${LIVE}${path}`)
+      const figures = await page.locator('[data-figure]').evaluateAll((nodes) =>
+        nodes.map((n) => ({
+          name: n.getAttribute('data-figure') ?? '',
+          evidence: n.getAttribute('data-evidence'),
+          value: (n.textContent ?? '').trim(),
+        })),
+      )
+      const uncited = figures.filter((f) => f.value !== '0' && Number(f.evidence ?? 0) === 0)
+      expect(uncited.map((f) => `${f.name} = ${f.value}`)).toEqual([])
+    })
+  }
 })

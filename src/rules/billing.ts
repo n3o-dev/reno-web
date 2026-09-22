@@ -102,7 +102,13 @@ export function computeBilling({
    * Pass a whole month of `days`, not a slice, or the deduction will be wrong.
    */
   const gross = contracts.reduce((n, c) => n + c.contracted, 0) * monthlyRatePerMp
-  const deduction = Math.round(unfilled * dailyRate)
+  /*
+   * Never more than the gross. With a small pro-rata divisor the deduction
+   * can exceed a month's billing and print a negative invoice — Rp
+   * -210.000.000 at a divisor of 1. A month can be worth nothing; it cannot
+   * be worth less than nothing.
+   */
+  const deduction = Math.min(gross, Math.round(unfilled * dailyRate))
 
   return {
     contractedSlotDays: contracted,

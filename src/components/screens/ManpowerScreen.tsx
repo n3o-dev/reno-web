@@ -5,6 +5,7 @@ import { Figure } from '@/components/common/Figure'
 import { countEvidence, resolveEvidence } from '@/services/evidence'
 import {
   applySlotCorrections,
+  unmatchedCorrections,
   absenceTotals,
   coverage,
   doubleListings,
@@ -14,6 +15,7 @@ import {
 } from '@/rules/manpower'
 import { getRecords } from '@/services/records'
 import { monthReport } from '@/services/report'
+import { contractSlots } from '@/services/contract'
 import { rupiah } from '@/report/money'
 import { CoverageTable } from '@/components/screens/parts/CoverageTable'
 import { SignalsPanel } from '@/components/screens/parts/SignalsPanel'
@@ -34,11 +36,13 @@ export async function ManpowerScreen({ siteId, showSignals = true }: ManpowerScr
   const [records, report] = await Promise.all([getRecords(siteId), monthReport('2026-09', siteId)])
   const { payable } = report.pack.manpower
   const lineups = records.lineups
-  const contracts = provisionalContracts(lineups)
+  // The same table the invoice uses; see the model's note.
+  const contracts = contractSlots(report.contract) ?? provisionalContracts(lineups)
   // The same corrected slot-days the invoice is built from, so the coverage
   // table and the amount payable cannot disagree.
   const days = applySlotCorrections(slotDays(lineups), report.corrections)
   const rows = coverage(contracts, days)
+  const stranded = unmatchedCorrections(slotDays(lineups), report.corrections)
   const absences = absenceTotals(lineups)
   const totalFilled = rows.reduce((n, r) => n + r.filled, 0)
   const totalContracted = rows.reduce((n, r) => n + r.contractedSlotDays, 0)
@@ -156,6 +160,15 @@ export async function ManpowerScreen({ siteId, showSignals = true }: ManpowerScr
             not from the service contract.
           </p>
           <CoverageTable rows={rows} evidence={lineupEvidence} corrections={report.corrections} />
+          {stranded.length > 0 && (
+            <p
+              data-stranded-corrections
+              className="mt-3 border-t border-line pt-3 text-[13px] text-[var(--color-critical)]"
+            >
+              {stranded.length} correction(s) name a slot and day this month does not contain and
+              were not applied: {stranded.map((c) => `${c.slot_id} on ${c.date}`).join(', ')}.
+            </p>
+          )}
         </section>
         {showSignals && (
           <SignalsPanel

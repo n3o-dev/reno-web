@@ -1,6 +1,7 @@
 import type { Section } from '@/rkb/read'
 import type { RkbMatchRecord } from '@/contract/schemas'
-import { jobRowId, WORKBOOK_MONTH } from '@/services/rkb'
+import { jobRowId, workbookEvidence, WORKBOOK_MONTH } from '@/services/rkb'
+import { Figure } from '@/components/common/Figure'
 
 interface DayGridProps {
   readonly section: Section
@@ -37,9 +38,15 @@ export function DayGrid({ section, sheetName, matches }: DayGridProps) {
         <p className="text-[13px] text-muted">
           JUMLAH <span className="tabular-nums">{planned.length}</span> · REALISASI{' '}
           <span className="tabular-nums">{done.length}</span> · PERSENTASI{' '}
-          <span data-figure-kind="completion" className="tabular-nums">
+          <Figure
+            name={`rkb.section.${sheetName.trim()}.${section.name}`}
+            kind="completion"
+            evidence={[workbookEvidence(sheetName, section.rows.map((r) => r.rowNumber))]}
+            total={1}
+            className="tabular-nums"
+          >
             {share}%
-          </span>
+          </Figure>
         </p>
       </div>
       <table className="w-full border-collapse text-left text-[13px]">

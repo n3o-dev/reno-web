@@ -126,8 +126,8 @@ test.describe('Work Orders', () => {
     await page.goto('/work-orders')
     await expect(page.locator(figure('work_orders.on_time'))).toHaveText('2')
     await expect(page.locator(figure('work_orders.open'))).toHaveText('1')
-    await expect(page.locator(figure('work_orders.blocked'))).toHaveText('0')
-    await expect(page.getByRole('row')).toHaveCount(4) // header + three requests
+    await expect(page.locator(figure('work_orders.blocked'))).toHaveText('1')
+    await expect(page.getByRole('row')).toHaveCount(5) // header + four requests
     await expect(page.getByText('WO to HK — Pioneer DJ (12 – 13 September 2026)')).toBeVisible()
   })
 })
@@ -244,5 +244,24 @@ test.describe('AC-11 · the screens read the database, not the fixtures', () => 
      */
     await page.goto('/personnel')
     await expect(page.locator(figure('personnel.people'))).toHaveText('46')
+  })
+})
+
+test.describe('AC-8 · a blocked work order', () => {
+  test('shows a paused clock and the message that justifies it', async ({ page }) => {
+    await page.goto('/work-orders')
+    const row = page.locator('[data-blocked-order]')
+    await expect(row).toHaveCount(1)
+    await expect(page.locator('[data-status^="work_orders."]', { hasText: 'clock paused' })).toHaveCount(1)
+
+    await row.locator('summary').click()
+    await expect(row).toContainText(/gondola/i)
+    await expect(row).not.toContainText('not in the loaded records')
+  })
+
+  test('is counted as blocked, not as open', async ({ page }) => {
+    await page.goto('/work-orders')
+    await expect(page.locator(figure('work_orders.blocked'))).toHaveText('1')
+    await expect(page.locator(figure('work_orders.open'))).toHaveText('1')
   })
 })

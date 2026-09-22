@@ -409,3 +409,55 @@ describe('a correction can raise a count, not only lower it', () => {
     expect(b.billing.payable).toBeGreaterThan(a.billing.payable)
   })
 })
+
+describe('a record is filed by the date it is about', () => {
+  it('keeps a late-posted line-up in the month it covers', () => {
+    const template = source.lineups[0]
+    if (template === undefined) throw new Error('no line-up')
+    /*
+     * Shift 2 runs to 23:00 and shift 3 past midnight, so a roster for the
+     * 30th posted at 01:30 on the 1st is routine. Filing it by when it was
+     * sent put 74 September slot-days inside an October pack.
+     */
+    const lateFiled = {
+      ...template,
+      record_id: 'lu_late',
+      date: '2026-09-30',
+      sent_at: '2026-10-01T01:30:00+07:00',
+    }
+    const withLate = createRecordSource({
+      message: [...source.messages],
+      work_report: [],
+      complaint: [],
+      work_order: [],
+      lineup: [lateFiled],
+      rkb_match: [],
+      photo: [],
+      person: [...source.people],
+    })
+
+    const september = buildReportPack({
+      source: withLate,
+      workbook,
+      month: '2026-09',
+      workbookLabel: 'RKB Juli 2026',
+      siteId: 'lwas',
+      siteLabel: 'Living World Alam Sutera',
+      contract,
+      workbookMonth: '2026-07',
+    })
+    const october = buildReportPack({
+      source: withLate,
+      workbook,
+      month: '2026-10',
+      workbookLabel: 'RKB Juli 2026',
+      siteId: 'lwas',
+      siteLabel: 'Living World Alam Sutera',
+      contract,
+      workbookMonth: '2026-07',
+    })
+
+    expect(september.manpower.filledSlotDays).toBeGreaterThan(0)
+    expect(october.manpower.filledSlotDays).toBe(0)
+  })
+})

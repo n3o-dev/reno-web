@@ -9,8 +9,20 @@ import { createRecordSource, type RecordSource } from '@/contract/source'
  * filter belongs here rather than in each section, because a section that
  * forgot would be wrong quietly.
  */
-const inMonth = <T extends { sent_at: string }>(records: readonly T[], month: string): T[] =>
-  records.filter((record) => record.sent_at.startsWith(month))
+/*
+ * The date the record is *about*, not the moment it was posted. A line-up
+ * for the 30th posted at 01:30 on the 1st landed in the following month and
+ * was billed there — shift 2 runs to 23:00 and shift 3 past midnight, so
+ * that is the normal case rather than a corner. Records without a business
+ * date fall back to when they were sent, which is the only date they have.
+ */
+const businessDate = (record: { sent_at: string; date?: string }): string =>
+  record.date ?? record.sent_at
+
+const inMonth = <T extends { sent_at: string; date?: string }>(
+  records: readonly T[],
+  month: string,
+): T[] => records.filter((record) => businessDate(record).startsWith(month))
 
 export function narrowToMonth(source: RecordSource, month: string): RecordSource {
   return createRecordSource({

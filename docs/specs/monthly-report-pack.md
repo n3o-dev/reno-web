@@ -2,8 +2,12 @@
 
 ## Goal
 Turn the dashboard's data into the month-end documents Reno has to produce anyway: the RKB
-workbook with realisation filled in, a client report, and the BAPP pack carrying the amount
-payable — as a button, not a second system.
+workbook with realisation filled in and a client report carrying the amount payable — as a
+button, not a second system.
+
+There is no separate BAPP artefact. The amount payable and its arithmetic are a section of
+the client report; a third document was in the original goal and was never built, and saying
+so here is cheaper than leaving the promise standing.
 
 Depends on [reno-dashboard](./reno-dashboard.md),
 [billing-and-scoring-rules](./billing-and-scoring-rules.md) and
@@ -27,7 +31,7 @@ to PDF from the browser.
 | RKB realisation | RKB workbook + `rkb_match` records | xlsx, written into Reno's existing template |
 | Complaint summary | complaint records, cause split, closure evidence, repeat areas | report section + evidence appendix |
 | Work orders delivered | work order records | report section |
-| Manpower and billing | Line-up records, slot master, deduction rules | BAPP pack, carries the amount payable |
+| Manpower and billing | Line-up records, slot master, deduction rules | report section, carries the amount payable |
 | Before-after gallery | work reports flagged `is_before_after` | report section, also feeds the QBR |
 | Training completed | **external** — Renno Grow Hub | placeholder, attached by a person |
 | Action plan | **human** — written by the Project Coordinator | placeholder section |
@@ -55,9 +59,13 @@ to PDF from the browser.
 - **AC-8**: Training and action plan render as explicitly unfilled placeholders, never as empty or zero. A test asserts both sections carry a human-input marker in the output.
 - **AC-9**: The pack produces the RKB xlsx as a downloadable file and the client report as a print view, and two exports of the same month agree cell for cell. `pnpm test:report` exports twice and asserts identical sheet names, identical cell values and identical styles.
 
-  *(Amended twice, both times because the original could not be satisfied honestly.*
+  *(Amended four times. Two were declared when made; two were not, and a later review caught them — they are declared here.*
 
   *No server-side PDF. Generating one means shipping Chromium to the VPS — roughly 300MB for a button pressed once a month — and the print view saves to PDF from the browser in one step. Decided with the user; revisit if the pack ever needs to be generated unattended, for instance to email itself.*
+
+  ***The BAPP pack was dropped, undeclared.** The original named three artefacts; this criterion now names two. There is no BAPP artefact anywhere in the code — the amount payable is a row in the client report. That is a real reduction in scope and it was removed silently, which is worse than removing it openly. The Goal and the contents table below still promise one and are corrected in the same edit.*
+
+  ***"From one action" was dropped, undeclared.** It is two actions on two surfaces now — a download and a print view. That is defensible, but it is a design change and it went unsaid.*
 
   *Not byte-stable. `writeActuals` rebuilds the zip archive, so entry timestamps move between runs and two exports of identical data differ as bytes while being identical as a spreadsheet. Comparing contents is the check that means something; comparing checksums would only have measured the clock.)*
 - **AC-10**: A QBR export produces the three things SOP/OPS/001 IV.C.1 asks for: cleanliness score graphs, attendance data, and before-after photos, over a three-month range. A test generates a QBR for a three-month fixture window and asserts all three sections are present and non-empty.

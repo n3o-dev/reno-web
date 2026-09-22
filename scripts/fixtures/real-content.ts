@@ -219,6 +219,20 @@ export const WORK_ORDERS = [
     due: '2026-09-13',
     state: 'raised',
   },
+  /*
+   * Blocked, and for the same real reason the RKB block cites: the gondola
+   * never arrived. Without one the blocked branch of the work-order table
+   * was unreachable, so its paused clock and its citation were never
+   * rendered and never tested.
+   */
+  {
+    title: 'WO to HK — Glass cleaning canopy selasar timur',
+    requestedBy: 'Desak Made Meyasni',
+    dayIndex: 1,
+    minute: 9 * 60 + 5,
+    due: '2026-09-13',
+    state: 'blocked',
+  },
 ] as const
 
 /**

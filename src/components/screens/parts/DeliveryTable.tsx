@@ -1,15 +1,18 @@
 import type { Delivery, DeliveryState } from '@/rules/work-orders'
+import type { Evidence } from '@/services/evidence'
 
 interface DeliveryTableProps {
   readonly deliveries: readonly Delivery[]
   readonly nameOf: (personId: string) => string
+  /** Keyed by record id: the message justifying a block. */
+  readonly citations: Readonly<Record<string, Evidence | undefined>>
 }
 
 const STATE_LABEL: Record<DeliveryState, string> = {
   on_time: 'Delivered on time',
   late: 'Delivered late',
   open: 'Open',
-  blocked: 'Blocked',
+  blocked: 'Blocked — clock paused',
   closed_no_photo: 'Closed, no photo',
 }
 
@@ -31,7 +34,7 @@ const STATE_COLOUR: Record<DeliveryState, string> = {
 const DATE = new Intl.DateTimeFormat('en-GB', { day: 'numeric', month: 'short', timeZone: 'UTC' })
 const format = (iso: string): string => DATE.format(new Date(`${iso}T00:00:00Z`))
 
-export function DeliveryTable({ deliveries, nameOf }: DeliveryTableProps) {
+export function DeliveryTable({ deliveries, nameOf, citations }: DeliveryTableProps) {
   return (
     <table className="w-full border-collapse text-left">
       <caption className="sr-only">Work orders the client raised in the group</caption>
@@ -67,6 +70,26 @@ export function DeliveryTable({ deliveries, nameOf }: DeliveryTableProps) {
               </span>
               {closedOn !== null && (
                 <span className="block text-[13px] text-faint">closed {format(closedOn)}</span>
+              )}
+              {state === 'blocked' && (
+                <details data-blocked-order={order.record_id} className="mt-1">
+                  <summary className="inline-flex min-h-11 cursor-pointer items-center text-[13px] text-muted underline decoration-line">
+                    Why it is paused
+                  </summary>
+                  {(() => {
+                    const cited = citations[order.record_id]
+                    return cited === undefined || cited.kind !== 'message' ? (
+                      <span className="block text-[13px] text-faint">
+                        The citing message is not in the loaded records.
+                      </span>
+                    ) : (
+                      <span className="block text-[13px]">
+                        <span className="font-medium">{cited.sender}</span>
+                        <span className="block text-muted">{cited.text}</span>
+                      </span>
+                    )
+                  })()}
+                </details>
               )}
             </td>
           </tr>

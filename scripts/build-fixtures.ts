@@ -417,6 +417,25 @@ Object.entries(LINEUP_BY_AREA).forEach(([areaId, names]) => {
     'Pak, untuk area gas tank belum bisa dikerjakan. Car gondola belum datang, masih ditahan vendor.'
 }
 
+/*
+ * The message a blocked work order cites has to read like the reason, the
+ * same as the blocked complaint's. A citation that opens onto an unrelated
+ * caption proves nothing to whoever clicks it.
+ */
+{
+  const blocked = WORK_ORDERS.find((wo) => wo.state === 'blocked')
+  if (blocked !== undefined) {
+    const id = messageIdAt(blocked.dayIndex, blocked.minute)
+    const message = out.message.find(
+      (m) => (m as { source_message_id?: string }).source_message_id === id,
+    ) as { text: string; sender_raw: string } | undefined
+    if (message === undefined) throw new Error(`blocked work order citation ${id} has no message`)
+    message.sender_raw = blocked.requestedBy
+    message.text =
+      'Pak, untuk glass cleaning canopy selasar timur ditunda dulu. Gondola belum tersedia dari vendor.'
+  }
+}
+
 WORK_ORDERS.forEach((wo, n) => {
   out.work_order.push({
     ...envelope(`wo_${n}`, wo.dayIndex, wo.minute, wo.requestedBy),
@@ -438,7 +457,8 @@ WORK_ORDERS.forEach((wo, n) => {
         : []),
     ],
     closing_photo_id: wo.state === 'closed_with_photo' ? `ph_${n}` : null,
-    blocked_reason_message_id: null,
+    blocked_reason_message_id:
+      wo.state === 'blocked' ? messageIdAt(wo.dayIndex, wo.minute) : null,
   })
 })
 
