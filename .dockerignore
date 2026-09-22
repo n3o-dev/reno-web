@@ -1,0 +1,12 @@
+node_modules
+.next
+.git
+.pglite
+.pglite-e2e
+e2e/.auth
+test-results
+playwright-report
+*.log
+.env
+.env.*
+!.env.example
