@@ -10,7 +10,7 @@
  * Type and colour come from DESIGN.md, so the document a client holds matches
  * the dashboard it is quoting for.
  */
-import { readFileSync, writeFileSync } from 'node:fs'
+import { existsSync, readFileSync } from 'node:fs'
 import { dirname, join } from 'node:path'
 import { fileURLToPath } from 'node:url'
 import { chromium } from '@playwright/test'
@@ -18,6 +18,29 @@ import { chromium } from '@playwright/test'
 const here = dirname(fileURLToPath(import.meta.url))
 const SOURCE = join(here, 'reno-quotation.md')
 const OUT = join(here, 'reno-quotation.pdf')
+
+/**
+ * The letterhead logo, if one has been dropped beside this script. Embedded
+ * as a data URI rather than linked: the PDF has to survive being emailed on
+ * its own, so it cannot depend on a file path resolving later.
+ */
+const LOGO_TYPES = {
+  '.svg': 'image/svg+xml',
+  '.png': 'image/png',
+  '.jpg': 'image/jpeg',
+  '.jpeg': 'image/jpeg',
+  '.webp': 'image/webp',
+}
+
+function logo() {
+  for (const [ext, mime] of Object.entries(LOGO_TYPES)) {
+    const path = join(here, `logo${ext}`)
+    if (!existsSync(path)) continue
+    const data = readFileSync(path).toString('base64')
+    return `<img class="logo" src="data:${mime};base64,${data}" alt="">`
+  }
+  return ''
+}
 
 const escape = (s) => s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
 
@@ -226,10 +249,11 @@ const HTML = (body) => `<!doctype html>
   }
   td { padding: 2mm 2.5mm; border-bottom: 1px solid var(--line); vertical-align: top; }
   tbody tr:last-child td { border-bottom: 1px solid var(--line); }
+  .logo { height: 13mm; width: auto; display: block; margin: 0 0 7mm; }
   .spacer { height: 6mm; }
   h2, h3 { page-break-after: avoid; }
 </style></head>
-<body>${body}</body></html>`
+<body>${logo()}${body}</body></html>`
 
 /*
  * Prefer the Chrome already on the machine. Playwright's own build is a
@@ -258,7 +282,7 @@ try {
     headerTemplate: '<div></div>',
     footerTemplate:
       '<div style="width:100%;padding:0 18mm;font-family:DM Sans,sans-serif;font-size:7.5pt;color:#8d8377;display:flex;justify-content:space-between">' +
-      '<span>Penawaran Harga · Agentic Reno AI</span>' +
+      '<span>Penawaran Harga · 021/JDP/Quot/09/2026 · PT Jaya Pirata Dinamika</span>' +
       '<span><span class="pageNumber"></span> / <span class="totalPages"></span></span></div>',
   })
   process.stdout.write(`wrote ${OUT}\n`)
