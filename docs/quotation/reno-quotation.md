@@ -6,11 +6,9 @@
 |---|---|
 | **Nomor** | 021/JDP/Quot/09/2026 |
 | **Tanggal** | 25 September 2026 |
-| **Berlaku sampai** | `[30 hari sejak tanggal di atas]` |
+| **Berlaku sampai** | 25 Oktober 2026 |
 | **Kepada** | PT Indo Cipta Daya (Renno) |
-| **u.p.** | `[nama & jabatan penerima]` |
 | **Dari** | PT JAYA PIRATA DINAMIKA |
-| **Kontak** | `[nama, telepon, email]` |
 
 ---
 
@@ -51,10 +49,10 @@ Termasuk hosting, pemeliharaan, dan dukungan selama masa kontrak.
 
 Langganan untuk **1 (satu) site** — Living World Alam Sutera.
 
-| Jangka waktu | Harga | Total | Hemat |
-|---|---|---:|---:|
-| **6 bulan** | Rp 4.000.000 / bulan | Rp 24.000.000 | — |
-| **12 bulan** | setara Rp 3.666.667 / bulan | **Rp 44.000.000** | Rp 4.000.000 |
+| Jangka waktu | Harga / bulan | Total |
+|---|---:|---:|
+| **6 bulan** | Rp 4.000.000 | Rp 24.000.000 |
+| **12 bulan** | Rp 3.500.000 | **Rp 42.000.000** |
 
 - Harga di atas **belum termasuk PPN**.
 - Diskon 12 bulan berlaku bila jangka waktu dikunci di muka.
@@ -66,21 +64,12 @@ Langganan untuk **1 (satu) site** — Living World Alam Sutera.
 
 1. **Pembayaran: 100% di muka.**
 2. **Implementasi: 1 (satu) minggu setelah pembayaran diterima.**
-3. Penawaran berlaku `[30]` hari sejak tanggal di atas.
+3. Penawaran berlaku sampai 25 Oktober 2026.
 4. Harga belum termasuk PPN.
 5. Perpanjangan mengikuti harga yang berlaku saat perpanjangan, kecuali disepakati lain.
-6. Biaya WhatsApp API, nomor telepon, dan perangkat yang dipakai agent di luar penawaran ini.
-7. Perubahan lingkup di luar Bagian 2 dikuotasi terpisah.
-8. `[klausul pengakhiran, kepemilikan data, kerahasiaan — lengkapi sesuai kebutuhan]`
 
 ---
 
 **Hormat kami,**
 
 **PT JAYA PIRATA DINAMIKA**
-
-`[nama]`
-
-`[jabatan]`
-
-`[telepon · email]`
