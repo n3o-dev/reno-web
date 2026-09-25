@@ -1,6 +1,6 @@
 # PENAWARAN HARGA
 
-**Agentic Renno AI — Agent WhatsApp & Dashboard Operasional**
+**Agentic Renno AI · Agent WhatsApp & Dashboard Operasional**
 
 | | |
 |---|---|
@@ -14,14 +14,15 @@
 
 ## 1. Latar belakang
 
-Data operasional Renno hari ini tersebar di beberapa tempat yang tidak saling terhubung — grup
-WhatsApp, RKB Excel, logbook kertas di site, glass wall, dan laporan bulanan. Setiap angka yang
-sampai ke klien harus dirakit ulang secara manual, dan tidak ada yang bisa ditelusuri kembali
-ke buktinya.
+Data operasional Renno hari ini tersebar di beberapa tempat yang tidak saling terhubung:
+grup WhatsApp, RKB Excel, logbook kertas di site, glass wall, dan laporan bulanan. Setiap angka
+yang sampai ke klien harus dirakit ulang secara manual, dan tidak ada yang bisa ditelusuri
+kembali ke buktinya.
 
-Sistem ini menyatukannya. Agent AI membaca grup WhatsApp dan mengubah percakapan menjadi data;
-dua dashboard mengubah data itu menjadi hal-hal yang memang sudah wajib Renno produksi —
-realisasi RKB, laporan bulanan klien, angka manpower untuk tagihan, dan Rapor Pimpro.
+Sistem ini menyatukannya. Agent AI membaca grup WhatsApp dan mengubah percakapan menjadi data.
+Dua dashboard kemudian mengubah data itu menjadi hal-hal yang memang sudah wajib Renno
+produksi: realisasi RKB, laporan bulanan klien, angka manpower untuk tagihan, dan Rapor
+Pimpro.
 
 Prinsip yang dipegang: **setiap angka bisa ditelusuri sampai ke pesan WhatsApp asalnya.**
 
@@ -47,7 +48,7 @@ Termasuk hosting, pemeliharaan, dan dukungan selama masa kontrak.
 
 ## 3. Harga
 
-Langganan untuk **1 (satu) site** — Living World Alam Sutera.
+Langganan untuk **1 (satu) site**, yaitu Living World Alam Sutera.
 
 | Jangka waktu | Harga / bulan | Total |
 |---|---:|---:|

@@ -32,14 +32,16 @@ const LOGO_TYPES = {
   '.webp': 'image/webp',
 }
 
-function logo() {
+const ISSUER = 'PT JAYA PIRATA DINAMIKA'
+
+function letterhead() {
   for (const [ext, mime] of Object.entries(LOGO_TYPES)) {
     const path = join(here, `logo${ext}`)
     if (!existsSync(path)) continue
     const data = readFileSync(path).toString('base64')
-    return `<img class="logo" src="data:${mime};base64,${data}" alt="">`
+    return `<div class="letterhead"><img src="data:${mime};base64,${data}" alt=""><span>${ISSUER}</span></div>`
   }
-  return ''
+  return `<div class="letterhead"><span>${ISSUER}</span></div>`
 }
 
 const escape = (s) => s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
@@ -249,11 +251,20 @@ const HTML = (body) => `<!doctype html>
   }
   td { padding: 2mm 2.5mm; border-bottom: 1px solid var(--line); vertical-align: top; }
   tbody tr:last-child td { border-bottom: 1px solid var(--line); }
-  .logo { height: 13mm; width: auto; display: block; margin: 0 0 7mm; }
+  .letterhead {
+    display: flex; align-items: center; gap: 4mm;
+    margin: 0 0 8mm; padding-bottom: 4mm; border-bottom: 1px solid var(--line);
+  }
+  .letterhead img { height: 13mm; width: auto; display: block; }
+  .letterhead span {
+    font-family: "Space Grotesk", system-ui, sans-serif;
+    font-weight: 700; font-size: 11.5pt; letter-spacing: 0.06em;
+    color: var(--ink);
+  }
   .spacer { height: 6mm; }
   h2, h3 { page-break-after: avoid; }
 </style></head>
-<body>${logo()}${body}</body></html>`
+<body>${letterhead()}${body}</body></html>`
 
 /*
  * Prefer the Chrome already on the machine. Playwright's own build is a
