@@ -56,7 +56,6 @@ Langganan untuk **1 (satu) site**, yaitu Living World Alam Sutera.
 | **12 bulan** | Rp 3.500.000 | **Rp 42.000.000** |
 
 - Harga di atas **belum termasuk PPN**.
-- Diskon 12 bulan berlaku bila jangka waktu dikunci di muka.
 - Site tambahan di luar LWAS: dikuotasi terpisah.
 
 ---
