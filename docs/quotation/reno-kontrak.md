@@ -4,8 +4,8 @@
 
 | | |
 |---|---|
-| **Nomor** | 001/JPD/PKS/09/2026 |
-| **Tanggal** | 28 September 2026 |
+| **Nomor** | 014/JPD/PKS/09/2026 |
+| **Tanggal** | 29 September 2026 |
 | **Referensi** | Penawaran 021/JPD/Quot/09/2026 dan Invoice 010/JPD/INV/09/2026 |
 
 ---
