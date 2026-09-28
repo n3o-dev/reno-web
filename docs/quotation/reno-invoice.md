@@ -17,11 +17,11 @@
 | Deskripsi | Periode | Harga / bulan | Jumlah |
 |---|---:|---:|---:|
 | Langganan Agentic Renno AI untuk 1 (satu) site, Living World Alam Sutera | 12 bulan | Rp 3.000.000 | Rp 36.000.000 |
-| | | **TOTAL** | **Rp 36.000.000** |
+| | | Subtotal | Rp 36.000.000 |
+| | | PPN 11% | Rp 3.960.000 |
+| | | **GRAND TOTAL** | **Rp 39.960.000** |
 
-**Terbilang:** tiga puluh enam juta rupiah.
-
-Harga di atas belum termasuk PPN.
+**Terbilang:** tiga puluh sembilan juta sembilan ratus enam puluh ribu rupiah.
 
 ---
 
