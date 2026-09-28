@@ -47,9 +47,9 @@ Pembayaran 100% di muka, ditransfer ke:
 
 | | |
 |---|---|
-| **Bank** | `[nama bank]` |
-| **Nomor rekening** | `[nomor rekening]` |
-| **Atas nama** | PT JAYA PIRATA DINAMIKA |
+| **Bank** | Bank Mandiri, Cabang Blok M |
+| **Nomor rekening** | 126-00-00202-100 |
+| **Atas nama** | PT Jaya Pirata Dinamika |
 
 Implementasi dimulai 1 (satu) minggu setelah pembayaran diterima. Mohon cantumkan nomor
 invoice pada berita transfer, dan kirimkan bukti transfer setelah pembayaran dilakukan.
@@ -59,3 +59,5 @@ invoice pada berita transfer, dan kirimkan bukti transfer setelah pembayaran dil
 **Hormat kami,**
 
 **PT JAYA PIRATA DINAMIKA**
+
+::signature MEGANDI|DIREKTUR

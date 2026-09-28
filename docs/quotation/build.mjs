@@ -147,6 +147,19 @@ function render(markdown) {
       continue
     }
 
+    // `::signature NAMA|JABATAN` leaves room for a wet signature and a materai.
+    const signature = /^::signature\s+(.+?)\s*\|\s*(.+)$/.exec(line.trim())
+    if (signature !== null) {
+      closeList()
+      out.push(
+        `<div class="sign"><div class="sign-space"></div>` +
+          `<div class="sign-name">${inline(signature[1])}</div>` +
+          `<div class="sign-role">${inline(signature[2])}</div></div>`,
+      )
+      i += 1
+      continue
+    }
+
     if (line.startsWith('> ')) {
       closeList()
       const quote = []
@@ -268,6 +281,17 @@ const HTML = (body) => `<!doctype html>
     color: var(--ink);
   }
   .num { white-space: nowrap; font-variant-numeric: tabular-nums; }
+  .sign {
+    width: 62mm; margin: 12mm 0 0 auto; text-align: center;
+    page-break-inside: avoid;
+  }
+  /* Room for the materai and a signature across it, as they are stuck in practice. */
+  .sign-space { height: 32mm; }
+  .sign-name {
+    border-top: 1px solid var(--ink); padding-top: 2mm;
+    font-weight: 700; letter-spacing: 0.04em;
+  }
+  .sign-role { font-size: 9pt; color: var(--muted); letter-spacing: 0.06em; }
   .spacer { height: 6mm; }
   h2, h3 { page-break-after: avoid; }
 </style></head>
