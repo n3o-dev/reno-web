@@ -4,7 +4,7 @@
 
 | | |
 |---|---|
-| **Nomor** | 021/JDP/Inv/09/2026 |
+| **Nomor** | 010/JDP/Inv/09/2026 |
 | **Tanggal** | 28 September 2026 |
 | **Jatuh tempo** | 5 Oktober 2026 |
 | **Kepada** | PT Indo Cipta Daya (Renno) |
