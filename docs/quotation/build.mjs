@@ -70,31 +70,95 @@ const cells = (row) =>
     .replace(/^\||\|$/g, '')
     .split('|')
 
+/** A line that opens a block, so it can never be swallowed as continuation. */
+function isMarker(line) {
+  return /^(#{1,4}\s|---+$|>\s|::|\s*[-*]\s|\s*\d+\.\s|\s{2,}[a-z]\.\s|\|)/.test(line)
+}
+
 function render(markdown) {
   const lines = markdown.split('\n')
   const out = []
+  const OPEN = { ul: '<ul>', ol: '<ol>', alpha: '<ol class="alpha">' }
   let i = 0
   let list = null
+  /*
+   * A lettered sub-list interrupts its parent. Without carrying the count
+   * across, clause 3's sub-points would send clause 4 back to "1."
+   */
+  let olCount = 0
+  let resumeOl = false
 
   const closeList = () => {
     if (list !== null) {
-      out.push(`</${list}>`)
+      out.push(list === 'ul' ? '</ul>' : '</ol>')
       list = null
     }
+  }
+
+  /** Ends every list; the next ordered list starts again at one. */
+  const endLists = () => {
+    closeList()
+    resumeOl = false
+    olCount = 0
+  }
+
+  /**
+   * Closes the list but keeps its count, for a block that sits *inside* an
+   * enumeration: a table between two numbered clauses interrupts the layout,
+   * not the numbering.
+   */
+  const pauseLists = () => {
+    const wasOrdered = list === 'ol'
+    closeList()
+    if (wasOrdered) resumeOl = true
+  }
+
+  /** Opens `kind` if a different list (or none) is open. */
+  const openList = (kind) => {
+    if (list === kind) return
+    const wasOrdered = list === 'ol'
+    closeList()
+    if (kind === 'ol') {
+      const start = resumeOl ? olCount + 1 : 1
+      out.push(start > 1 ? `<ol start="${start}">` : OPEN.ol)
+      if (!resumeOl) olCount = 0
+      resumeOl = false
+    } else {
+      out.push(OPEN[kind])
+      if (kind === 'alpha' && wasOrdered) resumeOl = true
+    }
+    list = kind
+  }
+
+  /**
+   * A list item's wrapped lines. Without this an indented continuation became
+   * its own paragraph, which closed the list: every numbered clause in a
+   * contract then restarted at 1.
+   */
+  const continuation = (from) => {
+    const parts = []
+    let n = from
+    while (n < lines.length && /^\s{2,}\S/.test(lines[n]) && !isMarker(lines[n])) {
+      parts.push(lines[n].trim())
+      n += 1
+    }
+    return [parts, n]
   }
 
   while (i < lines.length) {
     const line = lines[i]
 
+    // A blank line separates blocks, not enumerations: a numbered clause with
+    // a table under it is still the same clause list.
     if (line.trim() === '') {
-      closeList()
+      pauseLists()
       i += 1
       continue
     }
 
     // A table: a header row, a delimiter row, then body rows.
     if (line.trim().startsWith('|') && (lines[i + 1] ?? '').includes('---')) {
-      closeList()
+      pauseLists()
       const head = cells(line)
       const aligns = cells(lines[i + 1]).map(alignOf)
       const body = []
@@ -126,7 +190,7 @@ function render(markdown) {
 
     const heading = /^(#{1,4})\s+(.*)$/.exec(line)
     if (heading !== null) {
-      closeList()
+      endLists()
       const level = heading[1].length
       out.push(`<h${level}>${inline(heading[2])}</h${level}>`)
       i += 1
@@ -134,14 +198,14 @@ function render(markdown) {
     }
 
     if (/^---+$/.test(line.trim())) {
-      closeList()
+      endLists()
       out.push('<hr>')
       i += 1
       continue
     }
 
     if (line.trim() === '<br>') {
-      closeList()
+      endLists()
       out.push('<div class="spacer"></div>')
       i += 1
       continue
@@ -154,7 +218,7 @@ function render(markdown) {
      */
     const signature = /^::signature\s+(.+)$/.exec(line.trim())
     if (signature !== null) {
-      closeList()
+      endLists()
       const [salam = '', perusahaan = '', nama = '', jabatan = ''] = signature[1]
         .split('|')
         .map((part) => part.trim())
@@ -171,8 +235,37 @@ function render(markdown) {
       continue
     }
 
+    /*
+     * `::signatures <label>|<perusahaan>|<nama>|<jabatan> || <same again>`
+     * puts two signing parties side by side, which is what a contract needs.
+     */
+    const parties = /^::signatures\s+(.+)$/.exec(line.trim())
+    if (parties !== null) {
+      endLists()
+      const columns = parties[1]
+        .split('||')
+        .map((party) => {
+          const [label = '', perusahaan = '', nama = '', jabatan = ''] = party
+            .split('|')
+            .map((part) => part.trim())
+          return (
+            `<div>` +
+            `<div class="sign-salam">${inline(label)}</div>` +
+            `<div class="sign-company">${inline(perusahaan)}</div>` +
+            `<div class="sign-space"></div>` +
+            `<div class="sign-name">${inline(nama)}</div>` +
+            `<div class="sign-role">${inline(jabatan)}</div>` +
+            `</div>`
+          )
+        })
+        .join('')
+      out.push(`<div class="signs">${columns}</div>`)
+      i += 1
+      continue
+    }
+
     if (line.startsWith('> ')) {
-      closeList()
+      endLists()
       const quote = []
       while (i < lines.length && lines[i].startsWith('> ')) {
         quote.push(lines[i].slice(2))
@@ -184,41 +277,37 @@ function render(markdown) {
 
     const bullet = /^\s*[-*]\s+(.*)$/.exec(line)
     if (bullet !== null) {
-      if (list !== 'ul') {
-        closeList()
-        out.push('<ul>')
-        list = 'ul'
-      }
-      const item = [bullet[1]]
-      i += 1
-      while (i < lines.length && /^\s{2,}\S/.test(lines[i]) && !/^\s*[-*]\s/.test(lines[i])) {
-        item.push(lines[i].trim())
-        i += 1
-      }
-      out.push(`<li>${inline(item.join(' '))}</li>`)
+      openList('ul')
+      const [rest, next] = continuation(i + 1)
+      out.push(`<li>${inline([bullet[1], ...rest].join(' '))}</li>`)
+      i = next
       continue
     }
 
-    const numbered = /^\s*(\d+)\.\s+(.*)$/.exec(line)
+    // Lettered sub-clauses: `   a. ...` under a numbered clause.
+    const lettered = /^\s{2,}[a-z]\.\s+(.*)$/.exec(line)
+    if (lettered !== null) {
+      openList('alpha')
+      const [rest, next] = continuation(i + 1)
+      out.push(`<li>${inline([lettered[1], ...rest].join(' '))}</li>`)
+      i = next
+      continue
+    }
+
+    const numbered = /^\s*\d+\.\s+(.*)$/.exec(line)
     if (numbered !== null) {
-      if (list !== 'ol') {
-        closeList()
-        out.push('<ol>')
-        list = 'ol'
-      }
-      out.push(`<li>${inline(numbered[2])}</li>`)
-      i += 1
+      openList('ol')
+      olCount += 1
+      const [rest, next] = continuation(i + 1)
+      out.push(`<li>${inline([numbered[1], ...rest].join(' '))}</li>`)
+      i = next
       continue
     }
 
     // Paragraph: consume until a blank line or a block opener.
-    closeList()
+    endLists()
     const para = []
-    while (
-      i < lines.length &&
-      lines[i].trim() !== '' &&
-      !/^(#{1,4}\s|---+$|>\s|\s*[-*]\s|\s*\d+\.\s|\|)/.test(lines[i])
-    ) {
+    while (i < lines.length && lines[i].trim() !== '' && !isMarker(lines[i])) {
       para.push(lines[i].trim())
       i += 1
     }
@@ -264,6 +353,7 @@ const HTML = (body) => `<!doctype html>
   }
   hr { border: 0; border-top: 1px solid var(--line); margin: 7mm 0; }
   ul, ol { margin: 0 0 3mm; padding-left: 5.5mm; }
+  ol.alpha { list-style-type: lower-alpha; margin-left: 5mm; margin-bottom: 2mm; }
   li { margin-bottom: 1.5mm; }
   blockquote {
     margin: 0 0 4mm; padding: 3mm 4mm;
@@ -296,6 +386,11 @@ const HTML = (body) => `<!doctype html>
     width: 62mm; margin: 12mm 0 0 auto; text-align: center;
     page-break-inside: avoid;
   }
+  .signs {
+    display: flex; gap: 12mm; margin-top: 10mm;
+    page-break-inside: avoid; text-align: center;
+  }
+  .signs > div { flex: 1; }
   .sign-salam { margin-bottom: 1.5mm; }
   .sign-company { font-weight: 700; letter-spacing: 0.03em; }
   /* Room for the materai and a signature across it, as they are stuck in practice. */
