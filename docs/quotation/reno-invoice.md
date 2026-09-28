@@ -56,8 +56,4 @@ invoice pada berita transfer, dan kirimkan bukti transfer setelah pembayaran dil
 
 ---
 
-**Hormat kami,**
-
-**PT JAYA PIRATA DINAMIKA**
-
-::signature MEGANDI|DIREKTUR
+::signature Hormat kami,|PT JAYA PIRATA DINAMIKA|MEGANDI|DIREKTUR

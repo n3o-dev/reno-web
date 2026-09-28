@@ -147,14 +147,25 @@ function render(markdown) {
       continue
     }
 
-    // `::signature NAMA|JABATAN` leaves room for a wet signature and a materai.
-    const signature = /^::signature\s+(.+?)\s*\|\s*(.+)$/.exec(line.trim())
+    /*
+     * `::signature <salam>|<perusahaan>|<nama>|<jabatan>` renders the closing
+     * block: the whole thing sits right, with room between the company name
+     * and the rule for a materai and a signature across it.
+     */
+    const signature = /^::signature\s+(.+)$/.exec(line.trim())
     if (signature !== null) {
       closeList()
+      const [salam = '', perusahaan = '', nama = '', jabatan = ''] = signature[1]
+        .split('|')
+        .map((part) => part.trim())
       out.push(
-        `<div class="sign"><div class="sign-space"></div>` +
-          `<div class="sign-name">${inline(signature[1])}</div>` +
-          `<div class="sign-role">${inline(signature[2])}</div></div>`,
+        `<div class="sign">` +
+          `<div class="sign-salam">${inline(salam)}</div>` +
+          `<div class="sign-company">${inline(perusahaan)}</div>` +
+          `<div class="sign-space"></div>` +
+          `<div class="sign-name">${inline(nama)}</div>` +
+          `<div class="sign-role">${inline(jabatan)}</div>` +
+          `</div>`,
       )
       i += 1
       continue
@@ -285,6 +296,8 @@ const HTML = (body) => `<!doctype html>
     width: 62mm; margin: 12mm 0 0 auto; text-align: center;
     page-break-inside: avoid;
   }
+  .sign-salam { margin-bottom: 1.5mm; }
+  .sign-company { font-weight: 700; letter-spacing: 0.03em; }
   /* Room for the materai and a signature across it, as they are stuck in practice. */
   .sign-space { height: 32mm; }
   .sign-name {

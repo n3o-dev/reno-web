@@ -68,6 +68,4 @@ Langganan untuk **1 (satu) site**, yaitu Living World Alam Sutera.
 
 ---
 
-**Hormat kami,**
-
-**PT JAYA PIRATA DINAMIKA**
+::signature Hormat kami,|PT JAYA PIRATA DINAMIKA|MEGANDI|DIREKTUR
