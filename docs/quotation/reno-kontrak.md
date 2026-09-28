@@ -69,7 +69,7 @@ Penyedia menyediakan Sistem dengan lingkup sebagai berikut.
    a. keluhan yang belum ditutup dengan foto selesai;
    b. laporan manpower atau laporan shift yang belum masuk;
    c. laporan yang perlu dikoreksi, misalnya laporan tanpa area.
-4. Anggota Grup dapat memanggil `@Renno` untuk mengajukan pertanyaan, dan Agent menjawabnya
+4. Anggota Grup (client) dapat memanggil `@Renno` untuk mengajukan pertanyaan, dan Agent menjawabnya
    berdasarkan data yang telah terkumpul.
 5. Setiap fakta yang disimpan Agent mencantumkan pesan sumbernya. Fakta yang tidak dapat
    dibuktikan tidak ditebak, melainkan dikosongkan.
@@ -99,10 +99,8 @@ line-up, kecocokan RKB, blokir RKB, foto, personel, dan area.
 
 ### 2.5 Dashboard Klien
 
-Tautan khusus tanpa login, hanya baca, dan siap dibuka dari telepon genggam, berisi angka yang
-sama dengan yang dilihat Pengguna. Dashboard Klien tidak dapat mengonfirmasi bulan, tidak dapat
-mengunduh berkas RKB, dan tidak dapat menjangkau tampilan internal. Tautan dapat dicabut
-sewaktu-waktu atas permintaan Pengguna.
+Dashboard berbasis web siap dibuka dari telepon genggam dan pc, berisi angka yang
+sama dengan yang dilihat Pengguna Internal. Dashboard dapat mengonfirmasi hal-hal yang disepakati oleh kedua belah pihak, seperti absensi, RKB, keluhan, dll.
 
 ### 2.6 Dashboard Internal
 
@@ -118,11 +116,6 @@ sewaktu-waktu atas permintaan Pengguna.
    lolos validasi, foto before dan after, foto dipakai ulang, waktu respon keluhan, dan
    realisasi RKB.
 2. Sistem menyajikan KPI per orang dan rekomendasi topik training yang ditarik dari data.
-3. Laporan bulanan hanya dapat diterbitkan apabila tiga syarat terpenuhi: roster telah
-   dikonfirmasi oleh petugas Pengguna yang disebut namanya, seluruh nama pada line-up telah
-   dikenali, dan seluruh catatan terblokir telah mencantumkan pesan yang mendasarinya. Apabila
-   salah satu syarat belum terpenuhi, Sistem menolak menerbitkan laporan dan menyebutkan
-   penyebabnya.
 
 ---
 
@@ -176,8 +169,7 @@ sewaktu-waktu atas permintaan Pengguna.
    Dashboard Internal, tidak ditarik dari sistem luar.
 3. **Site kedua dan seterusnya.** Perjanjian ini mencakup 1 (satu) Site. Penambahan Site
    ditawarkan secara terpisah.
-4. **Biaya WhatsApp,** meliputi biaya API, nomor telepon, dan perangkat yang digunakan Agent.
-5. **Entri data manual** dari logbook kertas, glass wall, dan Form Kunjungan Project
+4. **Entri data manual** dari logbook kertas, glass wall, dan Form Kunjungan Project
    Coordinator, karena ketiganya tidak pernah masuk ke Grup sehingga tidak dapat dibaca Agent.
 
 ---
@@ -281,8 +273,7 @@ sewaktu-waktu atas permintaan Pengguna.
 
 1. Perselisihan yang timbul diselesaikan terlebih dahulu secara musyawarah dalam waktu 30
    (tiga puluh) hari kalender.
-2. Apabila musyawarah tidak mencapai kesepakatan, Para Pihak sepakat menyelesaikannya melalui
-   Pengadilan Negeri `[wilayah]`.
+2. Apabila musyawarah tidak mencapai kesepakatan, Para Pihak sepakat menyelesaikannya dengan hukum yang berlaku di       Indonesia
 3. Perjanjian ini tunduk pada hukum Republik Indonesia.
 
 ---
