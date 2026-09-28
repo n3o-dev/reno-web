@@ -27,17 +27,34 @@ Harga di atas belum termasuk PPN.
 
 ## 2. Lingkup yang dikirim
 
-**1. Renno AI Agent**
-Agent yang bekerja langsung di grup WhatsApp: melakukan follow-up ke PIC, mencatat aktivitas
-harian, mengisi RKB, dan menjawab pertanyaan dari data yang sudah terkumpul.
+**1. Renno AI Agent di grup WhatsApp**
+Grup tetap seperti sekarang. Agent membaca setiap laporan yang masuk, memvalidasinya, dan
+menyimpannya sebagai data. Agent juga melakukan follow-up ke PIC tanpa diminta, dengan tiga
+pemicu: keluhan yang belum ada foto selesai, laporan manpower atau laporan shift yang belum
+masuk, dan laporan yang perlu dikoreksi. Anggota grup dapat memanggil `@Renno` untuk bertanya,
+dan dijawab dari data yang sudah terkumpul.
 
-**2. Dashboard untuk klien**
-Tampilan khusus untuk klien, siap dibuka dari HP, berisi angka yang sama dengan yang dilihat
-Renno.
+**2. RKB terisi sendiri dari laporan WhatsApp**
+Kolom realisasi (A) terisi dari laporan yang masuk di grup, dipasangkan dengan kolom rencana
+(R) dari RKB tim site. Setiap realisasi membawa nama pelapor dan foto buktinya. Hasilnya bisa
+diunduh sebagai file Excel RKB.
 
-**3. Dashboard untuk Renno (internal)**
-Tampilan operasional untuk tim Renno, termasuk kemampuan mengunggah konteks perusahaan dan
-mengunggah RKB langsung dari dashboard.
+**3. Absensi dan manpower**
+Line-up per shift tercatat otomatis: jumlah manpower, off day, sakit, izin, dan alfa, per area
+dan per shift. Line-up atau laporan shift yang belum masuk menjadi pemicu follow-up agent.
+
+**4. KPI Dashboard**
+Tujuh KPI yang ada di konsep: keluhan selesai dengan foto, keluhan berulang, laporan lolos
+validasi, foto before dan after, foto dipakai ulang, waktu respon keluhan, dan realisasi RKB.
+Dilengkapi KPI per orang dan rekomendasi topik training yang ditarik dari data.
+
+**5. Dua tampilan dashboard**
+Tampilan untuk klien, siap dibuka dari HP, berisi angka yang sama dengan yang dilihat Renno.
+Tampilan internal untuk tim Renno, tempat konteks perusahaan (data personel, training, dan SOP)
+dan RKB diunggah langsung.
+
+Konteks perusahaan diunggah ke dashboard, tidak ditarik dari sistem lain. **Tidak ada integrasi
+ke sistem apa pun di luar ini, termasuk payroll.**
 
 Termasuk hosting, pemeliharaan, dan dukungan selama masa kontrak.
 
