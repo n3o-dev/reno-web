@@ -4,9 +4,9 @@
 
 | | |
 |---|---|
-| **Nomor** | 001/JDP/PKS/09/2026 |
+| **Nomor** | 001/JPD/PKS/09/2026 |
 | **Tanggal** | 28 September 2026 |
-| **Referensi** | Penawaran 021/JDP/Quot/09/2026 dan Invoice 010/JDP/Inv/09/2026 |
+| **Referensi** | Penawaran 021/JPD/Quot/09/2026 dan Invoice 010/JPD/INV/09/2026 |
 
 ---
 
@@ -212,7 +212,7 @@ sewaktu-waktu atas permintaan Pengguna.
 | Nomor rekening | 126-00-00202-100 |
 | Atas nama | PT Jaya Pirata Dinamika |
 
-4. Penagihan dilakukan melalui Invoice 010/JDP/Inv/09/2026.
+4. Penagihan dilakukan melalui Invoice 010/JPD/INV/09/2026.
 
 ---
 

@@ -4,7 +4,7 @@
 
 | | |
 |---|---|
-| **Nomor** | 021/JDP/Quot/09/2026 |
+| **Nomor** | 021/JPD/Quot/09/2026 |
 | **Tanggal** | 25 September 2026 |
 | **Berlaku sampai** | 25 Oktober 2026 |
 | **Kepada** | PT Indo Cipta Daya (Renno) |
