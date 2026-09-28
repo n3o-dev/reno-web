@@ -16,8 +16,11 @@ import { fileURLToPath } from 'node:url'
 import { chromium } from '@playwright/test'
 
 const here = dirname(fileURLToPath(import.meta.url))
-const SOURCE = join(here, 'reno-quotation.md')
-const OUT = join(here, 'reno-quotation.pdf')
+
+/** `node build.mjs [name.md]`. Defaults to the quotation. */
+const NAME = (process.argv[2] ?? 'reno-quotation.md').replace(/\.md$/, '')
+const SOURCE = join(here, `${NAME}.md`)
+const OUT = join(here, `${NAME}.pdf`)
 
 /**
  * The letterhead logo, if one has been dropped beside this script. Embedded
@@ -100,16 +103,19 @@ function render(markdown) {
         body.push(cells(lines[i]))
         i += 1
       }
-      const th = head
-        .map((c, n) => `<th style="text-align:${aligns[n] ?? 'left'}">${inline(c.trim())}</th>`)
-        .join('')
+      /*
+       * Right-aligned columns hold money. They are marked so the stylesheet
+       * can stop them wrapping: "Rp 36.000.000" breaking after "Rp" is the
+       * one defect a reader of an invoice is guaranteed to notice.
+       */
+      const cell = (tag, c, n) => {
+        const align = aligns[n] ?? 'left'
+        const cls = align === 'right' ? ' class="num"' : ''
+        return `<${tag}${cls} style="text-align:${align}">${inline(c.trim())}</${tag}>`
+      }
+      const th = head.map((c, n) => cell('th', c, n)).join('')
       const rows = body
-        .map(
-          (r) =>
-            `<tr>${r
-              .map((c, n) => `<td style="text-align:${aligns[n] ?? 'left'}">${inline(c.trim())}</td>`)
-              .join('')}</tr>`,
-        )
+        .map((r) => `<tr>${r.map((c, n) => cell('td', c, n)).join('')}</tr>`)
         .join('')
       const headless = head.every((c) => c.trim() === '')
       out.push(
@@ -261,6 +267,7 @@ const HTML = (body) => `<!doctype html>
     font-weight: 700; font-size: 11.5pt; letter-spacing: 0.06em;
     color: var(--ink);
   }
+  .num { white-space: nowrap; font-variant-numeric: tabular-nums; }
   .spacer { height: 6mm; }
   h2, h3 { page-break-after: avoid; }
 </style></head>
@@ -280,10 +287,18 @@ async function launch() {
   }
 }
 
+/** The document's own number, read from its `Nomor` row, for the footer. */
+function documentNumber(markdown) {
+  const row = /\|\s*\*\*Nomor\*\*\s*\|\s*([^|]+?)\s*\|/.exec(markdown)
+  return row === null ? '' : row[1]
+}
+
 const browser = await launch()
 try {
+  const markdown = readFileSync(SOURCE, 'utf8')
   const page = await browser.newPage()
-  await page.setContent(HTML(render(readFileSync(SOURCE, 'utf8'))), { waitUntil: 'networkidle' })
+  await page.setContent(HTML(render(markdown)), { waitUntil: 'networkidle' })
+  const number = documentNumber(markdown)
   await page.pdf({
     path: OUT,
     format: 'A4',
@@ -293,7 +308,7 @@ try {
     headerTemplate: '<div></div>',
     footerTemplate:
       '<div style="width:100%;padding:0 18mm;font-family:DM Sans,sans-serif;font-size:7.5pt;color:#8d8377;display:flex;justify-content:space-between">' +
-      '<span>Penawaran Harga · 021/JDP/Quot/09/2026 · PT Jaya Pirata Dinamika</span>' +
+      `<span>${number} · PT Jaya Pirata Dinamika</span>` +
       '<span><span class="pageNumber"></span> / <span class="totalPages"></span></span></div>',
   })
   process.stdout.write(`wrote ${OUT}\n`)
