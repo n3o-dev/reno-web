@@ -73,6 +73,14 @@ Penyedia menyediakan Sistem dengan lingkup sebagai berikut.
    berdasarkan data yang telah terkumpul.
 5. Setiap fakta yang disimpan Agent mencantumkan pesan sumbernya. Fakta yang tidak dapat
    dibuktikan tidak ditebak, melainkan dikosongkan.
+6. Interaksi dengan Agent hanya dilakukan pada 3 (tiga) ruang percakapan, yaitu 1 (satu) Grup
+   site dan 2 (dua) nomor kontak pribadi, masing-masing PIC Pengguna dan PIC klien. Di luar
+   ketiga ruang tersebut Agent tidak menanggapi.
+7. Agent bekerja melalui sebuah akun WhatsApp. Akun tersebut dapat diblokir oleh penyedia
+   layanan WhatsApp sewaktu-waktu, di luar kendali Para Pihak. Apabila hal itu terjadi,
+   Penyedia mengganti akun dengan nomor lain secepatnya, dan Pengguna memasukkan kembali akun
+   pengganti ke Grup dan kontak sebagaimana angka 6. Masa Agent tidak beroperasi akibat
+   pemblokiran tersebut tidak dihitung sebagai kelalaian Penyedia.
 
 ### 2.2 Pencatatan data
 
@@ -112,10 +120,8 @@ sama dengan yang dilihat Pengguna Internal. Dashboard dapat mengonfirmasi hal-ha
 
 ### 2.7 KPI dan laporan
 
-1. Sistem menyajikan tujuh KPI, yaitu keluhan selesai dengan foto, keluhan berulang, laporan
-   lolos validasi, foto before dan after, foto dipakai ulang, waktu respon keluhan, dan
-   realisasi RKB.
-2. Sistem menyajikan KPI per orang dan rekomendasi topik training yang ditarik dari data.
+1. Sistem menyajikan KPI operasional, KPI per orang, dan rekomendasi topik training yang
+   ditarik dari data.
 
 ---
 
@@ -126,8 +132,7 @@ sama dengan yang dilihat Pengguna Internal. Dashboard dapat mengonfirmasi hal-ha
    b. berkas RKB terisi dalam format Excel (`.xlsx`);
    c. laporan bulanan dalam bentuk siap cetak;
    d. data absensi dan manpower per area dan per shift;
-   e. tujuh KPI, KPI per orang, dan rekomendasi training;
-   f. Rapor Pimpro dengan bagian yang dapat diisi dari data telah terisi.
+   e. KPI operasional, KPI per orang, dan rekomendasi training.
 2. Setiap angka pada keluaran di atas dapat ditelusuri sampai ke pesan WhatsApp yang menjadi
    sumbernya.
 3. Angka yang tidak dapat dibuktikan tidak disajikan sebagai nol, melainkan sebagai tidak
@@ -154,7 +159,11 @@ sama dengan yang dilihat Pengguna Internal. Dashboard dapat mengonfirmasi hal-ha
    yang diterima di luar Jam Kerja dihitung sejak Jam Kerja berikutnya dimulai.
 5. **Saluran pelaporan.** Kendala dilaporkan melalui saluran yang disepakati Para Pihak. Waktu
    tanggap dihitung sejak laporan diterima pada saluran tersebut.
-6. **Batasan.** Pemeliharaan sebagaimana Pasal ini tidak mencakup penambahan fitur baru
+6. **Domain.** Sistem diakses melalui domain milik klien. Pengguna menyediakan domain
+   tersebut beserta akses pengaturan DNS yang diperlukan, dan Penyedia melakukan konfigurasi
+   serta pemasangan sertifikat keamanannya. Biaya pendaftaran dan perpanjangan domain menjadi
+   tanggungan Pengguna.
+7. **Batasan.** Pemeliharaan sebagaimana Pasal ini tidak mencakup penambahan fitur baru
    sebagaimana diatur dalam Pasal 5.
 
 ---
