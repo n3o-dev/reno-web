@@ -187,8 +187,8 @@ sama dengan yang dilihat Pengguna Internal. Dashboard dapat mengonfirmasi hal-ha
 
 1. Perjanjian ini berlaku selama **12 (dua belas) bulan** terhitung sejak tanggal Sistem
    dinyatakan aktif.
-2. Sistem dinyatakan aktif paling lambat **1 (satu) minggu** setelah pembayaran sebagaimana
-   Pasal 7 diterima Penyedia.
+2. Sistem dinyatakan aktif paling lambat **1 (satu) minggu** setelah pembayaran termin
+   pertama sebagaimana Pasal 7 diterima Penyedia.
 3. Perjanjian dapat diperpanjang atas kesepakatan tertulis Para Pihak, dengan harga yang
    berlaku pada saat perpanjangan.
 
@@ -205,7 +205,21 @@ sama dengan yang dilihat Pengguna Internal. Dashboard dapat mengonfirmasi hal-ha
 | **Jumlah yang dibayarkan** | **Rp 39.960.000** |
 
 2. Terbilang: tiga puluh sembilan juta sembilan ratus enam puluh ribu rupiah.
-3. Pembayaran dilakukan **100% (seratus persen) di muka** ke rekening Penyedia:
+3. **Pembayaran dilakukan per 3 (tiga) bulan**, dibagi menjadi 4 (empat) termin yang sama
+   besar. Jangka waktu Perjanjian tetap 12 (dua belas) bulan sebagaimana Pasal 6.
+
+| Termin | Periode | Nilai | PPN 11% | Jumlah |
+|---|---|---:|---:|---:|
+| I | bulan 1 sampai 3 | Rp 9.000.000 | Rp 990.000 | Rp 9.990.000 |
+| II | bulan 4 sampai 6 | Rp 9.000.000 | Rp 990.000 | Rp 9.990.000 |
+| III | bulan 7 sampai 9 | Rp 9.000.000 | Rp 990.000 | Rp 9.990.000 |
+| IV | bulan 10 sampai 12 | Rp 9.000.000 | Rp 990.000 | Rp 9.990.000 |
+
+4. **Invoice terbit setiap tanggal 29** pada bulan penagihan termin yang bersangkutan, dengan
+   **jatuh tempo 7 (tujuh) hari kalender** sejak tanggal invoice.
+5. Termin pertama ditagihkan melalui Invoice 017/JPD/INV/09/2026, terbit 29 September 2026 dan
+   jatuh tempo 6 Oktober 2026.
+6. Pembayaran ditransfer ke rekening Penyedia:
 
 | | |
 |---|---|
@@ -213,7 +227,9 @@ sama dengan yang dilihat Pengguna Internal. Dashboard dapat mengonfirmasi hal-ha
 | Nomor rekening | 126-00-00202-100 |
 | Atas nama | PT Jaya Pirata Dinamika |
 
-4. Penagihan dilakukan melalui Invoice 017/JPD/INV/09/2026.
+7. Keterlambatan pembayaran suatu termin lebih dari 14 (empat belas) hari kalender sejak
+   jatuh tempo memberi hak kepada Penyedia untuk menghentikan sementara akses ke Sistem
+   sampai pembayaran diterima, tanpa menghapus kewajiban pembayaran tersebut.
 
 ---
 

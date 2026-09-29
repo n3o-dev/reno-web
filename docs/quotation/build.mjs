@@ -75,8 +75,13 @@ function isMarker(line) {
   return /^(#{1,4}\s|---+$|>\s|::|\s*[-*]\s|\s*\d+\.\s|\s{2,}[a-z]\.\s|\|)/.test(line)
 }
 
+/** `::compact` on its own line tightens the layout, for a one-page document. */
+function isCompact(markdown) {
+  return /^::compact\s*$/m.test(markdown)
+}
+
 function render(markdown) {
-  const lines = markdown.split('\n')
+  const lines = markdown.replace(/^::compact\s*$/m, '').split('\n')
   const out = []
   const OPEN = { ul: '<ul>', ol: '<ol>', alpha: '<ol class="alpha">' }
   let i = 0
@@ -318,7 +323,7 @@ function render(markdown) {
   return out.join('\n')
 }
 
-const HTML = (body) => `<!doctype html>
+const HTML = (body, compact) => `<!doctype html>
 <html lang="id"><head><meta charset="utf-8">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -400,10 +405,22 @@ const HTML = (body) => `<!doctype html>
     font-weight: 700; letter-spacing: 0.04em;
   }
   .sign-role { font-size: 9pt; color: var(--muted); letter-spacing: 0.06em; }
+
+  /* Compact: same document, squeezed onto one page. */
+  .compact .letterhead { margin-bottom: 4mm; padding-bottom: 2.5mm; }
+  .compact h1 { font-size: 21pt; }
+  .compact h2 { margin: 4.5mm 0 2mm; }
+  .compact p { margin-bottom: 2mm; }
+  .compact hr { margin: 3.5mm 0; }
+  .compact table { margin-bottom: 2.5mm; }
+  .compact th, .compact td { padding: 1mm 2.5mm; }
+  .compact .sign { margin-top: 4mm; }
+  /* Still 22mm: a materai tempel is about 21mm tall and must fit. */
+  .compact .sign-space { height: 22mm; }
   .spacer { height: 6mm; }
   h2, h3 { page-break-after: avoid; }
 </style></head>
-<body>${letterhead()}${body}</body></html>`
+<body class="${compact ? 'compact' : ''}">${letterhead()}${body}</body></html>`
 
 /*
  * Prefer the Chrome already on the machine. Playwright's own build is a
@@ -428,14 +445,28 @@ function documentNumber(markdown) {
 const browser = await launch()
 try {
   const markdown = readFileSync(SOURCE, 'utf8')
+  const compact = isCompact(markdown)
   const page = await browser.newPage()
-  await page.setContent(HTML(render(markdown)), { waitUntil: 'networkidle' })
+  await page.setContent(HTML(render(markdown), compact), { waitUntil: 'networkidle' })
   const number = documentNumber(markdown)
+  // Measure and paginate under the same media the PDF uses.
+  await page.emulateMedia({ media: 'print' })
+  if (process.env.MEASURE) {
+    const h = await page.evaluate(() => document.body.scrollHeight)
+    const mm = (h * 25.4) / 96
+    process.stdout.write(`tinggi isi: ${mm.toFixed(1)}mm (muat 1 halaman jika <= 259mm)\n`)
+  }
   await page.pdf({
     path: OUT,
     format: 'A4',
     printBackground: true,
-    margin: { top: '18mm', bottom: '20mm', left: '18mm', right: '18mm' },
+    /*
+     * Compact buys back page height rather than signing room: the materai
+     * needs its 22mm whatever the margins do.
+     */
+    margin: compact
+      ? { top: '14mm', bottom: '16mm', left: '16mm', right: '16mm' }
+      : { top: '18mm', bottom: '20mm', left: '18mm', right: '18mm' },
     displayHeaderFooter: true,
     headerTemplate: '<div></div>',
     footerTemplate:

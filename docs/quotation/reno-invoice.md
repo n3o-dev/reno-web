@@ -1,3 +1,5 @@
+::compact
+
 # INVOICE
 
 **Agentic Renno AI · Agent WhatsApp & Dashboard Operasional**
@@ -8,7 +10,7 @@
 | **Tanggal** | 29 September 2026 |
 | **Jatuh tempo** | 6 Oktober 2026 |
 | **Kepada** | PT Indo Cipta Daya (Renno) |
-| **Referensi** | Penawaran 021/JPD/Quot/09/2026 |
+| **Referensi** | Perjanjian Kerja Sama 014/JPD/PKS/09/2026 |
 
 ---
 
@@ -16,34 +18,20 @@
 
 | Deskripsi | Periode | Harga / bulan | Jumlah |
 |---|---:|---:|---:|
-| Langganan Agentic Renno AI untuk 1 (satu) site, Living World Alam Sutera | 12 bulan | Rp 3.000.000 | Rp 36.000.000 |
-| | | Subtotal | Rp 36.000.000 |
-| | | PPN 11% | Rp 3.960.000 |
-| | | **GRAND TOTAL** | **Rp 39.960.000** |
+| Langganan Agentic Renno AI, 1 (satu) site Living World Alam Sutera. **Termin I dari IV**, bulan 1 sampai 3. | 3 bulan | Rp 3.000.000 | Rp 9.000.000 |
+| | | Subtotal | Rp 9.000.000 |
+| | | PPN 11% | Rp 990.000 |
+| | | **GRAND TOTAL** | **Rp 9.990.000** |
 
-**Terbilang:** tiga puluh sembilan juta sembilan ratus enam puluh ribu rupiah.
+**Terbilang:** sembilan juta sembilan ratus sembilan puluh ribu rupiah.
 
----
-
-## 2. Lingkup yang dikirim
-
-- **Renno AI Agent di grup WhatsApp.** Membaca dan memvalidasi laporan, follow-up otomatis ke
-  PIC, dan menjawab pertanyaan `@Renno` dari data.
-- **RKB terisi sendiri** dari laporan grup, lengkap dengan nama pelapor dan foto bukti, bisa
-  diunduh sebagai file Excel.
-- **Absensi dan manpower.** Line-up per shift: jumlah manpower, off day, sakit, izin, dan alfa.
-- **KPI Dashboard.** Tujuh KPI operasional, KPI per orang, dan rekomendasi topik training.
-- **Dashboard untuk klien**, siap dibuka dari HP.
-- **Dashboard internal Renno**, tempat konteks perusahaan dan RKB diunggah langsung.
-- **Hosting, pemeliharaan, dan dukungan** selama masa kontrak.
-
-Tidak ada integrasi ke sistem lain, termasuk payroll. Rincian teknis diatur dalam kontrak.
+Lingkup pekerjaan diatur dalam Perjanjian Kerja Sama 014/JPD/PKS/09/2026: Rp 39.960.000 untuk
+12 bulan, ditagihkan dalam 4 (empat) termin sama besar. Invoice berikutnya terbit tanggal 29
+pada bulan penagihan masing-masing termin, jatuh tempo 7 (tujuh) hari kalender.
 
 ---
 
-## 3. Pembayaran
-
-Pembayaran 100% di muka, ditransfer ke:
+## 2. Pembayaran
 
 | | |
 |---|---|
@@ -51,9 +39,6 @@ Pembayaran 100% di muka, ditransfer ke:
 | **Nomor rekening** | 126-00-00202-100 |
 | **Atas nama** | PT Jaya Pirata Dinamika |
 
-Implementasi dimulai 1 (satu) minggu setelah pembayaran diterima. Mohon cantumkan nomor
-invoice pada berita transfer, dan kirimkan bukti transfer setelah pembayaran dilakukan.
-
----
+Mohon cantumkan nomor invoice pada berita transfer.
 
 ::signature Hormat kami,|PT JAYA PIRATA DINAMIKA|MEGANDI|DIREKTUR
